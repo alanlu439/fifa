@@ -14,7 +14,7 @@ import {
   Table2,
   Trophy,
 } from "lucide-react";
-import { formatKickoff, standings as sampleStandings, statusLabel, teams } from "./data.js";
+import { standings as sampleStandings, statusLabel, teams } from "./data.js";
 import { collectTeamsFromMatches, fetchLiveData, freshSampleMatches, getFeedUrl } from "./liveFeed.js";
 
 const tabs = [
@@ -32,6 +32,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState("All");
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [source, setSource] = useState(getFeedUrl() ? "External JSON feed" : "Loading ESPN feed");
   const [feedError, setFeedError] = useState("");
@@ -63,6 +64,7 @@ function App() {
   }, [filteredMatches, selectedMatchId]);
 
   const visibleStandings = groupTables[selectedMatch?.group] || groupTables["Group C"] || [];
+  const boardSummary = useMemo(() => getBoardSummary(matches, groupTables), [matches, groupTables]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -86,6 +88,7 @@ function App() {
   }, [autoRefresh]);
 
   async function loadLiveFeed(signal) {
+    setIsRefreshing(true);
     try {
       const data = await fetchLiveData(signal);
       if (!data.matches.length) throw new Error("Real feed returned no matches for the current window");
@@ -109,6 +112,8 @@ function App() {
       setSource("Demo fallback");
       setFeedError(error.message);
       setLastUpdated(new Date());
+    } finally {
+      if (!signal?.aborted) setIsRefreshing(false);
     }
   }
 
@@ -116,11 +121,18 @@ function App() {
     loadLiveFeed();
   }
 
+  function selectMatch(matchId) {
+    setSelectedMatchId(matchId);
+    if (activeTab !== "live") setActiveTab("live");
+  }
+
   return (
     <div className="app-shell">
       <Header
         autoRefresh={autoRefresh}
+        boardSummary={boardSummary}
         feedError={feedError}
+        isRefreshing={isRefreshing}
         lastUpdated={lastUpdated}
         onRefresh={refreshNow}
         onToggleRefresh={() => setAutoRefresh((current) => !current)}
@@ -167,21 +179,27 @@ function App() {
             </select>
             <ChevronDown className="select-chevron" size={16} strokeWidth={2.2} />
           </label>
+
+          <div className="result-chip" aria-live="polite">
+            <strong>{filteredMatches.length}</strong>
+            <span>showing</span>
+          </div>
         </section>
 
         {activeTab === "live" && (
           <LiveBoard
+            boardSummary={boardSummary}
             matches={filteredMatches}
             selectedMatch={selectedMatch}
             selectedMatchId={selectedMatch?.id}
             standingsRows={visibleStandings}
             teamsByCode={teamsByCode}
-            onSelectMatch={setSelectedMatchId}
+            onSelectMatch={selectMatch}
           />
         )}
 
         {activeTab === "fixtures" && (
-          <FixturesView matches={filteredMatches} teamsByCode={teamsByCode} onSelectMatch={setSelectedMatchId} />
+          <FixturesView matches={filteredMatches} teamsByCode={teamsByCode} onSelectMatch={selectMatch} />
         )}
 
         {activeTab === "groups" && <GroupsView groupTables={groupTables} teamsByCode={teamsByCode} />}
@@ -190,7 +208,7 @@ function App() {
   );
 }
 
-function Header({ autoRefresh, feedError, lastUpdated, onRefresh, onToggleRefresh, source }) {
+function Header({ autoRefresh, boardSummary, feedError, isRefreshing, lastUpdated, onRefresh, onToggleRefresh, source }) {
   const localeClock = new Intl.DateTimeFormat(undefined, {
     hour: "2-digit",
     minute: "2-digit",
@@ -207,12 +225,19 @@ function Header({ autoRefresh, feedError, lastUpdated, onRefresh, onToggleRefres
         <div>
           <h1>FIFA Watchboard</h1>
           <div className="source-row">
-            <span className="live-dot" aria-hidden="true" />
+            <span className={feedError ? "live-dot warning" : "live-dot"} aria-hidden="true" />
+            <strong>{source}</strong>
             <span>World Cup 2026</span>
-            <span>{source}</span>
-            {feedError && <span className="feed-warning">Feed fallback active</span>}
+            <span>{feedError ? "Demo fallback active" : "ESPN scoreboard window"}</span>
           </div>
         </div>
+      </div>
+
+      <div className="header-summary" aria-label="Board summary">
+        <SummaryChip label="Matches" value={boardSummary.total} />
+        <SummaryChip label="Live" value={boardSummary.live} tone={boardSummary.live ? "live" : "neutral"} />
+        <SummaryChip label="Next" value={boardSummary.nextKickoff} wide />
+        <SummaryChip label="Groups" value={boardSummary.groups} />
       </div>
 
       <div className="header-actions">
@@ -222,17 +247,28 @@ function Header({ autoRefresh, feedError, lastUpdated, onRefresh, onToggleRefres
         </div>
         <button className="icon-button" onClick={onToggleRefresh} type="button" aria-label="Toggle auto refresh">
           {autoRefresh ? <CirclePause size={18} /> : <CirclePlay size={18} />}
-          <span>Auto refresh</span>
+          <span>{autoRefresh ? "Auto on" : "Auto off"}</span>
         </button>
-        <button className="icon-button refresh" onClick={onRefresh} type="button" aria-label="Refresh scores now">
+        <button
+          className={isRefreshing ? "icon-button refresh spinning" : "icon-button refresh"}
+          disabled={isRefreshing}
+          onClick={onRefresh}
+          type="button"
+          aria-label="Refresh scores now"
+        >
           <RefreshCw size={18} />
         </button>
       </div>
+      {feedError && (
+        <div className="feed-alert" role="status">
+          Real feed unavailable: {feedError}
+        </div>
+      )}
     </header>
   );
 }
 
-function LiveBoard({ matches, onSelectMatch, selectedMatch, selectedMatchId, standingsRows, teamsByCode }) {
+function LiveBoard({ boardSummary, matches, onSelectMatch, selectedMatch, selectedMatchId, standingsRows, teamsByCode }) {
   if (!selectedMatch) {
     return (
       <section className="wide-panel empty-board">
@@ -251,8 +287,10 @@ function LiveBoard({ matches, onSelectMatch, selectedMatch, selectedMatchId, sta
       <section className="match-panel" aria-label="Match list">
         <div className="section-heading">
           <div>
-            <h2>Live</h2>
-            <p>{matches.length} tracked matches</p>
+            <h2>Match Window</h2>
+            <p>
+              {boardSummary.live} live, {boardSummary.upcoming} upcoming, {boardSummary.finished} final
+            </p>
           </div>
           <Activity size={18} strokeWidth={2.2} />
         </div>
@@ -286,6 +324,8 @@ function FeaturedMatch({ match, teamsByCode }) {
   const home = getTeam(match.home, teamsByCode);
   const away = getTeam(match.away, teamsByCode);
   const possessionAway = 100 - match.stats.possessionHome;
+  const clockValue = match.status === "upcoming" ? formatShortKickoff(match.kickoff) : `${match.minute}'`;
+  const clockLabel = match.status === "upcoming" ? "Kickoff" : match.status === "finished" ? "Full time" : "Match clock";
 
   return (
     <div className="scoreboard">
@@ -297,9 +337,10 @@ function FeaturedMatch({ match, teamsByCode }) {
 
       <div className="score-display">
         <TeamScore side="home" score={match.homeScore} team={home} />
-        <div className="match-clock">
-          <span>{match.status === "upcoming" ? formatKickoff(match.kickoff) : `${match.minute}'`}</span>
-          <small>{match.note}</small>
+        <div className={`match-clock ${match.status}`}>
+          <small>{clockLabel}</small>
+          <span>{clockValue}</span>
+          <small>{match.note || match.stage}</small>
         </div>
         <TeamScore side="away" score={match.awayScore} team={away} />
       </div>
@@ -331,13 +372,19 @@ function TeamScore({ score, side, team }) {
 function MatchRow({ active, match, onClick, teamsByCode }) {
   const home = getTeam(match.home, teamsByCode);
   const away = getTeam(match.away, teamsByCode);
+  const rowTime = match.status === "upcoming" ? formatShortKickoff(match.kickoff) : match.status === "finished" ? "Final" : `${match.minute}'`;
 
   return (
     <button className={active ? "match-row active" : "match-row"} onClick={onClick} type="button">
+      <div className="match-row-top">
+        <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
+        <span>{match.group}</span>
+        <span>{rowTime}</span>
+      </div>
       <div className="match-row-main">
         <div className="row-team">
           <TeamBadge team={home} compact />
-          <span>{home.name}</span>
+          <span className="row-team-name">{home.name}</span>
         </div>
         <div className="row-score">
           <strong>{match.homeScore ?? "-"}</strong>
@@ -345,14 +392,13 @@ function MatchRow({ active, match, onClick, teamsByCode }) {
           <strong>{match.awayScore ?? "-"}</strong>
         </div>
         <div className="row-team away">
-          <span>{away.name}</span>
+          <span className="row-team-name">{away.name}</span>
           <TeamBadge team={away} compact />
         </div>
       </div>
       <div className="match-row-meta">
-        <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
-        <span>{match.status === "upcoming" ? formatKickoff(match.kickoff) : `${match.minute}'`}</span>
         <span>{match.venue}</span>
+        <span>{match.note || match.stage}</span>
       </div>
     </button>
   );
@@ -443,22 +489,26 @@ function FixturesView({ matches, onSelectMatch, teamsByCode }) {
         <CalendarDays size={18} strokeWidth={2.2} />
       </div>
       <div className="fixture-days">
-        {Object.entries(byDate).map(([date, dayMatches]) => (
-          <div className="fixture-day" key={date}>
-            <h3>{date}</h3>
-            <div className="fixture-stack">
-              {dayMatches.map((match) => (
-                <MatchRow
-                  key={match.id}
-                  active={false}
-                  match={match}
-                  teamsByCode={teamsByCode}
-                  onClick={() => onSelectMatch(match.id)}
-                />
-              ))}
+        {Object.entries(byDate).length ? (
+          Object.entries(byDate).map(([date, dayMatches]) => (
+            <div className="fixture-day" key={date}>
+              <h3>{date}</h3>
+              <div className="fixture-stack">
+                {dayMatches.map((match) => (
+                  <MatchRow
+                    key={match.id}
+                    active={false}
+                    match={match}
+                    teamsByCode={teamsByCode}
+                    onClick={() => onSelectMatch(match.id)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <div className="empty-state wide">No fixtures match the current filters</div>
+        )}
       </div>
     </section>
   );
@@ -477,6 +527,15 @@ function GroupsView({ groupTables, teamsByCode }) {
 function StatPill({ label, value }) {
   return (
     <div className="stat-pill">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function SummaryChip({ label, tone = "neutral", value, wide = false }) {
+  return (
+    <div className={`summary-chip ${tone} ${wide ? "wide" : ""}`}>
       <span>{label}</span>
       <strong>{value}</strong>
     </div>
@@ -511,6 +570,31 @@ function scoreStatusWeight(status) {
   if (status === "halftime") return 1;
   if (status === "upcoming") return 2;
   return 3;
+}
+
+function getBoardSummary(matches, groupTables) {
+  const live = matches.filter((match) => match.status === "live" || match.status === "halftime").length;
+  const upcomingMatches = matches
+    .filter((match) => match.status === "upcoming")
+    .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
+
+  return {
+    total: matches.length,
+    live,
+    upcoming: upcomingMatches.length,
+    finished: matches.filter((match) => match.status === "finished").length,
+    groups: Object.keys(groupTables).length,
+    nextKickoff: upcomingMatches[0] ? formatShortKickoff(upcomingMatches[0].kickoff) : "TBD",
+  };
+}
+
+function formatShortKickoff(kickoff) {
+  return new Intl.DateTimeFormat(undefined, {
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    month: "short",
+  }).format(new Date(kickoff));
 }
 
 function choosePrimaryMatch(matches) {
