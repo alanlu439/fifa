@@ -14,8 +14,8 @@ import {
   Table2,
   Trophy,
 } from "lucide-react";
-import { formatKickoff, standings, statusLabel, teams } from "./data.js";
-import { fetchExternalFeed, freshSampleMatches, getFeedUrl, tickDemoMatches } from "./liveFeed.js";
+import { formatKickoff, standings as sampleStandings, statusLabel, teams } from "./data.js";
+import { collectTeamsFromMatches, fetchLiveData, freshSampleMatches, getFeedUrl } from "./liveFeed.js";
 
 const tabs = [
   { id: "live", label: "Live", icon: Radio },
@@ -26,12 +26,14 @@ const tabs = [
 function App() {
   const [activeTab, setActiveTab] = useState("live");
   const [matches, setMatches] = useState(() => freshSampleMatches());
+  const [groupTables, setGroupTables] = useState(sampleStandings);
+  const [teamsByCode, setTeamsByCode] = useState(teams);
   const [selectedMatchId, setSelectedMatchId] = useState("m-101");
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState("All");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [source, setSource] = useState(getFeedUrl() ? "External feed" : "Demo feed");
+  const [source, setSource] = useState(getFeedUrl() ? "External JSON feed" : "Loading ESPN feed");
   const [feedError, setFeedError] = useState("");
 
   const groups = useMemo(() => {
@@ -46,37 +48,27 @@ function App() {
       .filter((match) => group === "All" || match.group === group)
       .filter((match) => {
         if (!cleanQuery) return true;
-        const home = teamName(match.home).toLowerCase();
-        const away = teamName(match.away).toLowerCase();
-        return [home, away, match.venue.toLowerCase(), match.group.toLowerCase()].some((value) =>
+        const home = teamName(match.home, teamsByCode).toLowerCase();
+        const away = teamName(match.away, teamsByCode).toLowerCase();
+        return [home, away, match.home.toLowerCase(), match.away.toLowerCase(), match.venue.toLowerCase(), match.group.toLowerCase()].some((value) =>
           value.includes(cleanQuery)
         );
       })
       .sort((a, b) => scoreStatusWeight(a.status) - scoreStatusWeight(b.status));
-  }, [group, matches, query]);
+  }, [group, matches, query, teamsByCode]);
 
   const selectedMatch = useMemo(() => {
     const preferred = filteredMatches.find((match) => match.id === selectedMatchId);
-    return preferred || filteredMatches.find((match) => match.status === "live") || filteredMatches[0] || matches[0];
-  }, [filteredMatches, matches, selectedMatchId]);
+    return preferred || filteredMatches.find((match) => match.status === "live") || filteredMatches[0] || null;
+  }, [filteredMatches, selectedMatchId]);
 
-  const visibleStandings = standings[selectedMatch?.group] || standings["Group C"];
+  const visibleStandings = groupTables[selectedMatch?.group] || groupTables["Group C"] || [];
 
   useEffect(() => {
     const controller = new AbortController();
 
     async function loadFeed() {
-      try {
-        const externalMatches = await fetchExternalFeed(controller.signal);
-        if (!externalMatches) return;
-        setMatches(externalMatches);
-        setSource("External feed");
-        setFeedError("");
-        setLastUpdated(new Date());
-      } catch (error) {
-        setFeedError(error.message);
-        setSource("Demo feed");
-      }
+      await loadLiveFeed(controller.signal);
     }
 
     loadFeed();
@@ -87,31 +79,41 @@ function App() {
     if (!autoRefresh) return undefined;
 
     const interval = window.setInterval(async () => {
-      const feedUrl = getFeedUrl();
-      if (feedUrl) {
-        try {
-          const externalMatches = await fetchExternalFeed();
-          if (externalMatches) {
-            setMatches(externalMatches);
-            setSource("External feed");
-            setFeedError("");
-          }
-        } catch (error) {
-          setFeedError(error.message);
-          setMatches((current) => tickDemoMatches(current));
-        }
-      } else {
-        setMatches((current) => tickDemoMatches(current));
-      }
-      setLastUpdated(new Date());
+      await loadLiveFeed();
     }, 12000);
 
     return () => window.clearInterval(interval);
   }, [autoRefresh]);
 
+  async function loadLiveFeed(signal) {
+    try {
+      const data = await fetchLiveData(signal);
+      if (!data.matches.length) throw new Error("Real feed returned no matches for the current window");
+      const nextTeams = { ...teams, ...data.teams, ...collectTeamsFromMatches(data.matches) };
+      setMatches(data.matches);
+      setGroupTables(data.standings || sampleStandings);
+      setTeamsByCode(nextTeams);
+      setSelectedMatchId((current) =>
+        data.matches.some((match) => match.id === current) ? current : choosePrimaryMatch(data.matches)?.id || ""
+      );
+      setSource(data.source);
+      setFeedError("");
+      setLastUpdated(new Date());
+    } catch (error) {
+      if (error.name === "AbortError") return;
+      const fallbackMatches = freshSampleMatches();
+      setMatches(fallbackMatches);
+      setGroupTables(sampleStandings);
+      setTeamsByCode({ ...teams, ...collectTeamsFromMatches(fallbackMatches) });
+      setSelectedMatchId(fallbackMatches[0]?.id || "");
+      setSource("Demo fallback");
+      setFeedError(error.message);
+      setLastUpdated(new Date());
+    }
+  }
+
   function refreshNow() {
-    setMatches((current) => tickDemoMatches(current));
-    setLastUpdated(new Date());
+    loadLiveFeed();
   }
 
   return (
@@ -173,13 +175,16 @@ function App() {
             selectedMatch={selectedMatch}
             selectedMatchId={selectedMatch?.id}
             standingsRows={visibleStandings}
+            teamsByCode={teamsByCode}
             onSelectMatch={setSelectedMatchId}
           />
         )}
 
-        {activeTab === "fixtures" && <FixturesView matches={filteredMatches} onSelectMatch={setSelectedMatchId} />}
+        {activeTab === "fixtures" && (
+          <FixturesView matches={filteredMatches} teamsByCode={teamsByCode} onSelectMatch={setSelectedMatchId} />
+        )}
 
-        {activeTab === "groups" && <GroupsView />}
+        {activeTab === "groups" && <GroupsView groupTables={groupTables} teamsByCode={teamsByCode} />}
       </main>
     </div>
   );
@@ -227,11 +232,20 @@ function Header({ autoRefresh, feedError, lastUpdated, onRefresh, onToggleRefres
   );
 }
 
-function LiveBoard({ matches, onSelectMatch, selectedMatch, selectedMatchId, standingsRows }) {
+function LiveBoard({ matches, onSelectMatch, selectedMatch, selectedMatchId, standingsRows, teamsByCode }) {
+  if (!selectedMatch) {
+    return (
+      <section className="wide-panel empty-board">
+        <h2>No matches found</h2>
+        <p>Try clearing the search or changing the group filter.</p>
+      </section>
+    );
+  }
+
   return (
     <div className="live-grid">
       <section className="featured-panel" aria-label="Featured match">
-        <FeaturedMatch match={selectedMatch} />
+        <FeaturedMatch match={selectedMatch} teamsByCode={teamsByCode} />
       </section>
 
       <section className="match-panel" aria-label="Match list">
@@ -248,6 +262,7 @@ function LiveBoard({ matches, onSelectMatch, selectedMatch, selectedMatchId, sta
               key={match.id}
               active={match.id === selectedMatchId}
               match={match}
+              teamsByCode={teamsByCode}
               onClick={() => onSelectMatch(match.id)}
             />
           ))}
@@ -255,16 +270,21 @@ function LiveBoard({ matches, onSelectMatch, selectedMatch, selectedMatchId, sta
       </section>
 
       <aside className="side-rail" aria-label="Match insights">
-        <StandingsPanel group={selectedMatch.group} rows={standingsRows} />
-        <EventTimeline events={selectedMatch.events} home={selectedMatch.home} away={selectedMatch.away} />
+        <StandingsPanel group={selectedMatch.group} rows={standingsRows} teamsByCode={teamsByCode} />
+        <EventTimeline
+          away={selectedMatch.away}
+          events={selectedMatch.events}
+          home={selectedMatch.home}
+          teamsByCode={teamsByCode}
+        />
       </aside>
     </div>
   );
 }
 
-function FeaturedMatch({ match }) {
-  const home = team(match.home);
-  const away = team(match.away);
+function FeaturedMatch({ match, teamsByCode }) {
+  const home = getTeam(match.home, teamsByCode);
+  const away = getTeam(match.away, teamsByCode);
   const possessionAway = 100 - match.stats.possessionHome;
 
   return (
@@ -308,9 +328,9 @@ function TeamScore({ score, side, team }) {
   );
 }
 
-function MatchRow({ active, match, onClick }) {
-  const home = team(match.home);
-  const away = team(match.away);
+function MatchRow({ active, match, onClick, teamsByCode }) {
+  const home = getTeam(match.home, teamsByCode);
+  const away = getTeam(match.away, teamsByCode);
 
   return (
     <button className={active ? "match-row active" : "match-row"} onClick={onClick} type="button">
@@ -338,7 +358,7 @@ function MatchRow({ active, match, onClick }) {
   );
 }
 
-function StandingsPanel({ group, rows }) {
+function StandingsPanel({ group, rows, teamsByCode }) {
   return (
     <section className="rail-panel">
       <div className="section-heading compact">
@@ -359,7 +379,7 @@ function StandingsPanel({ group, rows }) {
         </thead>
         <tbody>
           {rows.map((row) => {
-            const item = team(row.team);
+            const item = row.teamData || getTeam(row.team, teamsByCode);
             return (
               <tr key={row.team}>
                 <td>
@@ -378,14 +398,14 @@ function StandingsPanel({ group, rows }) {
   );
 }
 
-function EventTimeline({ away, events, home }) {
+function EventTimeline({ away, events, home, teamsByCode }) {
   return (
     <section className="rail-panel events-panel">
       <div className="section-heading compact">
         <div>
           <h2>Events</h2>
           <p>
-            {teamName(home)} vs {teamName(away)}
+            {teamName(home, teamsByCode)} vs {teamName(away, teamsByCode)}
           </p>
         </div>
         <Goal size={18} strokeWidth={2.2} />
@@ -407,7 +427,7 @@ function EventTimeline({ away, events, home }) {
   );
 }
 
-function FixturesView({ matches, onSelectMatch }) {
+function FixturesView({ matches, onSelectMatch, teamsByCode }) {
   const byDate = matches.reduce((days, match) => {
     const key = new Intl.DateTimeFormat(undefined, { month: "long", day: "numeric" }).format(new Date(match.kickoff));
     return { ...days, [key]: [...(days[key] || []), match] };
@@ -428,7 +448,13 @@ function FixturesView({ matches, onSelectMatch }) {
             <h3>{date}</h3>
             <div className="fixture-stack">
               {dayMatches.map((match) => (
-                <MatchRow key={match.id} active={false} match={match} onClick={() => onSelectMatch(match.id)} />
+                <MatchRow
+                  key={match.id}
+                  active={false}
+                  match={match}
+                  teamsByCode={teamsByCode}
+                  onClick={() => onSelectMatch(match.id)}
+                />
               ))}
             </div>
           </div>
@@ -438,11 +464,11 @@ function FixturesView({ matches, onSelectMatch }) {
   );
 }
 
-function GroupsView() {
+function GroupsView({ groupTables, teamsByCode }) {
   return (
     <section className="groups-view">
-      {Object.entries(standings).map(([groupName, rows]) => (
-        <StandingsPanel group={groupName} key={groupName} rows={rows} />
+      {Object.entries(groupTables).map(([groupName, rows]) => (
+        <StandingsPanel group={groupName} key={groupName} rows={rows} teamsByCode={teamsByCode} />
       ))}
     </section>
   );
@@ -466,17 +492,18 @@ function TeamBadge({ compact = false, team }) {
         "--team-secondary": team.colors[1],
       }}
     >
-      {team.code}
+      {team.flagUrl && <img src={team.flagUrl} alt="" loading="lazy" />}
+      <span>{team.code}</span>
     </span>
   );
 }
 
-function team(code) {
-  return teams[code] || { name: code, code, colors: ["#8de4ff", "#f4f7fb"] };
+function getTeam(code, teamsByCode) {
+  return teamsByCode[code] || teams[code] || { name: code, code, colors: ["#8de4ff", "#f4f7fb"] };
 }
 
-function teamName(code) {
-  return team(code).name;
+function teamName(code, teamsByCode) {
+  return getTeam(code, teamsByCode).name;
 }
 
 function scoreStatusWeight(status) {
@@ -484,6 +511,10 @@ function scoreStatusWeight(status) {
   if (status === "halftime") return 1;
   if (status === "upcoming") return 2;
   return 3;
+}
+
+function choosePrimaryMatch(matches) {
+  return [...matches].sort((a, b) => scoreStatusWeight(a.status) - scoreStatusWeight(b.status))[0];
 }
 
 export default App;
