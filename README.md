@@ -1,5 +1,7 @@
 # FIFA Watchboard
 
+**Description:** A live World Cup 2026 score tracking board with fixtures, standings, event timelines, and external feed support.
+
 FIFA Watchboard is a live-score tracking board for World Cup 2026 coverage. It ships with a demo feed, live filtering, fixtures, group standings, event timelines, and a simple external JSON feed hook.
 
 ## Run locally
