@@ -25,6 +25,56 @@ const tabs = [
   { id: "groups", label: "Groups", icon: Table2 },
 ];
 
+const flagCodesByTeam = {
+  ARG: "AR",
+  AUS: "AU",
+  AUT: "AT",
+  BEL: "BE",
+  BRA: "BR",
+  CAN: "CA",
+  CHI: "CL",
+  COL: "CO",
+  CRC: "CR",
+  CRO: "HR",
+  CZE: "CZ",
+  DEN: "DK",
+  ECU: "EC",
+  EGY: "EG",
+  ENG: "GB-ENG",
+  ESP: "ES",
+  FRA: "FR",
+  GER: "DE",
+  GHA: "GH",
+  HAI: "HT",
+  IRN: "IR",
+  IRQ: "IQ",
+  ITA: "IT",
+  JPN: "JP",
+  KOR: "KR",
+  KSA: "SA",
+  MAR: "MA",
+  MEX: "MX",
+  NED: "NL",
+  NOR: "NO",
+  NZL: "NZ",
+  PAR: "PY",
+  POL: "PL",
+  POR: "PT",
+  QAT: "QA",
+  ROU: "RO",
+  RSA: "ZA",
+  SCO: "GB-SCT",
+  SEN: "SN",
+  SRB: "RS",
+  SUI: "CH",
+  SWE: "SE",
+  TUR: "TR",
+  UKR: "UA",
+  URU: "UY",
+  USA: "US",
+  WAL: "GB-WLS",
+};
+
 function App() {
   const [activeTab, setActiveTab] = useState("live");
   const [matches, setMatches] = useState(() => freshSampleMatches());
@@ -333,7 +383,7 @@ function FeaturedMatch({ match, teamsByCode }) {
   const home = getTeam(match.home, teamsByCode);
   const away = getTeam(match.away, teamsByCode);
   const possessionAway = 100 - match.stats.possessionHome;
-  const clockValue = match.status === "upcoming" ? formatShortKickoff(match.kickoff) : `${match.minute}'`;
+  const kickoff = formatFeaturedKickoff(match.kickoff);
   const clockLabel = match.status === "upcoming" ? "Kickoff" : match.status === "finished" ? "Full time" : "Match clock";
 
   return (
@@ -348,7 +398,14 @@ function FeaturedMatch({ match, teamsByCode }) {
         <TeamScore side="home" score={match.homeScore} team={home} />
         <div className={`match-clock ${match.status}`}>
           <small>{clockLabel}</small>
-          <span>{clockValue}</span>
+          {match.status === "upcoming" ? (
+            <span className="clock-stack">
+              <strong>{kickoff.date}</strong>
+              <span>{kickoff.time}</span>
+            </span>
+          ) : (
+            <span>{`${match.minute}'`}</span>
+          )}
           <small>{match.note || match.stage}</small>
         </div>
         <TeamScore side="away" score={match.awayScore} team={away} />
@@ -370,10 +427,10 @@ function FeaturedMatch({ match, teamsByCode }) {
 
 function TeamScore({ score, side, team }) {
   return (
-    <div className={`team-score ${side}`}>
+    <div className={`team-score ${side} ${score == null ? "pending" : ""}`}>
       <TeamBadge team={team} />
-      <strong>{score ?? "-"}</strong>
       <span>{team.name}</span>
+      <strong>{score ?? "-"}</strong>
     </div>
   );
 }
@@ -635,6 +692,8 @@ function SummaryChip({ label, tone = "neutral", value, wide = false }) {
 }
 
 function TeamBadge({ compact = false, team }) {
+  const flagEmoji = flagEmojiForTeam(team.code);
+
   return (
     <span
       className={compact ? "team-badge compact" : "team-badge"}
@@ -643,7 +702,7 @@ function TeamBadge({ compact = false, team }) {
         "--team-secondary": team.colors[1],
       }}
     >
-      {team.flagUrl && <img src={team.flagUrl} alt="" loading="lazy" />}
+      {flagEmoji ? <span className="flag-emoji" aria-hidden="true">{flagEmoji}</span> : team.flagUrl && <img src={team.flagUrl} alt="" />}
       <span>{team.code}</span>
     </span>
   );
@@ -686,6 +745,32 @@ function formatShortKickoff(kickoff) {
     minute: "2-digit",
     month: "short",
   }).format(new Date(kickoff));
+}
+
+function formatFeaturedKickoff(kickoff) {
+  const date = new Date(kickoff);
+  return {
+    date: new Intl.DateTimeFormat(undefined, {
+      day: "numeric",
+      month: "short",
+    }).format(date),
+    time: new Intl.DateTimeFormat(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date),
+  };
+}
+
+function flagEmojiForTeam(code) {
+  const flagCode = flagCodesByTeam[code] || (code?.length === 2 ? code.toUpperCase() : "");
+  if (!flagCode) return "";
+  const countryCode = flagCode.startsWith("GB-") ? "GB" : flagCode;
+
+  return countryCode
+    .toUpperCase()
+    .split("")
+    .map((letter) => String.fromCodePoint(127397 + letter.charCodeAt(0)))
+    .join("");
 }
 
 function formatLongDate(kickoff) {
