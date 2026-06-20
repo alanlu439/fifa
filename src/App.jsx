@@ -7,6 +7,7 @@ import {
   CirclePlay,
   Clock3,
   Goal,
+  History,
   Radio,
   RefreshCw,
   Search,
@@ -20,6 +21,7 @@ import { collectTeamsFromMatches, fetchLiveData, freshSampleMatches, getFeedUrl 
 const tabs = [
   { id: "live", label: "Live", icon: Radio },
   { id: "fixtures", label: "Fixtures", icon: CalendarDays },
+  { id: "past", label: "Past", icon: History },
   { id: "groups", label: "Groups", icon: Table2 },
 ];
 
@@ -64,7 +66,10 @@ function App() {
   }, [filteredMatches, selectedMatchId]);
 
   const visibleStandings = groupTables[selectedMatch?.group] || groupTables["Group C"] || [];
-  const boardSummary = useMemo(() => getBoardSummary(matches, groupTables), [matches, groupTables]);
+  const boardSummary = useMemo(() => getBoardSummary(matches), [matches]);
+  const fixtureMatches = useMemo(() => filteredMatches.filter((match) => !isPastMatch(match)), [filteredMatches]);
+  const pastMatches = useMemo(() => filteredMatches.filter(isPastMatch).sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff)), [filteredMatches]);
+  const resultCount = activeTab === "past" ? pastMatches.length : activeTab === "fixtures" ? fixtureMatches.length : filteredMatches.length;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -181,7 +186,7 @@ function App() {
           </label>
 
           <div className="result-chip" aria-live="polite">
-            <strong>{filteredMatches.length}</strong>
+            <strong>{resultCount}</strong>
             <span>showing</span>
           </div>
         </section>
@@ -199,7 +204,11 @@ function App() {
         )}
 
         {activeTab === "fixtures" && (
-          <FixturesView matches={filteredMatches} teamsByCode={teamsByCode} onSelectMatch={selectMatch} />
+          <FixturesView matches={fixtureMatches} teamsByCode={teamsByCode} onSelectMatch={selectMatch} />
+        )}
+
+        {activeTab === "past" && (
+          <PastEventsView matches={pastMatches} teamsByCode={teamsByCode} onSelectMatch={selectMatch} />
         )}
 
         {activeTab === "groups" && <GroupsView groupTables={groupTables} teamsByCode={teamsByCode} />}
@@ -236,8 +245,8 @@ function Header({ autoRefresh, boardSummary, feedError, isRefreshing, lastUpdate
       <div className="header-summary" aria-label="Board summary">
         <SummaryChip label="Matches" value={boardSummary.total} />
         <SummaryChip label="Live" value={boardSummary.live} tone={boardSummary.live ? "live" : "neutral"} />
+        <SummaryChip label="Past" value={boardSummary.finished} />
         <SummaryChip label="Next" value={boardSummary.nextKickoff} wide />
-        <SummaryChip label="Groups" value={boardSummary.groups} />
       </div>
 
       <div className="header-actions">
@@ -514,6 +523,89 @@ function FixturesView({ matches, onSelectMatch, teamsByCode }) {
   );
 }
 
+function PastEventsView({ matches, onSelectMatch, teamsByCode }) {
+  const byDate = groupMatchesByDate(matches);
+
+  return (
+    <section className="wide-panel past-view">
+      <div className="section-heading">
+        <div>
+          <h2>Past Events</h2>
+          <p>Completed matches with final scores and published match events</p>
+        </div>
+        <History size={18} strokeWidth={2.2} />
+      </div>
+      <div className="past-days">
+        {Object.entries(byDate).length ? (
+          Object.entries(byDate).map(([date, dayMatches]) => (
+            <div className="past-day" key={date}>
+              <h3>{date}</h3>
+              <div className="past-stack">
+                {dayMatches.map((match) => (
+                  <PastEventCard
+                    key={match.id}
+                    match={match}
+                    teamsByCode={teamsByCode}
+                    onClick={() => onSelectMatch(match.id)}
+                  />
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="empty-state wide">No past events match the current filters</div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function PastEventCard({ match, onClick, teamsByCode }) {
+  const home = getTeam(match.home, teamsByCode);
+  const away = getTeam(match.away, teamsByCode);
+  const visibleEvents = match.events.slice(0, 4);
+
+  return (
+    <button className="past-card" onClick={onClick} type="button" aria-label={`Open ${home.name} vs ${away.name}`}>
+      <div className="past-card-top">
+        <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
+        <span>{match.group}</span>
+        <span>{match.venue}</span>
+      </div>
+
+      <div className="past-scoreline">
+        <div className="past-team">
+          <TeamBadge team={home} compact />
+          <span>{home.name}</span>
+        </div>
+        <div className="past-score">
+          <strong>{match.homeScore ?? "-"}</strong>
+          <span>:</span>
+          <strong>{match.awayScore ?? "-"}</strong>
+        </div>
+        <div className="past-team away">
+          <span>{away.name}</span>
+          <TeamBadge team={away} compact />
+        </div>
+      </div>
+
+      <div className="past-events">
+        {visibleEvents.length ? (
+          visibleEvents.map((event, index) => (
+            <span className="past-event" key={`${match.id}-${event.minute}-${event.text}-${index}`}>
+              <span className={`event-type ${event.type}`} />
+              <strong>{event.minute}'</strong>
+              <span>{event.text}</span>
+            </span>
+          ))
+        ) : (
+          <span className="past-event muted">Final score recorded; event detail not published in feed.</span>
+        )}
+      </div>
+    </button>
+  );
+}
+
 function GroupsView({ groupTables, teamsByCode }) {
   return (
     <section className="groups-view">
@@ -572,7 +664,7 @@ function scoreStatusWeight(status) {
   return 3;
 }
 
-function getBoardSummary(matches, groupTables) {
+function getBoardSummary(matches) {
   const live = matches.filter((match) => match.status === "live" || match.status === "halftime").length;
   const upcomingMatches = matches
     .filter((match) => match.status === "upcoming")
@@ -583,7 +675,6 @@ function getBoardSummary(matches, groupTables) {
     live,
     upcoming: upcomingMatches.length,
     finished: matches.filter((match) => match.status === "finished").length,
-    groups: Object.keys(groupTables).length,
     nextKickoff: upcomingMatches[0] ? formatShortKickoff(upcomingMatches[0].kickoff) : "TBD",
   };
 }
@@ -595,6 +686,25 @@ function formatShortKickoff(kickoff) {
     minute: "2-digit",
     month: "short",
   }).format(new Date(kickoff));
+}
+
+function formatLongDate(kickoff) {
+  return new Intl.DateTimeFormat(undefined, {
+    day: "numeric",
+    month: "long",
+    weekday: "short",
+  }).format(new Date(kickoff));
+}
+
+function groupMatchesByDate(matches) {
+  return matches.reduce((days, match) => {
+    const key = formatLongDate(match.kickoff);
+    return { ...days, [key]: [...(days[key] || []), match] };
+  }, {});
+}
+
+function isPastMatch(match) {
+  return match.status === "finished";
 }
 
 function choosePrimaryMatch(matches) {

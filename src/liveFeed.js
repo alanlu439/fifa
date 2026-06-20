@@ -3,6 +3,9 @@ import { sampleMatches, standings as sampleStandings, teams as baseTeams } from 
 const requiredKeys = ["id", "home", "away", "status", "group", "venue", "kickoff"];
 const ESPN_SCOREBOARD_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
 const ESPN_STANDINGS_URL = "https://site.web.api.espn.com/apis/v2/sports/soccer/fifa.world/standings";
+const ESPN_SUMMARY_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary";
+const WORLD_CUP_2026_START = "2026-06-11T00:00:00";
+const summaryEventsCache = new Map();
 
 export async function fetchLiveData(signal) {
   const feedUrl = getFeedUrl();
@@ -80,9 +83,10 @@ export async function fetchEspnWorldCupFeed(signal) {
 
   const tableData = normalizeEspnStandings(standings);
   const scoreboardData = normalizeEspnScoreboard(scoreboard, tableData.teamGroups);
+  const matches = await hydrateEspnPastEvents(scoreboardData.matches, signal);
 
   return {
-    matches: scoreboardData.matches,
+    matches,
     standings: tableData.standings,
     teams: {
       ...tableData.teams,
@@ -153,6 +157,35 @@ function normalizeEspnScoreboard(payload, teamGroups) {
   return { matches, teams };
 }
 
+async function hydrateEspnPastEvents(matches, signal) {
+  const finishedMatches = matches.filter((match) => match.status === "finished" && !match.events.length);
+  if (!finishedMatches.length) return matches;
+
+  const eventPairs = await Promise.all(
+    finishedMatches.map(async (match) => {
+      try {
+        return [match.id, await fetchEspnSummaryEvents(match.id, signal)];
+      } catch {
+        return [match.id, []];
+      }
+    })
+  );
+  const eventsByMatchId = new Map(eventPairs);
+
+  return matches.map((match) => {
+    if (!eventsByMatchId.has(match.id)) return match;
+    return { ...match, events: eventsByMatchId.get(match.id) };
+  });
+}
+
+async function fetchEspnSummaryEvents(eventId, signal) {
+  if (summaryEventsCache.has(eventId)) return summaryEventsCache.get(eventId);
+  const summary = await fetchJson(`${ESPN_SUMMARY_URL}?event=${eventId}`, signal);
+  const events = normalizeEspnKeyEvents(summary.keyEvents || []);
+  summaryEventsCache.set(eventId, events);
+  return events;
+}
+
 function normalizeEspnStandings(payload) {
   const teams = {};
   const teamGroups = {};
@@ -195,9 +228,10 @@ async function fetchJson(url, signal) {
 }
 
 function getEspnDateRange(date = new Date()) {
-  const start = new Date(date);
+  const tournamentStart = new Date(WORLD_CUP_2026_START);
+  const start = date >= tournamentStart ? tournamentStart : new Date(date);
   const end = new Date(date);
-  start.setDate(start.getDate() - 1);
+  if (date < tournamentStart) start.setDate(start.getDate() - 7);
   end.setDate(end.getDate() + 2);
   return `${formatYmd(start)}-${formatYmd(end)}`;
 }
@@ -269,9 +303,13 @@ function normalizeEspnDetails(details) {
       minute: normalizeDetailMinute(detail),
       team: detail.team?.abbreviation || "",
       type: normalizeEventType(detail.type?.text || detail.type?.id || detail.type || ""),
-      text: detail.text || detail.headline || "",
+      text: detail.shortText || detail.text || detail.headline || "",
     }))
     .filter((detail) => detail.text);
+}
+
+function normalizeEspnKeyEvents(details) {
+  return normalizeEspnDetails(details).filter((detail) => ["goal", "card", "shot", "corner"].includes(detail.type));
 }
 
 function normalizeDetailMinute(detail) {
