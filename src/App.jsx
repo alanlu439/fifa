@@ -117,6 +117,7 @@ function App() {
 
   const visibleStandings = groupTables[selectedMatch?.group] || groupTables["Group C"] || [];
   const boardSummary = useMemo(() => getBoardSummary(matches), [matches]);
+  const heroContext = useMemo(() => getHeroContext(matches, teamsByCode), [matches, teamsByCode]);
   const fixtureMatches = useMemo(() => filteredMatches.filter((match) => !isPastMatch(match)), [filteredMatches]);
   const pastMatches = useMemo(() => filteredMatches.filter(isPastMatch).sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff)), [filteredMatches]);
   const resultCount = activeTab === "past" ? pastMatches.length : activeTab === "fixtures" ? fixtureMatches.length : filteredMatches.length;
@@ -187,6 +188,7 @@ function App() {
         autoRefresh={autoRefresh}
         boardSummary={boardSummary}
         feedError={feedError}
+        heroContext={heroContext}
         isRefreshing={isRefreshing}
         lastUpdated={lastUpdated}
         onRefresh={refreshNow}
@@ -267,7 +269,17 @@ function App() {
   );
 }
 
-function Header({ autoRefresh, boardSummary, feedError, isRefreshing, lastUpdated, onRefresh, onToggleRefresh, source }) {
+function Header({
+  autoRefresh,
+  boardSummary,
+  feedError,
+  heroContext,
+  isRefreshing,
+  lastUpdated,
+  onRefresh,
+  onToggleRefresh,
+  source,
+}) {
   const localeClock = new Intl.DateTimeFormat(undefined, {
     hour: "2-digit",
     minute: "2-digit",
@@ -295,6 +307,7 @@ function Header({ autoRefresh, boardSummary, feedError, isRefreshing, lastUpdate
       <div className="header-summary" aria-label="Board summary">
         <SummaryChip label="Matches" value={boardSummary.total} />
         <SummaryChip label="Live" value={boardSummary.live} tone={boardSummary.live ? "live" : "neutral"} />
+        <SummaryChip label="Upcoming" value={boardSummary.upcoming} />
         <SummaryChip label="Past" value={boardSummary.finished} />
         <SummaryChip label="Next" value={boardSummary.nextKickoff} wide />
       </div>
@@ -318,6 +331,19 @@ function Header({ autoRefresh, boardSummary, feedError, isRefreshing, lastUpdate
           <RefreshCw size={18} />
         </button>
       </div>
+
+      <div className="hero-intel" aria-label="World Cup feed context">
+        <HeroFact
+          label="Feed"
+          value={source}
+          detail={`${feedError ? "Fallback active" : "Real scoreboard"} • ${autoRefresh ? "Auto refresh on" : "Auto refresh paused"}`}
+          tone={feedError ? "warning" : "live"}
+        />
+        <HeroFact label={heroContext.focusLabel} value={heroContext.focusValue} detail={heroContext.focusDetail} tone={heroContext.focusTone} />
+        <HeroFact label="Next Kickoff" value={heroContext.nextValue} detail={heroContext.nextDetail} />
+        <HeroFact label="Window" value={heroContext.windowValue} detail={heroContext.windowDetail} />
+      </div>
+
       {feedError && (
         <div className="feed-alert" role="status">
           Real feed unavailable: {feedError}
@@ -691,6 +717,16 @@ function SummaryChip({ label, tone = "neutral", value, wide = false }) {
   );
 }
 
+function HeroFact({ detail, label, tone = "neutral", value }) {
+  return (
+    <div className={`hero-fact ${tone}`}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <p>{detail}</p>
+    </div>
+  );
+}
+
 function TeamBadge({ compact = false, team }) {
   const flagEmoji = flagEmojiForTeam(team.code);
 
@@ -736,6 +772,61 @@ function getBoardSummary(matches) {
     finished: matches.filter((match) => match.status === "finished").length,
     nextKickoff: upcomingMatches[0] ? formatShortKickoff(upcomingMatches[0].kickoff) : "TBD",
   };
+}
+
+function getHeroContext(matches, teamsByCode) {
+  const liveMatches = matches
+    .filter((match) => match.status === "live" || match.status === "halftime")
+    .sort((a, b) => scoreStatusWeight(a.status) - scoreStatusWeight(b.status));
+  const upcomingMatches = matches
+    .filter((match) => match.status === "upcoming")
+    .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
+  const finishedMatches = matches
+    .filter((match) => match.status === "finished")
+    .sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff));
+  const focusMatch = liveMatches[0] || upcomingMatches[0] || finishedMatches[0] || matches[0];
+  const nextMatch = upcomingMatches[0];
+  const groupsCount = new Set(matches.map((match) => match.group)).size;
+  const venuesCount = new Set(matches.map((match) => match.venue)).size;
+
+  if (!focusMatch) {
+    return {
+      focusLabel: "Focus",
+      focusValue: "No matches loaded",
+      focusDetail: "Waiting for feed data",
+      focusTone: "neutral",
+      nextValue: "TBD",
+      nextDetail: "No kickoff available",
+      windowValue: "0 matches",
+      windowDetail: "0 groups • 0 venues",
+    };
+  }
+
+  const focusLabel = liveMatches[0] ? "Live Focus" : nextMatch ? "Next Up" : "Latest Final";
+  const focusTone = liveMatches[0] ? "live" : focusMatch.status === "finished" ? "finished" : "neutral";
+  const focusDetail = `${matchStatusDetail(focusMatch)} • ${focusMatch.group} • ${focusMatch.venue}`;
+
+  return {
+    focusLabel,
+    focusValue: matchLabel(focusMatch, teamsByCode),
+    focusDetail,
+    focusTone,
+    nextValue: nextMatch ? matchLabel(nextMatch, teamsByCode) : "No upcoming fixtures",
+    nextDetail: nextMatch ? `${formatShortKickoff(nextMatch.kickoff)} • ${nextMatch.venue}` : `${finishedMatches.length} finals logged`,
+    windowValue: `${matches.length} matches`,
+    windowDetail: `${upcomingMatches.length} upcoming • ${finishedMatches.length} final • ${groupsCount} groups • ${venuesCount} venues`,
+  };
+}
+
+function matchLabel(match, teamsByCode) {
+  return `${teamName(match.home, teamsByCode)} vs ${teamName(match.away, teamsByCode)}`;
+}
+
+function matchStatusDetail(match) {
+  if (match.status === "upcoming") return "Scheduled";
+  if (match.status === "finished") return "Final";
+  if (match.status === "halftime") return "Half-time";
+  return `${match.minute}'`;
 }
 
 function formatShortKickoff(kickoff) {
