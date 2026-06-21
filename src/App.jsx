@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   CalendarDays,
@@ -7,8 +7,12 @@ import {
   CirclePlay,
   Clock3,
   ExternalLink,
+  Gauge,
   Goal,
   History,
+  Maximize2,
+  Minimize2,
+  RadioTower,
   Radio,
   RefreshCw,
   Search,
@@ -26,6 +30,7 @@ const tabs = [
   { id: "groups", label: "Groups", icon: Table2 },
 ];
 
+const REFRESH_INTERVAL_MS = 12000;
 const flagCodesByTeam = {
   ALG: "DZ",
   ARG: "AR",
@@ -90,6 +95,7 @@ const flagCodesByTeam = {
 const FIFA_YOUTUBE_CHANNEL = "https://www.youtube.com/@fifa";
 
 function App() {
+  const appShellRef = useRef(null);
   const [activeTab, setActiveTab] = useState("live");
   const [matches, setMatches] = useState(() => freshSampleMatches());
   const [groupTables, setGroupTables] = useState(sampleStandings);
@@ -102,6 +108,8 @@ function App() {
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [source, setSource] = useState(getFeedUrl() ? "External JSON feed" : "Loading live feed");
   const [feedError, setFeedError] = useState("");
+  const [fullscreenElementActive, setFullscreenElementActive] = useState(false);
+  const [fullscreenFallback, setFullscreenFallback] = useState(false);
 
   const groups = useMemo(() => {
     const uniqueGroups = Array.from(new Set(matches.map((match) => match.group))).sort();
@@ -131,6 +139,7 @@ function App() {
 
   const visibleStandings = groupTables[selectedMatch?.group] || groupTables["Group C"] || [];
   const boardSummary = useMemo(() => getBoardSummary(matches), [matches]);
+  const dashboardStats = useMemo(() => getDashboardStats(matches, teamsByCode), [matches, teamsByCode]);
   const heroContext = useMemo(() => getHeroContext(matches, teamsByCode), [matches, teamsByCode]);
   const fixtureMatches = useMemo(() => filteredMatches.filter((match) => !isPastMatch(match)), [filteredMatches]);
   const pastMatches = useMemo(() => filteredMatches.filter(isPastMatch).sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff)), [filteredMatches]);
@@ -152,10 +161,22 @@ function App() {
 
     const interval = window.setInterval(async () => {
       await loadLiveFeed();
-    }, 12000);
+    }, REFRESH_INTERVAL_MS);
 
     return () => window.clearInterval(interval);
   }, [autoRefresh]);
+
+  useEffect(() => {
+    function syncFullscreenState() {
+      const isNativeFullscreen = Boolean(document.fullscreenElement);
+      setFullscreenElementActive(isNativeFullscreen);
+      if (isNativeFullscreen) setFullscreenFallback(false);
+    }
+
+    document.addEventListener("fullscreenchange", syncFullscreenState);
+    syncFullscreenState();
+    return () => document.removeEventListener("fullscreenchange", syncFullscreenState);
+  }, []);
 
   async function loadLiveFeed(signal) {
     setIsRefreshing(true);
@@ -196,16 +217,42 @@ function App() {
     if (activeTab !== "live") setActiveTab("live");
   }
 
+  async function toggleFullscreen() {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      setFullscreenFallback(false);
+      return;
+    }
+
+    const target = appShellRef.current || document.documentElement;
+    if (target.requestFullscreen) {
+      try {
+        await target.requestFullscreen();
+        setFullscreenFallback(false);
+        return;
+      } catch {
+        // Some embedded browsers block fullscreen; keep a visual fallback mode.
+      }
+    }
+
+    setFullscreenFallback((current) => !current);
+  }
+
+  const fullscreenActive = fullscreenElementActive || fullscreenFallback;
+
   return (
-    <div className="app-shell">
+    <div className={fullscreenActive ? "app-shell dashboard-fullscreen" : "app-shell"} ref={appShellRef}>
       <Header
         autoRefresh={autoRefresh}
         boardSummary={boardSummary}
+        dashboardStats={dashboardStats}
         feedError={feedError}
         heroContext={heroContext}
+        isFullscreen={fullscreenActive}
         isRefreshing={isRefreshing}
         lastUpdated={lastUpdated}
         onRefresh={refreshNow}
+        onToggleFullscreen={toggleFullscreen}
         onToggleRefresh={() => setAutoRefresh((current) => !current)}
         source={source}
       />
@@ -286,23 +333,35 @@ function App() {
 function Header({
   autoRefresh,
   boardSummary,
+  dashboardStats,
   feedError,
   heroContext,
+  isFullscreen,
   isRefreshing,
   lastUpdated,
   onRefresh,
+  onToggleFullscreen,
   onToggleRefresh,
   source,
 }) {
-  const localeClock = new Intl.DateTimeFormat(undefined, {
+  const [now, setNow] = useState(() => new Date());
+  const FullscreenIcon = isFullscreen ? Minimize2 : Maximize2;
+  const currentClock = new Intl.DateTimeFormat(undefined, {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
     timeZoneName: "short",
-  }).format(lastUpdated);
+  }).format(now);
+  const updateAge = formatUpdateAge(now - lastUpdated);
+  const updateDetail = isRefreshing ? "Refreshing now" : autoRefresh ? `Auto every ${REFRESH_INTERVAL_MS / 1000}s` : "Manual refresh";
+
+  useEffect(() => {
+    const clock = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(clock);
+  }, []);
 
   return (
-    <header className="top-bar">
+    <header className="top-bar" aria-label="Live statistics dashboard">
       <div className="brand-block">
         <span className="brand-mark" aria-hidden="true">
           <Trophy size={20} strokeWidth={2.4} />
@@ -313,23 +372,15 @@ function Header({
             <span className={feedError ? "live-dot warning" : "live-dot"} aria-hidden="true" />
             <strong>{source}</strong>
             <span>World Cup 2026</span>
-            <span>{feedError ? "Demo fallback active" : "Live match window"}</span>
+            <span>{feedError ? "Demo fallback active" : `Synced ${updateAge}`}</span>
           </div>
         </div>
-      </div>
-
-      <div className="header-summary" aria-label="Board summary">
-        <SummaryChip label="Matches" value={boardSummary.total} />
-        <SummaryChip label="Live" value={boardSummary.live} tone={boardSummary.live ? "live" : "neutral"} />
-        <SummaryChip label="Upcoming" value={boardSummary.upcoming} />
-        <SummaryChip label="Past" value={boardSummary.finished} />
-        <SummaryChip label="Next" value={boardSummary.nextKickoff} wide />
       </div>
 
       <div className="header-actions">
         <div className="clock-chip">
           <Clock3 size={16} strokeWidth={2.2} />
-          <span>{localeClock}</span>
+          <span>{currentClock}</span>
         </div>
         <button className="icon-button" onClick={onToggleRefresh} type="button" aria-label="Toggle auto refresh">
           {autoRefresh ? <CirclePause size={18} /> : <CirclePlay size={18} />}
@@ -344,6 +395,18 @@ function Header({
         >
           <RefreshCw size={18} />
         </button>
+        <button className="icon-button fullscreen-button" onClick={onToggleFullscreen} type="button" aria-label={isFullscreen ? "Exit full screen" : "Open full screen dashboard"}>
+          <FullscreenIcon size={18} />
+          <span>{isFullscreen ? "Exit" : "Full screen"}</span>
+        </button>
+      </div>
+
+      <div className="dashboard-metrics" aria-label="Live board statistics">
+        <DashboardMetric icon={RadioTower} label="Live" value={boardSummary.live} detail={`${dashboardStats.halftime} half-time • ${boardSummary.upcoming} upcoming`} tone={boardSummary.live ? "live" : "neutral"} />
+        <DashboardMetric icon={Trophy} label="Matches" value={boardSummary.total} detail={`${boardSummary.finished} final • ${dashboardStats.groupsCount} groups`} />
+        <DashboardMetric icon={Goal} label="Goals" value={dashboardStats.totalGoals} detail={`${dashboardStats.totalEvents} event updates`} tone="cyan" />
+        <DashboardMetric icon={Gauge} label="Venues" value={dashboardStats.venuesCount} detail={`${dashboardStats.highlightMatches} highlight links`} />
+        <DashboardMetric icon={RefreshCw} label="Updated" value={updateAge} detail={updateDetail} tone={isRefreshing ? "live" : "neutral"} />
       </div>
 
       <div className="hero-intel" aria-label="World Cup feed context">
@@ -358,12 +421,55 @@ function Header({
         <HeroFact label="Window" value={heroContext.windowValue} detail={heroContext.windowDetail} />
       </div>
 
+      <LiveTicker items={dashboardStats.liveTicker} />
+
       {feedError && (
         <div className="feed-alert" role="status">
           Live match data unavailable: {feedError}
         </div>
       )}
     </header>
+  );
+}
+
+function DashboardMetric({ detail, icon: Icon, label, tone = "neutral", value }) {
+  return (
+    <div className={`dashboard-metric ${tone}`}>
+      <div className="metric-topline">
+        <span>{label}</span>
+        <Icon size={17} strokeWidth={2.2} />
+      </div>
+      <strong>{value}</strong>
+      <p>{detail}</p>
+    </div>
+  );
+}
+
+function LiveTicker({ items }) {
+  return (
+    <section className="live-ticker" aria-label="Live match updates">
+      <div className="ticker-heading">
+        <Activity size={17} strokeWidth={2.2} />
+        <span>Live Updates</span>
+      </div>
+      <div className="ticker-list">
+        {items.length ? (
+          items.map((item) => (
+            <div className="ticker-item" key={item.id}>
+              <span className={`status-chip ${item.status}`}>{item.clock}</span>
+              <strong>{item.scoreline}</strong>
+              <p>{item.detail}</p>
+            </div>
+          ))
+        ) : (
+          <div className="ticker-item empty">
+            <span className="status-chip upcoming">Standby</span>
+            <strong>No live matches right now</strong>
+            <p>Auto refresh keeps watching the match window.</p>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -839,6 +945,37 @@ function getBoardSummary(matches) {
   };
 }
 
+function getDashboardStats(matches, teamsByCode) {
+  const liveMatches = matches
+    .filter((match) => match.status === "live" || match.status === "halftime")
+    .sort((a, b) => scoreStatusWeight(a.status) - scoreStatusWeight(b.status));
+  const totalGoals = matches.reduce((total, match) => total + Number(match.homeScore ?? 0) + Number(match.awayScore ?? 0), 0);
+  const totalEvents = matches.reduce((total, match) => total + (match.events?.length || 0), 0);
+
+  return {
+    groupsCount: new Set(matches.map((match) => match.group)).size,
+    halftime: matches.filter((match) => match.status === "halftime").length,
+    highlightMatches: matches.filter((match) => match.highlights).length,
+    liveTicker: liveMatches.slice(0, 4).map((match) => {
+      const home = getTeam(match.home, teamsByCode);
+      const away = getTeam(match.away, teamsByCode);
+      const clock = match.status === "halftime" ? "HT" : `${match.minute}'`;
+      const scoreline = `${home.code} ${match.homeScore ?? "-"}:${match.awayScore ?? "-"} ${away.code}`;
+
+      return {
+        id: match.id,
+        clock,
+        detail: `${home.name} vs ${away.name} • ${match.group} • ${match.venue}`,
+        scoreline,
+        status: match.status,
+      };
+    }),
+    totalEvents,
+    totalGoals,
+    venuesCount: new Set(matches.map((match) => match.venue)).size,
+  };
+}
+
 function getHeroContext(matches, teamsByCode) {
   const liveMatches = matches
     .filter((match) => match.status === "live" || match.status === "halftime")
@@ -948,6 +1085,16 @@ function formatShortKickoff(kickoff) {
     minute: "2-digit",
     month: "short",
   }).format(new Date(kickoff));
+}
+
+function formatUpdateAge(milliseconds) {
+  const seconds = Math.max(0, Math.floor(milliseconds / 1000));
+  if (seconds < 5) return "now";
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  return `${hours}h ago`;
 }
 
 function formatFeaturedKickoff(kickoff) {

@@ -61,28 +61,50 @@ button {
   padding: 18px;
 }
 
+.app-shell.dashboard-fullscreen {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(35, 219, 143, 0.12), transparent 32%),
+    radial-gradient(circle at 90% 12%, rgba(87, 216, 255, 0.1), transparent 34%),
+    var(--bg);
+  overflow-y: auto;
+  padding: clamp(12px, 1.8vw, 24px);
+}
+
 .top-bar {
-  align-items: center;
+  align-items: stretch;
   background: rgba(6, 17, 15, 0.78);
   border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: var(--shadow);
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(360px, auto) auto;
-  gap: 16px;
+  grid-template-areas:
+    "brand actions"
+    "metrics metrics"
+    "intel ticker"
+    "alert alert";
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 0.42fr);
+  gap: 14px;
   margin: 0 auto 16px;
   max-width: 1480px;
-  padding: 14px 16px;
+  padding: 16px;
   position: sticky;
   top: 12px;
   z-index: 10;
   backdrop-filter: blur(18px);
 }
 
+.dashboard-fullscreen .top-bar {
+  max-width: none;
+  position: static;
+}
+
 .brand-block,
 .header-actions,
 .source-row,
 .header-summary,
+.metric-topline,
+.ticker-heading,
+.ticker-item,
 .clock-chip,
 .icon-button,
 .tabs,
@@ -105,6 +127,7 @@ button {
 
 .brand-block {
   gap: 12px;
+  grid-area: brand;
   min-width: 0;
 }
 
@@ -220,24 +243,102 @@ h1 {
   border-radius: 8px;
   font-size: 12px;
   font-weight: 720;
-  grid-column: 1 / -1;
+  grid-area: alert;
   line-height: 1.35;
   padding: 9px 11px;
 }
 
 .header-actions {
   gap: 10px;
+  grid-area: actions;
   justify-content: flex-end;
 }
 
-.hero-intel {
-  border-top: 1px solid var(--border);
+.dashboard-metrics {
   display: grid;
   gap: 10px;
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(180px, 0.85fr) minmax(240px, 1.2fr) minmax(240px, 1.2fr) minmax(220px, 1fr);
+  grid-area: metrics;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   min-width: 0;
-  padding-top: 12px;
+}
+
+.dashboard-metric {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.026)),
+    rgba(9, 24, 21, 0.78);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  min-height: 118px;
+  min-width: 0;
+  padding: 13px 14px;
+}
+
+.dashboard-metric.live {
+  background:
+    linear-gradient(145deg, rgba(35, 219, 143, 0.16), rgba(255, 255, 255, 0.026)),
+    rgba(9, 24, 21, 0.82);
+  border-color: rgba(35, 219, 143, 0.34);
+}
+
+.dashboard-metric.cyan {
+  background:
+    linear-gradient(145deg, rgba(87, 216, 255, 0.14), rgba(255, 255, 255, 0.026)),
+    rgba(9, 24, 21, 0.82);
+  border-color: rgba(87, 216, 255, 0.28);
+}
+
+.metric-topline {
+  color: var(--muted-2);
+  font-size: 10px;
+  font-weight: 820;
+  justify-content: space-between;
+  line-height: 1;
+  min-width: 0;
+  text-transform: uppercase;
+}
+
+.metric-topline svg {
+  color: var(--muted);
+  flex: 0 0 auto;
+}
+
+.dashboard-metric strong {
+  color: var(--text);
+  font-size: clamp(28px, 3vw, 46px);
+  font-weight: 880;
+  letter-spacing: 0;
+  line-height: 0.95;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-metric.live strong {
+  color: var(--green);
+}
+
+.dashboard-metric.cyan strong {
+  color: var(--cyan);
+}
+
+.dashboard-metric p {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 680;
+  line-height: 1.25;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hero-intel {
+  display: grid;
+  gap: 10px;
+  grid-area: intel;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0;
 }
 
 .hero-fact {
@@ -298,6 +399,74 @@ h1 {
   white-space: nowrap;
 }
 
+.live-ticker {
+  background:
+    linear-gradient(145deg, rgba(35, 219, 143, 0.08), rgba(87, 216, 255, 0.05)),
+    rgba(5, 16, 14, 0.72);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  gap: 10px;
+  grid-area: ticker;
+  min-width: 0;
+  padding: 12px;
+}
+
+.ticker-heading {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 820;
+  gap: 7px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ticker-heading svg {
+  color: var(--green);
+}
+
+.ticker-list {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ticker-item {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  display: grid;
+  gap: 5px 8px;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-width: 0;
+  padding: 9px 10px;
+}
+
+.ticker-item strong,
+.ticker-item p {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticker-item strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 820;
+}
+
+.ticker-item p {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 660;
+  grid-column: 2;
+}
+
+.ticker-item.empty {
+  align-items: start;
+}
+
 .clock-chip,
 .icon-button {
   border: 1px solid var(--border);
@@ -328,6 +497,11 @@ h1 {
   justify-content: center;
   padding: 0;
   width: 40px;
+}
+
+.fullscreen-button {
+  min-width: 124px;
+  justify-content: center;
 }
 
 .icon-button.refresh.spinning svg {
@@ -1258,7 +1432,17 @@ h1 {
 
 @media (max-width: 1220px) {
   .top-bar {
+    grid-template-areas:
+      "brand actions"
+      "metrics metrics"
+      "intel intel"
+      "ticker ticker"
+      "alert alert";
     grid-template-columns: minmax(240px, 1fr) auto;
+  }
+
+  .dashboard-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .hero-intel {
@@ -1302,6 +1486,13 @@ h1 {
 
   .top-bar {
     align-items: stretch;
+    grid-template-areas:
+      "brand"
+      "actions"
+      "metrics"
+      "intel"
+      "ticker"
+      "alert";
     grid-template-columns: 1fr;
     max-width: 100%;
     min-width: 0;
@@ -1333,6 +1524,14 @@ h1 {
   }
 
   .summary-chip.wide {
+    grid-column: 1 / -1;
+  }
+
+  .dashboard-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-metric:last-child {
     grid-column: 1 / -1;
   }
 
@@ -1464,6 +1663,25 @@ h1 {
     width: 40px;
   }
 
+  .dashboard-metrics {
+    gap: 8px;
+  }
+
+  .dashboard-metric {
+    min-height: 104px;
+    padding: 11px 12px;
+  }
+
+  .dashboard-metric strong {
+    font-size: 30px;
+  }
+
+  .dashboard-metric p {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
   .summary-chip {
     overflow: hidden;
     padding-inline: 8px;
@@ -1569,7 +1787,12 @@ h1 {
 }
 
 @media (max-width: 360px) {
+  .dashboard-metrics,
   .hero-intel {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-metric:last-child {
+    grid-column: auto;
   }
 }
