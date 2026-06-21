@@ -61,7 +61,7 @@ export function normalizeMatches(rawMatches) {
       homeScore: normalizeScore(match.homeScore),
       awayScore: normalizeScore(match.awayScore),
       note: match.note ? String(match.note) : "",
-      video: normalizeVideoFeed(match),
+      highlights: normalizeHighlights(match),
       homeTeam: match.homeTeam ? normalizeCustomTeam(match.homeTeam, match.home) : undefined,
       awayTeam: match.awayTeam ? normalizeCustomTeam(match.awayTeam, match.away) : undefined,
       stats: {
@@ -151,7 +151,7 @@ function normalizeEspnScoreboard(payload, teamGroups) {
         awayTeam,
         stats: normalizeEspnStats(homeEntry, awayEntry),
         events: normalizeEspnDetails(competition.details || []),
-        video: normalizeVideoFeed(event),
+        highlights: normalizeHighlights(event),
       };
     })
     .filter(Boolean);
@@ -265,15 +265,49 @@ function normalizeCustomTeam(team, fallbackCode) {
   };
 }
 
-function normalizeVideoFeed(match) {
-  const video = match.video || {};
-  const url = video.url || match.videoUrl || match.video_url || "";
+function normalizeHighlights(match) {
+  const highlights = match.highlights || match.highlight || {};
+  const legacyVideo = match.video || {};
+  const url =
+    highlights.url ||
+    match.highlightsUrl ||
+    match.highlights_url ||
+    match.highlightUrl ||
+    match.highlight_url ||
+    match.youtubeUrl ||
+    match.youtube_url ||
+    match.youtubeHighlightUrl ||
+    match.youtube_highlight_url ||
+    legacyVideo.url ||
+    match.videoUrl ||
+    match.video_url ||
+    "";
   if (!url) return null;
 
   return {
     url: String(url),
-    title: String(video.title || match.videoTitle || match.video_title || "Match video feed"),
-    source: String(video.source || match.videoSource || match.video_source || "Authorized feed"),
+    title: String(
+      highlights.title ||
+        match.highlightsTitle ||
+        match.highlights_title ||
+        match.highlightTitle ||
+        match.highlight_title ||
+        legacyVideo.title ||
+        match.videoTitle ||
+        match.video_title ||
+        "Official match highlights"
+    ),
+    source: String(
+      highlights.source ||
+        match.highlightsSource ||
+        match.highlights_source ||
+        match.highlightSource ||
+        match.highlight_source ||
+        legacyVideo.source ||
+        match.videoSource ||
+        match.video_source ||
+        "Official YouTube highlights"
+    ),
   };
 }
 

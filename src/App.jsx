@@ -9,7 +9,6 @@ import {
   ExternalLink,
   Goal,
   History,
-  MonitorPlay,
   Radio,
   RefreshCw,
   Search,
@@ -88,6 +87,8 @@ const flagCodesByTeam = {
   WAL: "GB-WLS",
 };
 
+const FIFA_YOUTUBE_CHANNEL = "https://www.youtube.com/@fifa";
+
 function App() {
   const [activeTab, setActiveTab] = useState("live");
   const [matches, setMatches] = useState(() => freshSampleMatches());
@@ -131,7 +132,6 @@ function App() {
   const visibleStandings = groupTables[selectedMatch?.group] || groupTables["Group C"] || [];
   const boardSummary = useMemo(() => getBoardSummary(matches), [matches]);
   const heroContext = useMemo(() => getHeroContext(matches, teamsByCode), [matches, teamsByCode]);
-  const videoOverride = useMemo(() => getVideoOverride(), []);
   const fixtureMatches = useMemo(() => filteredMatches.filter((match) => !isPastMatch(match)), [filteredMatches]);
   const pastMatches = useMemo(() => filteredMatches.filter(isPastMatch).sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff)), [filteredMatches]);
   const resultCount = activeTab === "past" ? pastMatches.length : activeTab === "fixtures" ? fixtureMatches.length : filteredMatches.length;
@@ -265,7 +265,6 @@ function App() {
             selectedMatchId={selectedMatch?.id}
             standingsRows={visibleStandings}
             teamsByCode={teamsByCode}
-            videoOverride={videoOverride}
             onSelectMatch={selectMatch}
           />
         )}
@@ -368,7 +367,7 @@ function Header({
   );
 }
 
-function LiveBoard({ boardSummary, matches, onSelectMatch, selectedMatch, selectedMatchId, standingsRows, teamsByCode, videoOverride }) {
+function LiveBoard({ boardSummary, matches, onSelectMatch, selectedMatch, selectedMatchId, standingsRows, teamsByCode }) {
   if (!selectedMatch) {
     return (
       <section className="wide-panel empty-board">
@@ -415,7 +414,6 @@ function LiveBoard({ boardSummary, matches, onSelectMatch, selectedMatch, select
           home={selectedMatch.home}
           teamsByCode={teamsByCode}
         />
-        <VideoPanel match={selectedMatch} teamsByCode={teamsByCode} videoOverride={videoOverride} />
       </aside>
     </div>
   );
@@ -463,6 +461,8 @@ function FeaturedMatch({ match, teamsByCode }) {
         <span style={{ width: `${match.stats.possessionHome}%` }} />
         <span style={{ width: `${possessionAway}%` }} />
       </div>
+
+      <MatchHighlights match={match} teamsByCode={teamsByCode} />
     </div>
   );
 }
@@ -483,32 +483,35 @@ function MatchRow({ active, match, onClick, teamsByCode }) {
   const rowTime = match.status === "upcoming" ? formatShortKickoff(match.kickoff) : match.status === "finished" ? "Final" : `${match.minute}'`;
 
   return (
-    <button className={active ? "match-row active" : "match-row"} onClick={onClick} type="button">
-      <div className="match-row-top">
-        <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
-        <span>{match.group}</span>
-        <span>{rowTime}</span>
-      </div>
-      <div className="match-row-main">
-        <div className="row-team">
-          <TeamBadge team={home} compact />
-          <span className="row-team-name">{home.name}</span>
+    <article className={active ? "match-card active" : "match-card"}>
+      <button className="match-row" onClick={onClick} type="button">
+        <div className="match-row-top">
+          <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
+          <span>{match.group}</span>
+          <span>{rowTime}</span>
         </div>
-        <div className="row-score">
-          <strong>{match.homeScore ?? "-"}</strong>
-          <span>:</span>
-          <strong>{match.awayScore ?? "-"}</strong>
+        <div className="match-row-main">
+          <div className="row-team">
+            <TeamBadge team={home} compact />
+            <span className="row-team-name">{home.name}</span>
+          </div>
+          <div className="row-score">
+            <strong>{match.homeScore ?? "-"}</strong>
+            <span>:</span>
+            <strong>{match.awayScore ?? "-"}</strong>
+          </div>
+          <div className="row-team away">
+            <span className="row-team-name">{away.name}</span>
+            <TeamBadge team={away} compact />
+          </div>
         </div>
-        <div className="row-team away">
-          <span className="row-team-name">{away.name}</span>
-          <TeamBadge team={away} compact />
+        <div className="match-row-meta">
+          <span>{match.venue}</span>
+          <span>{match.note || match.stage}</span>
         </div>
-      </div>
-      <div className="match-row-meta">
-        <span>{match.venue}</span>
-        <span>{match.note || match.stage}</span>
-      </div>
-    </button>
+      </button>
+      <MatchHighlights compact match={match} teamsByCode={teamsByCode} />
+    </article>
   );
 }
 
@@ -581,57 +584,47 @@ function EventTimeline({ away, events, home, teamsByCode }) {
   );
 }
 
-function VideoPanel({ match, teamsByCode, videoOverride }) {
+function MatchHighlights({ compact = false, match, teamsByCode }) {
   const home = getTeam(match.home, teamsByCode);
   const away = getTeam(match.away, teamsByCode);
-  const video = getMatchVideo(match, videoOverride);
-  const resolved = video ? resolveVideoSource(video.url) : null;
+  const highlights = getMatchHighlights(match);
+  const resolved = highlights ? resolveYouTubeHighlight(highlights.url) : null;
+  const searchUrl = officialHighlightsSearchUrl(match, teamsByCode);
+  const title = highlights?.title || `${home.name} vs ${away.name} official highlights`;
+  const placeholder = match.status === "finished" ? "Official highlights pending" : "Highlights publish after full time";
 
   return (
-    <section className="rail-panel video-panel">
-      <div className="section-heading compact">
+    <section className={compact ? "match-highlights compact" : "match-highlights"} aria-label={`${home.name} vs ${away.name} official highlights`}>
+      <div className="highlight-heading">
         <div>
-          <h2>Video Feed</h2>
-          <p>{home.name} vs {away.name}</p>
+          <h3>
+            <CirclePlay size={15} strokeWidth={2.2} />
+            Official highlights
+          </h3>
+          <p>{resolved ? highlights.source : placeholder}</p>
         </div>
-        <MonitorPlay size={18} strokeWidth={2.2} />
+        <a href={resolved?.watchUrl || searchUrl} target="_blank" rel="noreferrer">
+          {resolved ? "Watch on YouTube" : "Search FIFA"}
+          <ExternalLink size={13} strokeWidth={2.2} />
+        </a>
       </div>
 
-      {resolved?.type === "embed" && (
-        <div className="video-frame">
+      {resolved ? (
+        <div className="highlight-frame">
           <iframe
             allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
             referrerPolicy="strict-origin-when-cross-origin"
             sandbox="allow-same-origin allow-scripts allow-presentation allow-popups"
-            src={resolved.url}
-            title={video.title}
+            src={resolved.embedUrl}
+            title={title}
           />
         </div>
-      )}
-
-      {resolved?.type === "file" && (
-        <div className="video-frame">
-          <video controls preload="metadata" src={resolved.url} />
+      ) : (
+        <div className="highlight-placeholder">
+          <CirclePlay size={20} strokeWidth={1.9} />
+          <span>{placeholder}</span>
         </div>
       )}
-
-      {!resolved && (
-        <div className="video-placeholder">
-          <MonitorPlay size={30} strokeWidth={1.9} />
-          <strong>Licensed video feed unavailable</strong>
-          <span>Scoreboard and event data remain live.</span>
-        </div>
-      )}
-
-      <div className="video-meta">
-        <span>{video?.source || "No authorized source"}</span>
-        {video?.url && (
-          <a href={video.url} target="_blank" rel="noreferrer">
-            Open feed
-            <ExternalLink size={13} strokeWidth={2.2} />
-          </a>
-        )}
-      </div>
     </section>
   );
 }
@@ -720,43 +713,46 @@ function PastEventCard({ match, onClick, teamsByCode }) {
   const visibleEvents = match.events.slice(0, 4);
 
   return (
-    <button className="past-card" onClick={onClick} type="button" aria-label={`Open ${home.name} vs ${away.name}`}>
-      <div className="past-card-top">
-        <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
-        <span>{match.group}</span>
-        <span>{match.venue}</span>
-      </div>
+    <article className="past-card-shell">
+      <button className="past-card" onClick={onClick} type="button" aria-label={`Open ${home.name} vs ${away.name}`}>
+        <div className="past-card-top">
+          <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
+          <span>{match.group}</span>
+          <span>{match.venue}</span>
+        </div>
 
-      <div className="past-scoreline">
-        <div className="past-team">
-          <TeamBadge team={home} compact />
-          <span>{home.name}</span>
+        <div className="past-scoreline">
+          <div className="past-team">
+            <TeamBadge team={home} compact />
+            <span>{home.name}</span>
+          </div>
+          <div className="past-score">
+            <strong>{match.homeScore ?? "-"}</strong>
+            <span>:</span>
+            <strong>{match.awayScore ?? "-"}</strong>
+          </div>
+          <div className="past-team away">
+            <span>{away.name}</span>
+            <TeamBadge team={away} compact />
+          </div>
         </div>
-        <div className="past-score">
-          <strong>{match.homeScore ?? "-"}</strong>
-          <span>:</span>
-          <strong>{match.awayScore ?? "-"}</strong>
-        </div>
-        <div className="past-team away">
-          <span>{away.name}</span>
-          <TeamBadge team={away} compact />
-        </div>
-      </div>
 
-      <div className="past-events">
-        {visibleEvents.length ? (
-          visibleEvents.map((event, index) => (
-            <span className="past-event" key={`${match.id}-${event.minute}-${event.text}-${index}`}>
-              <span className={`event-type ${event.type}`} />
-              <strong>{event.minute}'</strong>
-              <span>{event.text}</span>
-            </span>
-          ))
-        ) : (
-          <span className="past-event muted">Final score recorded; event detail not published in feed.</span>
-        )}
-      </div>
-    </button>
+        <div className="past-events">
+          {visibleEvents.length ? (
+            visibleEvents.map((event, index) => (
+              <span className="past-event" key={`${match.id}-${event.minute}-${event.text}-${index}`}>
+                <span className={`event-type ${event.type}`} />
+                <strong>{event.minute}'</strong>
+                <span>{event.text}</span>
+              </span>
+            ))
+          ) : (
+            <span className="past-event muted">Final score recorded; event detail not published in feed.</span>
+          )}
+        </div>
+      </button>
+      <MatchHighlights compact match={match} teamsByCode={teamsByCode} />
+    </article>
   );
 }
 
@@ -898,24 +894,18 @@ function matchStatusDetail(match) {
   return `${match.minute}'`;
 }
 
-function getVideoOverride() {
-  const params = new URLSearchParams(window.location.search);
-  const url = params.get("video");
-  if (!url) return null;
-
-  return {
-    url,
-    title: params.get("videoTitle") || "Video feed override",
-    source: params.get("videoSource") || "URL override",
-  };
+function getMatchHighlights(match) {
+  return match.highlights || null;
 }
 
-function getMatchVideo(match, videoOverride) {
-  if (videoOverride) return videoOverride;
-  return match.video || null;
+function officialHighlightsSearchUrl(match, teamsByCode) {
+  const home = teamName(match.home, teamsByCode);
+  const away = teamName(match.away, teamsByCode);
+  const query = `FIFA World Cup 2026 ${home} ${away} highlights`;
+  return `${FIFA_YOUTUBE_CHANNEL}/search?query=${encodeURIComponent(query)}`;
 }
 
-function resolveVideoSource(url) {
+function resolveYouTubeHighlight(url) {
   let parsed;
 
   try {
@@ -926,51 +916,29 @@ function resolveVideoSource(url) {
 
   if (!["https:", "http:"].includes(parsed.protocol)) return null;
 
-  const fileType = directVideoType(parsed.pathname);
-  if (fileType) return { type: "file", url: parsed.toString(), fileType };
-
-  const embedUrl = toEmbedUrl(parsed);
-  if (embedUrl) return { type: "embed", url: embedUrl };
-
-  if (parsed.pathname.includes("/embed/") || parsed.hostname === "player.vimeo.com") {
-    return { type: "embed", url: parsed.toString() };
-  }
-
-  return null;
-}
-
-function directVideoType(pathname) {
-  const cleanPath = pathname.toLowerCase();
-  if (cleanPath.endsWith(".mp4")) return "video/mp4";
-  if (cleanPath.endsWith(".webm")) return "video/webm";
-  if (cleanPath.endsWith(".ogg") || cleanPath.endsWith(".ogv")) return "video/ogg";
-  if (cleanPath.endsWith(".m3u8")) return "application/vnd.apple.mpegurl";
-  return "";
-}
-
-function toEmbedUrl(parsed) {
   const host = parsed.hostname.replace(/^www\./, "");
+  let videoId = "";
 
   if (host === "youtu.be") {
-    const videoId = parsed.pathname.split("/").filter(Boolean)[0];
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
+    videoId = parsed.pathname.split("/").filter(Boolean)[0] || "";
   }
 
-  if (host === "youtube.com" || host === "m.youtube.com") {
-    const videoId = parsed.searchParams.get("v");
-    if (videoId) return `https://www.youtube.com/embed/${videoId}`;
-    if (parsed.pathname.startsWith("/live/")) {
-      const liveId = parsed.pathname.split("/").filter(Boolean)[1];
-      return liveId ? `https://www.youtube.com/embed/${liveId}` : "";
+  if (host === "youtube.com" || host === "m.youtube.com" || host === "youtube-nocookie.com") {
+    videoId = parsed.searchParams.get("v") || "";
+    if (!videoId && (parsed.pathname.startsWith("/live/") || parsed.pathname.startsWith("/shorts/"))) {
+      videoId = parsed.pathname.split("/").filter(Boolean)[1] || "";
+    }
+    if (!videoId && parsed.pathname.startsWith("/embed/")) {
+      videoId = parsed.pathname.split("/").filter(Boolean)[1] || "";
     }
   }
 
-  if (host === "vimeo.com") {
-    const videoId = parsed.pathname.split("/").filter(Boolean)[0];
-    return videoId ? `https://player.vimeo.com/video/${videoId}` : "";
-  }
+  if (!videoId) return null;
 
-  return "";
+  return {
+    embedUrl: `https://www.youtube.com/embed/${encodeURIComponent(videoId)}`,
+    watchUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`,
+  };
 }
 
 function formatShortKickoff(kickoff) {

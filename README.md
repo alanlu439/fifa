@@ -1,8 +1,8 @@
 # FIFA Watchboard
 
-**Description:** A live World Cup 2026 score tracking board with emoji flags, fixtures, standings, event timelines, and authorized video feed embeds.
+**Description:** A live World Cup 2026 score tracking board with emoji flags, fixtures, standings, event timelines, and official YouTube highlights.
 
-FIFA Watchboard is a live-score tracking board for World Cup 2026 coverage. It uses a live match data feed by default, with a local fallback and a custom external JSON feed hook. Match video panels support authorized embeddable feeds when a feed URL is supplied.
+FIFA Watchboard is a live-score tracking board for World Cup 2026 coverage. It uses a live match data feed by default, with a local fallback and a custom external JSON feed hook. Each match includes an official highlights area that embeds a YouTube highlights URL when one is supplied.
 
 ## Run locally
 
@@ -33,17 +33,11 @@ https://<user>.github.io/fifa/?feed=https://example.com/matches.json
 
 The feed may be either an array of match objects or an object with a `matches` array.
 
-## Video feed
+## Official highlights
 
-Live broadcast rights are regional, so the app does not invent or proxy an unlicensed stream. The Video Feed panel embeds an authorized source when one is provided by either a URL override or a custom match feed.
+FIFA Watchboard does not provide live video streams. Match cards show official YouTube highlights when a highlight URL is provided. If a match has no highlight URL yet, the card links to the official FIFA YouTube channel search for that matchup.
 
-Use a page-level override:
-
-```text
-https://<user>.github.io/fifa/?video=https://www.youtube.com/watch?v=<id>&videoTitle=Match%20feed
-```
-
-Or include video metadata on a custom feed match:
+Include highlights metadata on a custom feed match:
 
 ```json
 {
@@ -54,10 +48,10 @@ Or include video metadata on a custom feed match:
   "group": "Group D",
   "venue": "Seattle",
   "kickoff": "2026-06-21T18:00:00-07:00",
-  "videoUrl": "https://www.youtube.com/watch?v=<id>",
-  "videoTitle": "USA vs Canada video feed",
-  "videoSource": "Authorized broadcaster"
+  "highlightsUrl": "https://www.youtube.com/watch?v=<id>",
+  "highlightsTitle": "USA vs Canada official highlights",
+  "highlightsSource": "FIFA YouTube"
 }
 ```
 
-Supported embeds include YouTube, Vimeo, existing `/embed/` URLs, and direct video files such as `.mp4`, `.webm`, `.ogg`, or `.m3u8`.
+Supported highlight links include YouTube watch, short, live, embed, and `youtu.be` URLs.

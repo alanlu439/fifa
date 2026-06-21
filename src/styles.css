@@ -336,8 +336,8 @@ h1 {
 
 .icon-button:hover,
 .tab:hover,
-.match-row:hover,
-.past-card:hover {
+.match-card:hover,
+.past-card-shell:hover {
   border-color: var(--border-strong);
   transform: translateY(-1px);
 }
@@ -794,26 +794,35 @@ h1 {
   gap: 10px;
 }
 
-.match-row {
+.match-card,
+.past-card-shell {
   background: rgba(255, 255, 255, 0.045);
   border: 1px solid var(--border);
   border-radius: 8px;
+  display: grid;
+  overflow: hidden;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.match-card.active {
+  background: rgba(35, 219, 143, 0.08);
+  border-color: rgba(35, 219, 143, 0.38);
+}
+
+.match-row {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   color: var(--text);
   display: grid;
   gap: 10px;
   min-height: 104px;
   padding: 11px;
   text-align: left;
-  transition:
-    border-color 160ms ease,
-    background 160ms ease,
-    transform 160ms ease;
   width: 100%;
-}
-
-.match-row.active {
-  background: rgba(35, 219, 143, 0.08);
-  border-color: rgba(35, 219, 143, 0.38);
 }
 
 .match-row-top {
@@ -931,12 +940,61 @@ h1 {
   min-height: 278px;
 }
 
-.video-panel {
+.match-highlights {
   display: grid;
+  background: rgba(3, 14, 12, 0.45);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   gap: 10px;
+  padding: 12px;
+  position: relative;
+  z-index: 1;
 }
 
-.video-frame {
+.match-highlights.compact {
+  background: rgba(3, 14, 12, 0.32);
+  border-width: 1px 0 0;
+  border-radius: 0;
+  padding: 10px 12px 12px;
+}
+
+.highlight-heading {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.highlight-heading h3 {
+  align-items: center;
+  color: var(--text);
+  display: flex;
+  font-size: 13px;
+  font-weight: 780;
+  gap: 7px;
+  line-height: 1.2;
+}
+
+.highlight-heading p {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  margin-top: 3px;
+}
+
+.highlight-heading a {
+  align-items: center;
+  color: var(--cyan);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 760;
+  gap: 5px;
+  text-decoration: none;
+}
+
+.highlight-frame {
   aspect-ratio: 16 / 9;
   background:
     radial-gradient(circle at 50% 28%, rgba(87, 216, 255, 0.12), transparent 32%),
@@ -947,8 +1005,7 @@ h1 {
   width: 100%;
 }
 
-.video-frame iframe,
-.video-frame video {
+.highlight-frame iframe {
   background: #020706;
   border: 0;
   display: block;
@@ -956,60 +1013,23 @@ h1 {
   width: 100%;
 }
 
-.video-placeholder {
+.highlight-placeholder {
   align-items: center;
-  aspect-ratio: 16 / 9;
   background:
     linear-gradient(135deg, rgba(87, 216, 255, 0.08), rgba(35, 219, 143, 0.06)),
     rgba(3, 14, 12, 0.78);
   border: 1px dashed var(--border-strong);
   border-radius: 8px;
   color: var(--muted);
-  display: grid;
-  gap: 6px;
-  justify-items: center;
-  min-height: 154px;
-  padding: 18px;
-  text-align: center;
-}
-
-.video-placeholder strong {
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 780;
-}
-
-.video-placeholder span {
-  font-size: 12px;
-  font-weight: 650;
-  line-height: 1.35;
-}
-
-.video-meta {
-  align-items: center;
-  color: var(--muted);
   display: flex;
+  gap: 8px;
+  min-height: 40px;
+  padding: 9px 10px;
+}
+
+.highlight-placeholder span {
   font-size: 12px;
   font-weight: 680;
-  gap: 8px;
-  justify-content: space-between;
-  min-width: 0;
-}
-
-.video-meta span {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.video-meta a {
-  align-items: center;
-  color: var(--cyan);
-  display: inline-flex;
-  flex: 0 0 auto;
-  gap: 5px;
-  text-decoration: none;
 }
 
 .event-list {
@@ -1119,18 +1139,14 @@ h1 {
 }
 
 .past-card {
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   color: var(--text);
   display: grid;
   gap: 11px;
   padding: 12px;
   text-align: left;
-  transition:
-    border-color 160ms ease,
-    background 160ms ease,
-    transform 160ms ease;
   width: 100%;
 }
 
