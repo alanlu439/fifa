@@ -478,41 +478,35 @@ h1 {
 
 .scoreboard {
   background:
-    linear-gradient(180deg, rgba(35, 219, 143, 0.12), transparent 58%),
-    linear-gradient(90deg, rgba(87, 216, 255, 0.11), rgba(255, 77, 98, 0.08)),
-    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.08), transparent 32%);
+    linear-gradient(145deg, rgba(35, 219, 143, 0.13), transparent 48%),
+    linear-gradient(90deg, rgba(87, 216, 255, 0.08), rgba(255, 77, 98, 0.06)),
+    rgba(9, 24, 21, 0.84);
   display: grid;
-  gap: 18px;
-  min-height: 500px;
-  padding: 22px 28px 24px;
+  gap: 16px;
+  min-height: 0;
+  padding: 18px 20px 20px;
   position: relative;
 }
 
 .scoreboard::before,
 .scoreboard::after {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  content: "";
-  inset: 96px 44px 142px;
-  pointer-events: none;
-  position: absolute;
-}
-
-.scoreboard::after {
-  border-radius: 50%;
-  height: 164px;
-  inset: 180px auto auto 50%;
-  transform: translateX(-50%);
-  width: 164px;
+  display: none;
 }
 
 .scoreboard-meta {
   color: var(--muted);
   flex-wrap: wrap;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 720;
   gap: 10px;
   position: relative;
   z-index: 1;
+}
+
+.scoreboard-meta span:not(.status-chip) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status-chip {
@@ -548,47 +542,61 @@ h1 {
 }
 
 .score-display {
-  align-items: stretch;
+  align-items: center;
   display: grid;
-  gap: 22px;
-  grid-template-columns: minmax(0, 1fr) minmax(156px, 176px) minmax(0, 1fr);
-  min-height: 270px;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(152px, 176px) minmax(0, 1fr);
+  min-height: 0;
   position: relative;
   z-index: 1;
 }
 
 .team-score {
-  align-items: center;
-  align-self: center;
   background: rgba(255, 255, 255, 0.055);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   display: grid;
-  gap: 14px;
+  gap: 12px;
+  grid-template-areas:
+    "badge"
+    "name"
+    "score";
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
   min-width: 0;
-  min-height: 210px;
-  padding: 18px 16px;
+  min-height: 184px;
+  padding: 16px;
   text-align: center;
 }
 
+.team-score.away {
+  justify-items: center;
+  text-align: center;
+}
+
+.team-score .team-badge {
+  grid-area: badge;
+}
+
 .team-score strong {
-  font-size: 70px;
+  font-size: 58px;
   font-weight: 840;
+  grid-area: score;
   line-height: 0.9;
   text-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
 }
 
 .team-score.pending strong {
   color: rgba(245, 251, 248, 0.82);
-  font-size: 54px;
+  font-size: 42px;
   line-height: 1;
 }
 
 .team-score > span {
   color: var(--text);
-  font-size: clamp(20px, 2vw, 24px);
+  font-size: 22px;
   font-weight: 780;
+  grid-area: name;
   line-height: 1.1;
   max-width: 100%;
   hyphens: none;
@@ -606,7 +614,8 @@ h1 {
   display: grid;
   gap: 8px;
   justify-items: center;
-  min-height: 128px;
+  min-height: 136px;
+  min-width: 0;
   padding: 18px 12px;
   text-align: center;
 }
@@ -699,8 +708,10 @@ h1 {
 }
 
 .stat-strip {
+  display: grid;
   gap: 10px;
-  margin-top: 2px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 0;
   position: relative;
   z-index: 1;
 }
@@ -1359,47 +1370,46 @@ h1 {
     padding: 16px;
   }
 
-  .scoreboard::before,
-  .scoreboard::after {
-    display: none;
-  }
-
   .score-display {
     gap: 12px;
     grid-template-columns: 1fr;
     min-height: 0;
-    padding: 8px 0 6px;
+    padding: 0;
   }
 
   .team-score {
-    gap: 10px;
-    min-height: auto;
-    padding: 14px;
+    min-height: 118px;
+    padding: 13px;
   }
 
   .team-score strong {
-    font-size: 58px;
+    font-size: 44px;
   }
 
   .team-score.pending strong {
-    font-size: 42px;
+    font-size: 34px;
   }
 
   .team-score > span {
-    font-size: 20px;
+    font-size: 19px;
   }
 
   .match-clock {
     justify-self: center;
-    max-width: 240px;
-    min-height: 112px;
+    max-width: none;
+    min-height: 104px;
     order: -1;
     width: 100%;
   }
 
   .stat-strip {
-    display: grid;
-    grid-template-columns: 1fr;
+    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stat-pill {
+    min-height: 68px;
+    padding: 10px;
   }
 }
 
@@ -1531,6 +1541,14 @@ h1 {
 
   .row-team-name {
     font-size: 12px;
+  }
+
+  .stat-pill span {
+    font-size: 11px;
+  }
+
+  .stat-pill strong {
+    font-size: 18px;
   }
 }
 
