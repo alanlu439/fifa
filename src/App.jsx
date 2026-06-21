@@ -710,6 +710,7 @@ function PastEventsView({ matches, onSelectMatch, teamsByCode }) {
         </div>
         <History size={18} strokeWidth={2.2} />
       </div>
+      <PastVideosLibrary matches={matches} teamsByCode={teamsByCode} onSelectMatch={onSelectMatch} />
       <div className="past-days">
         {Object.entries(byDate).length ? (
           Object.entries(byDate).map(([date, dayMatches]) => (
@@ -732,6 +733,65 @@ function PastEventsView({ matches, onSelectMatch, teamsByCode }) {
         )}
       </div>
     </section>
+  );
+}
+
+function PastVideosLibrary({ matches, onSelectMatch, teamsByCode }) {
+  if (!matches.length) return null;
+
+  const publishedCount = matches.filter((match) => getMatchHighlights(match)).length;
+  const pendingCount = matches.length - publishedCount;
+
+  return (
+    <section className="past-video-library" aria-label="All past match videos">
+      <div className="section-heading compact">
+        <div>
+          <h2>Past Videos</h2>
+          <p>
+            {publishedCount} published, {pendingCount} waiting for official FIFA upload
+          </p>
+        </div>
+        <CirclePlay size={18} strokeWidth={2.2} />
+      </div>
+      <div className="past-video-grid">
+        {matches.map((match) => (
+          <PastVideoCard key={`video-${match.id}`} match={match} teamsByCode={teamsByCode} onClick={() => onSelectMatch(match.id)} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PastVideoCard({ match, onClick, teamsByCode }) {
+  const home = getTeam(match.home, teamsByCode);
+  const away = getTeam(match.away, teamsByCode);
+
+  return (
+    <article className="past-video-card">
+      <button className="past-video-summary" onClick={onClick} type="button" aria-label={`Open ${home.name} vs ${away.name}`}>
+        <div className="past-video-top">
+          <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
+          <span>{formatShortKickoff(match.kickoff)}</span>
+          <span>{match.venue}</span>
+        </div>
+        <div className="past-video-match">
+          <div className="past-video-team">
+            <TeamBadge team={home} compact />
+            <span>{home.name}</span>
+          </div>
+          <div className="past-video-score">
+            <strong>{match.homeScore ?? "-"}</strong>
+            <span>:</span>
+            <strong>{match.awayScore ?? "-"}</strong>
+          </div>
+          <div className="past-video-team away">
+            <span>{away.name}</span>
+            <TeamBadge team={away} compact />
+          </div>
+        </div>
+      </button>
+      <MatchHighlights match={match} teamsByCode={teamsByCode} />
+    </article>
   );
 }
 

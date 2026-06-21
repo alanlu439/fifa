@@ -1062,6 +1062,106 @@ h1 {
   min-height: 560px;
 }
 
+.past-video-library {
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+}
+
+.past-video-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.past-video-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.past-video-summary {
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  text-align: left;
+  width: 100%;
+}
+
+.past-video-top,
+.past-video-match,
+.past-video-team,
+.past-video-score {
+  align-items: center;
+  display: flex;
+}
+
+.past-video-top {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 760;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.past-video-top span:not(.status-chip) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.past-video-match {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 68px minmax(0, 1fr);
+}
+
+.past-video-team {
+  gap: 8px;
+  min-width: 0;
+}
+
+.past-video-team.away {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.past-video-team > span:not(.team-badge) {
+  display: -webkit-box;
+  font-size: 13px;
+  font-weight: 760;
+  line-height: 1.15;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.past-video-score {
+  font-size: 19px;
+  font-weight: 840;
+  gap: 5px;
+  justify-content: center;
+}
+
+.past-video-score span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.past-video-card .match-highlights {
+  border-width: 1px 0 0;
+  border-radius: 0;
+}
+
 .fixture-days,
 .past-days {
   display: grid;
@@ -1215,7 +1315,8 @@ h1 {
 
   .groups-view,
   .fixture-days,
-  .past-days {
+  .past-days,
+  .past-video-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1305,7 +1406,8 @@ h1 {
   .side-rail,
   .groups-view,
   .fixture-days,
-  .past-days {
+  .past-days,
+  .past-video-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1448,6 +1550,11 @@ h1 {
   .past-scoreline {
     gap: 6px;
     grid-template-columns: 1fr 58px 1fr;
+  }
+
+  .past-video-match {
+    gap: 6px;
+    grid-template-columns: 1fr 54px 1fr;
   }
 
   .clock-stack strong {

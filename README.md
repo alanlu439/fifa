@@ -2,7 +2,7 @@
 
 **Description:** A live World Cup 2026 score tracking board with a prominent clock header, emoji flags, fixtures, standings, event timelines, and official YouTube highlights.
 
-FIFA Watchboard is a live-score tracking board for World Cup 2026 coverage. It uses a live match data feed by default, with a local fallback and a custom external JSON feed hook. The main board starts with a compact sync header, a larger live clock, fullscreen viewing, match filters, and live update controls. Each match includes an official highlights area that embeds a YouTube highlights URL when one is supplied.
+FIFA Watchboard is a live-score tracking board for World Cup 2026 coverage. It uses a live match data feed by default, with a local fallback and a custom external JSON feed hook. The main board starts with a compact sync header, a larger live clock, fullscreen viewing, match filters, and live update controls. Each match includes an official highlights area that embeds a YouTube highlights URL when one is supplied, and the Past view includes a Past Videos library for every completed match.
 
 ## Run locally
 
@@ -39,14 +39,14 @@ FIFA Watchboard does not provide live video streams. Match cards show official Y
 
 ## Automatic highlight search
 
-The site reads `public/highlights-index.json` on every feed refresh and automatically attaches any indexed official highlights to matching finished games. A scheduled GitHub Action runs `npm run highlights:update` hourly, searches the official FIFA YouTube channel, and commits new highlight URLs back into that index.
+The site reads `public/highlights-index.json` on every feed refresh and automatically attaches any indexed official highlights to matching finished games. A scheduled GitHub Action runs `npm run highlights:update` hourly, searches the official FIFA YouTube channel for every finished match, and commits new highlight URLs back into that index.
 
 To enable the automation, add a repository secret named `YOUTUBE_API_KEY` with a YouTube Data API key. Optional workflow environment variables:
 
 - `YOUTUBE_CHANNEL_HANDLE`: defaults to `@fifa`
 - `YOUTUBE_CHANNEL_ID`: skips handle lookup when supplied
 - `HIGHLIGHT_MATCH_FEED_URL`: searches against your custom match feed instead of the default live feed
-- `HIGHLIGHT_MAX_MATCHES`: maximum finished matches to search per run, default `8`
+- `HIGHLIGHT_MAX_MATCHES`: maximum finished matches to search per run; use `all` for every past match, default `all`
 - `HIGHLIGHT_RETRY_HOURS`: how soon to retry a match with no result, default `2`
 
 Include highlights metadata on a custom feed match:

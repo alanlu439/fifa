@@ -8,7 +8,7 @@ const API_BASE = "https://www.googleapis.com/youtube/v3";
 const INDEX_URL = new URL("../public/highlights-index.json", import.meta.url);
 const WORLD_CUP_YEAR = "2026";
 const DEFAULT_CHANNEL_HANDLE = "@fifa";
-const DEFAULT_MAX_MATCHES = 8;
+const DEFAULT_MAX_MATCHES = Number.POSITIVE_INFINITY;
 const DEFAULT_RETRY_HOURS = 2;
 
 const TEAM_ALIASES = {
@@ -36,13 +36,13 @@ async function main() {
   const channel = await resolveChannel(apiKey);
   const matches = await loadMatches();
   const retryHours = Number(process.env.HIGHLIGHT_RETRY_HOURS || DEFAULT_RETRY_HOURS);
-  const maxMatches = Number(process.env.HIGHLIGHT_MAX_MATCHES || DEFAULT_MAX_MATCHES);
-  const finishedMatches = matches
+  const maxMatches = parseMaxMatches(process.env.HIGHLIGHT_MAX_MATCHES);
+  const searchableMatches = matches
     .filter((match) => match.status === "finished")
     .sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff))
     .filter((match) => !findExistingHighlight(index.matches, match))
-    .filter((match) => shouldSearch(index.checked, match, now, retryHours))
-    .slice(0, maxMatches);
+    .filter((match) => shouldSearch(index.checked, match, now, retryHours));
+  const finishedMatches = limitMatches(searchableMatches, maxMatches);
 
   if (!finishedMatches.length) {
     console.log("No finished matches need highlight search right now.");
@@ -244,6 +244,19 @@ function publishedAfter(match) {
   if (Number.isNaN(kickoff.getTime())) return `${WORLD_CUP_YEAR}-06-01T00:00:00Z`;
   kickoff.setHours(kickoff.getHours() - 2);
   return kickoff.toISOString();
+}
+
+function parseMaxMatches(value) {
+  if (value === undefined || value === null || String(value).trim() === "") return DEFAULT_MAX_MATCHES;
+  const normalized = String(value).trim().toLowerCase();
+  if (normalized === "all" || normalized === "unlimited") return Number.POSITIVE_INFINITY;
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed) || parsed <= 0) return Number.POSITIVE_INFINITY;
+  return Math.floor(parsed);
+}
+
+function limitMatches(matches, maxMatches) {
+  return Number.isFinite(maxMatches) ? matches.slice(0, maxMatches) : matches;
 }
 
 async function youtubeGet(resource, apiKey, params) {

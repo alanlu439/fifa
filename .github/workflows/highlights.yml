@@ -33,6 +33,7 @@ jobs:
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           YOUTUBE_CHANNEL_HANDLE: "@fifa"
+          HIGHLIGHT_MAX_MATCHES: "all"
 
       - name: Commit highlight index updates
         run: |
