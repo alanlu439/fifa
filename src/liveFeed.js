@@ -61,6 +61,7 @@ export function normalizeMatches(rawMatches) {
       homeScore: normalizeScore(match.homeScore),
       awayScore: normalizeScore(match.awayScore),
       note: match.note ? String(match.note) : "",
+      video: normalizeVideoFeed(match),
       homeTeam: match.homeTeam ? normalizeCustomTeam(match.homeTeam, match.home) : undefined,
       awayTeam: match.awayTeam ? normalizeCustomTeam(match.awayTeam, match.away) : undefined,
       stats: {
@@ -150,6 +151,7 @@ function normalizeEspnScoreboard(payload, teamGroups) {
         awayTeam,
         stats: normalizeEspnStats(homeEntry, awayEntry),
         events: normalizeEspnDetails(competition.details || []),
+        video: normalizeVideoFeed(event),
       };
     })
     .filter(Boolean);
@@ -260,6 +262,18 @@ function normalizeCustomTeam(team, fallbackCode) {
     name: team.name || knownTeam.name || code,
     code,
     colors: team.colors || knownTeam.colors || ["#8de4ff", "#f4f7fb"],
+  };
+}
+
+function normalizeVideoFeed(match) {
+  const video = match.video || {};
+  const url = video.url || match.videoUrl || match.video_url || "";
+  if (!url) return null;
+
+  return {
+    url: String(url),
+    title: String(video.title || match.videoTitle || match.video_title || "Match video feed"),
+    source: String(video.source || match.videoSource || match.video_source || "Authorized feed"),
   };
 }
 

@@ -1,8 +1,8 @@
 # FIFA Watchboard
 
-**Description:** A live World Cup 2026 score tracking board powered by ESPN feeds, with country flags, fixtures, standings, and event timelines.
+**Description:** A live World Cup 2026 score tracking board powered by ESPN feeds, with emoji flags, fixtures, standings, event timelines, and authorized video feed embeds.
 
-FIFA Watchboard is a live-score tracking board for World Cup 2026 coverage. It uses ESPN's public FIFA World Cup scoreboard and standings feeds by default, with a local fallback and a custom external JSON feed hook.
+FIFA Watchboard is a live-score tracking board for World Cup 2026 coverage. It uses ESPN's public FIFA World Cup scoreboard and standings feeds by default, with a local fallback and a custom external JSON feed hook. Match video panels support authorized embeddable feeds when a feed URL is supplied.
 
 ## Run locally
 
@@ -32,3 +32,32 @@ https://<user>.github.io/fifa/?feed=https://example.com/matches.json
 ```
 
 The feed may be either an array of match objects or an object with a `matches` array.
+
+## Video feed
+
+Live broadcast rights are regional, so the app does not invent or proxy an unlicensed stream. The Video Feed panel embeds an authorized source when one is provided by either a URL override or a custom match feed.
+
+Use a page-level override:
+
+```text
+https://<user>.github.io/fifa/?video=https://www.youtube.com/watch?v=<id>&videoTitle=Match%20feed
+```
+
+Or include video metadata on a custom feed match:
+
+```json
+{
+  "id": "match-1",
+  "home": "USA",
+  "away": "CAN",
+  "status": "upcoming",
+  "group": "Group D",
+  "venue": "Seattle",
+  "kickoff": "2026-06-21T18:00:00-07:00",
+  "videoUrl": "https://www.youtube.com/watch?v=<id>",
+  "videoTitle": "USA vs Canada video feed",
+  "videoSource": "Authorized broadcaster"
+}
+```
+
+Supported embeds include YouTube, Vimeo, existing `/embed/` URLs, and direct video files such as `.mp4`, `.webm`, `.ogg`, or `.m3u8`.

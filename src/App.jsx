@@ -6,8 +6,10 @@ import {
   CirclePause,
   CirclePlay,
   Clock3,
+  ExternalLink,
   Goal,
   History,
+  MonitorPlay,
   Radio,
   RefreshCw,
   Search,
@@ -129,6 +131,7 @@ function App() {
   const visibleStandings = groupTables[selectedMatch?.group] || groupTables["Group C"] || [];
   const boardSummary = useMemo(() => getBoardSummary(matches), [matches]);
   const heroContext = useMemo(() => getHeroContext(matches, teamsByCode), [matches, teamsByCode]);
+  const videoOverride = useMemo(() => getVideoOverride(), []);
   const fixtureMatches = useMemo(() => filteredMatches.filter((match) => !isPastMatch(match)), [filteredMatches]);
   const pastMatches = useMemo(() => filteredMatches.filter(isPastMatch).sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff)), [filteredMatches]);
   const resultCount = activeTab === "past" ? pastMatches.length : activeTab === "fixtures" ? fixtureMatches.length : filteredMatches.length;
@@ -262,6 +265,7 @@ function App() {
             selectedMatchId={selectedMatch?.id}
             standingsRows={visibleStandings}
             teamsByCode={teamsByCode}
+            videoOverride={videoOverride}
             onSelectMatch={selectMatch}
           />
         )}
@@ -364,7 +368,7 @@ function Header({
   );
 }
 
-function LiveBoard({ boardSummary, matches, onSelectMatch, selectedMatch, selectedMatchId, standingsRows, teamsByCode }) {
+function LiveBoard({ boardSummary, matches, onSelectMatch, selectedMatch, selectedMatchId, standingsRows, teamsByCode, videoOverride }) {
   if (!selectedMatch) {
     return (
       <section className="wide-panel empty-board">
@@ -411,6 +415,7 @@ function LiveBoard({ boardSummary, matches, onSelectMatch, selectedMatch, select
           home={selectedMatch.home}
           teamsByCode={teamsByCode}
         />
+        <VideoPanel match={selectedMatch} teamsByCode={teamsByCode} videoOverride={videoOverride} />
       </aside>
     </div>
   );
@@ -570,6 +575,61 @@ function EventTimeline({ away, events, home, teamsByCode }) {
           ))
         ) : (
           <div className="empty-state">No match events yet</div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function VideoPanel({ match, teamsByCode, videoOverride }) {
+  const home = getTeam(match.home, teamsByCode);
+  const away = getTeam(match.away, teamsByCode);
+  const video = getMatchVideo(match, videoOverride);
+  const resolved = video ? resolveVideoSource(video.url) : null;
+
+  return (
+    <section className="rail-panel video-panel">
+      <div className="section-heading compact">
+        <div>
+          <h2>Video Feed</h2>
+          <p>{home.name} vs {away.name}</p>
+        </div>
+        <MonitorPlay size={18} strokeWidth={2.2} />
+      </div>
+
+      {resolved?.type === "embed" && (
+        <div className="video-frame">
+          <iframe
+            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+            referrerPolicy="strict-origin-when-cross-origin"
+            sandbox="allow-same-origin allow-scripts allow-presentation allow-popups"
+            src={resolved.url}
+            title={video.title}
+          />
+        </div>
+      )}
+
+      {resolved?.type === "file" && (
+        <div className="video-frame">
+          <video controls preload="metadata" src={resolved.url} />
+        </div>
+      )}
+
+      {!resolved && (
+        <div className="video-placeholder">
+          <MonitorPlay size={30} strokeWidth={1.9} />
+          <strong>Licensed video feed unavailable</strong>
+          <span>Scoreboard and event data remain live.</span>
+        </div>
+      )}
+
+      <div className="video-meta">
+        <span>{video?.source || "No authorized source"}</span>
+        {video?.url && (
+          <a href={video.url} target="_blank" rel="noreferrer">
+            Open feed
+            <ExternalLink size={13} strokeWidth={2.2} />
+          </a>
         )}
       </div>
     </section>
@@ -836,6 +896,81 @@ function matchStatusDetail(match) {
   if (match.status === "finished") return "Final";
   if (match.status === "halftime") return "Half-time";
   return `${match.minute}'`;
+}
+
+function getVideoOverride() {
+  const params = new URLSearchParams(window.location.search);
+  const url = params.get("video");
+  if (!url) return null;
+
+  return {
+    url,
+    title: params.get("videoTitle") || "Video feed override",
+    source: params.get("videoSource") || "URL override",
+  };
+}
+
+function getMatchVideo(match, videoOverride) {
+  if (videoOverride) return videoOverride;
+  return match.video || null;
+}
+
+function resolveVideoSource(url) {
+  let parsed;
+
+  try {
+    parsed = new URL(url);
+  } catch {
+    return null;
+  }
+
+  if (!["https:", "http:"].includes(parsed.protocol)) return null;
+
+  const fileType = directVideoType(parsed.pathname);
+  if (fileType) return { type: "file", url: parsed.toString(), fileType };
+
+  const embedUrl = toEmbedUrl(parsed);
+  if (embedUrl) return { type: "embed", url: embedUrl };
+
+  if (parsed.pathname.includes("/embed/") || parsed.hostname === "player.vimeo.com") {
+    return { type: "embed", url: parsed.toString() };
+  }
+
+  return null;
+}
+
+function directVideoType(pathname) {
+  const cleanPath = pathname.toLowerCase();
+  if (cleanPath.endsWith(".mp4")) return "video/mp4";
+  if (cleanPath.endsWith(".webm")) return "video/webm";
+  if (cleanPath.endsWith(".ogg") || cleanPath.endsWith(".ogv")) return "video/ogg";
+  if (cleanPath.endsWith(".m3u8")) return "application/vnd.apple.mpegurl";
+  return "";
+}
+
+function toEmbedUrl(parsed) {
+  const host = parsed.hostname.replace(/^www\./, "");
+
+  if (host === "youtu.be") {
+    const videoId = parsed.pathname.split("/").filter(Boolean)[0];
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
+  }
+
+  if (host === "youtube.com" || host === "m.youtube.com") {
+    const videoId = parsed.searchParams.get("v");
+    if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+    if (parsed.pathname.startsWith("/live/")) {
+      const liveId = parsed.pathname.split("/").filter(Boolean)[1];
+      return liveId ? `https://www.youtube.com/embed/${liveId}` : "";
+    }
+  }
+
+  if (host === "vimeo.com") {
+    const videoId = parsed.pathname.split("/").filter(Boolean)[0];
+    return videoId ? `https://player.vimeo.com/video/${videoId}` : "";
+  }
+
+  return "";
 }
 
 function formatShortKickoff(kickoff) {
