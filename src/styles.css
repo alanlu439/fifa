@@ -198,6 +198,7 @@ h1 {
 
 .header-actions {
   gap: 10px;
+  justify-self: end;
   justify-content: flex-end;
   min-width: 0;
 }
@@ -225,6 +226,7 @@ h1 {
   grid-template-columns: auto minmax(0, 1fr);
   min-height: 60px;
   min-width: 268px;
+  order: 2;
   padding: 8px 15px;
 }
 
@@ -255,6 +257,7 @@ h1 {
 
 .icon-button {
   background: rgba(255, 255, 255, 0.07);
+  order: 1;
   padding: 0 12px;
 }
 
@@ -1201,14 +1204,6 @@ h1 {
 }
 
 @media (max-width: 1220px) {
-  .top-bar {
-    grid-template-columns: 1fr;
-  }
-
-  .header-actions {
-    justify-content: flex-start;
-  }
-
   .live-grid {
     grid-template-columns: minmax(0, 1fr) minmax(380px, 0.9fr);
   }
@@ -1222,6 +1217,17 @@ h1 {
   .fixture-days,
   .past-days {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .top-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .header-actions {
+    justify-self: stretch;
+    justify-content: flex-start;
   }
 }
 
@@ -1269,10 +1275,12 @@ h1 {
   .clock-chip {
     flex: 1 1 270px;
     min-width: 0;
+    order: 0;
   }
 
   .header-actions .icon-button {
     flex: 0 0 auto;
+    order: 1;
   }
 
   .control-bar {
