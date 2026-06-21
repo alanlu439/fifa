@@ -250,7 +250,6 @@ function normalizeEspnTeam(team) {
     name: team.displayName || team.shortDisplayName || knownTeam.name || code,
     code,
     colors: [ensureHex(team.color) || knownTeam.colors?.[0] || "#8de4ff", ensureHex(team.alternateColor) || knownTeam.colors?.[1] || "#f4f7fb"],
-    flagUrl: team.logo || team.logos?.[0]?.href || knownTeam.flagUrl,
   };
 }
 
@@ -261,7 +260,6 @@ function normalizeCustomTeam(team, fallbackCode) {
     name: team.name || knownTeam.name || code,
     code,
     colors: team.colors || knownTeam.colors || ["#8de4ff", "#f4f7fb"],
-    flagUrl: team.flagUrl || knownTeam.flagUrl,
   };
 }
 

@@ -3,73 +3,61 @@ export const teams = {
     name: "Brazil",
     code: "BRA",
     colors: ["#f7cf2f", "#1fa36a"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/bra.png",
   },
   HAI: {
     name: "Haiti",
     code: "HAI",
     colors: ["#2f6dff", "#d73445"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/hai.png",
   },
   USA: {
     name: "USA",
     code: "USA",
     colors: ["#1e5eff", "#f2445a"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
   },
   AUS: {
     name: "Australia",
     code: "AUS",
     colors: ["#1e8f5a", "#ffd442"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/aus.png",
   },
   TUR: {
     name: "Türkiye",
     code: "TUR",
     colors: ["#e01f35", "#ffffff"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/tur.png",
   },
   PAR: {
     name: "Paraguay",
     code: "PAR",
     colors: ["#2676ff", "#ef3340"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/par.png",
   },
   SCO: {
     name: "Scotland",
     code: "SCO",
     colors: ["#2055c7", "#ffffff"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/sco.png",
   },
   MAR: {
     name: "Morocco",
     code: "MAR",
     colors: ["#c42736", "#159957"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/mar.png",
   },
   MEX: {
     name: "Mexico",
     code: "MEX",
     colors: ["#188353", "#d22d42"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/mex.png",
   },
   RSA: {
     name: "South Africa",
     code: "RSA",
     colors: ["#087a4f", "#ffcc2f"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/rsa.png",
   },
   CAN: {
     name: "Canada",
     code: "CAN",
     colors: ["#f23d4f", "#ffffff"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/can.png",
   },
   KOR: {
     name: "Korea Republic",
     code: "KOR",
     colors: ["#ffffff", "#df334e"],
-    flagUrl: "https://a.espncdn.com/i/teamlogos/countries/500/kor.png",
   },
 };
 

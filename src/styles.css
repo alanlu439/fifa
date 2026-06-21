@@ -677,14 +677,6 @@ h1 {
   padding: 0 6px;
 }
 
-.team-badge img {
-  border-radius: 4px;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.24);
-  height: 24px;
-  object-fit: cover;
-  width: 34px;
-}
-
 .flag-emoji {
   align-items: center;
   display: inline-flex;
@@ -693,12 +685,6 @@ h1 {
   justify-content: center;
   line-height: 1;
   width: 34px;
-}
-
-.team-badge.compact img {
-  border-radius: 3px;
-  height: 15px;
-  width: 21px;
 }
 
 .team-badge.compact .flag-emoji {

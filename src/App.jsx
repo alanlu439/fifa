@@ -26,16 +26,22 @@ const tabs = [
 ];
 
 const flagCodesByTeam = {
+  ALG: "DZ",
   ARG: "AR",
   AUS: "AU",
   AUT: "AT",
   BEL: "BE",
+  BIH: "BA",
   BRA: "BR",
   CAN: "CA",
   CHI: "CL",
+  CIV: "CI",
+  COD: "CD",
   COL: "CO",
+  CPV: "CV",
   CRC: "CR",
   CRO: "HR",
+  CUW: "CW",
   CZE: "CZ",
   DEN: "DK",
   ECU: "EC",
@@ -49,6 +55,8 @@ const flagCodesByTeam = {
   IRN: "IR",
   IRQ: "IQ",
   ITA: "IT",
+  JAM: "JM",
+  JOR: "JO",
   JPN: "JP",
   KOR: "KR",
   KSA: "SA",
@@ -57,6 +65,7 @@ const flagCodesByTeam = {
   NED: "NL",
   NOR: "NO",
   NZL: "NZ",
+  PAN: "PA",
   PAR: "PY",
   POL: "PL",
   POR: "PT",
@@ -68,10 +77,12 @@ const flagCodesByTeam = {
   SRB: "RS",
   SUI: "CH",
   SWE: "SE",
+  TUN: "TN",
   TUR: "TR",
   UKR: "UA",
   URU: "UY",
   USA: "US",
+  UZB: "UZ",
   WAL: "GB-WLS",
 };
 
@@ -728,8 +739,6 @@ function HeroFact({ detail, label, tone = "neutral", value }) {
 }
 
 function TeamBadge({ compact = false, team }) {
-  const flagEmoji = flagEmojiForTeam(team.code);
-
   return (
     <span
       className={compact ? "team-badge compact" : "team-badge"}
@@ -738,7 +747,7 @@ function TeamBadge({ compact = false, team }) {
         "--team-secondary": team.colors[1],
       }}
     >
-      {flagEmoji ? <span className="flag-emoji" aria-hidden="true">{flagEmoji}</span> : team.flagUrl && <img src={team.flagUrl} alt="" />}
+      <span className="flag-emoji" aria-hidden="true">{flagEmojiForTeam(team.code)}</span>
       <span>{team.code}</span>
     </span>
   );
@@ -854,7 +863,7 @@ function formatFeaturedKickoff(kickoff) {
 
 function flagEmojiForTeam(code) {
   const flagCode = flagCodesByTeam[code] || (code?.length === 2 ? code.toUpperCase() : "");
-  if (!flagCode) return "";
+  if (!flagCode) return String.fromCodePoint(0x1f3f3, 0xfe0f);
   const countryCode = flagCode.startsWith("GB-") ? "GB" : flagCode;
 
   return countryCode
