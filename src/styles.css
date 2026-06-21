@@ -522,7 +522,19 @@ h1 {
 }
 
 .team-score .team-badge {
+  font-size: 16px;
   grid-area: badge;
+  height: 44px;
+  margin: 6px 8px 2px;
+  max-width: calc(100% - 16px);
+  min-width: 84px;
+  padding: 0 8px;
+}
+
+.team-score .team-badge .flag-emoji {
+  font-size: 20px;
+  height: 20px;
+  width: 28px;
 }
 
 .team-score strong {
@@ -1304,6 +1316,10 @@ h1 {
 }
 
 @media (max-width: 1220px) {
+  .score-display {
+    grid-template-columns: minmax(0, 1fr) minmax(136px, 156px) minmax(0, 1fr);
+  }
+
   .live-grid {
     grid-template-columns: minmax(0, 1fr) minmax(380px, 0.9fr);
   }
