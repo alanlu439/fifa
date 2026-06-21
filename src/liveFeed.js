@@ -5,21 +5,27 @@ const ESPN_SCOREBOARD_URL = "https://site.api.espn.com/apis/site/v2/sports/socce
 const ESPN_STANDINGS_URL = "https://site.web.api.espn.com/apis/v2/sports/soccer/fifa.world/standings";
 const ESPN_SUMMARY_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary";
 const WORLD_CUP_2026_START = "2026-06-11T00:00:00";
+const HIGHLIGHTS_INDEX_PATH = "highlights-index.json";
 const summaryEventsCache = new Map();
 
 export async function fetchLiveData(signal) {
+  const highlightsIndexPromise = fetchHighlightsIndex(signal);
   const feedUrl = getFeedUrl();
   if (feedUrl) {
-    const matches = await fetchExternalFeed(signal);
+    const [matches, highlightsIndex] = await Promise.all([fetchExternalFeed(signal), highlightsIndexPromise]);
     return {
-      matches,
+      matches: applyAutomaticHighlights(matches, highlightsIndex),
       standings: sampleStandings,
       teams: collectTeamsFromMatches(matches),
       source: "External JSON feed",
     };
   }
 
-  return fetchEspnWorldCupFeed(signal);
+  const [liveData, highlightsIndex] = await Promise.all([fetchEspnWorldCupFeed(signal), highlightsIndexPromise]);
+  return {
+    ...liveData,
+    matches: applyAutomaticHighlights(liveData.matches, highlightsIndex),
+  };
 }
 
 export function getFeedUrl() {
@@ -73,6 +79,31 @@ export function normalizeMatches(rawMatches) {
       },
       events: Array.isArray(match.events) ? match.events : [],
     }));
+}
+
+export async function fetchHighlightsIndex(signal) {
+  try {
+    const response = await fetch(publicAssetUrl(HIGHLIGHTS_INDEX_PATH), {
+      cache: "no-store",
+      signal,
+    });
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    if (error.name === "AbortError") throw error;
+    return null;
+  }
+}
+
+export function applyAutomaticHighlights(matches, highlightsIndex) {
+  if (!highlightsIndex || typeof highlightsIndex !== "object") return matches;
+  const indexMatches = highlightsIndex.matches || highlightsIndex;
+
+  return matches.map((match) => {
+    if (match.highlights) return match;
+    const indexedHighlight = findIndexedHighlight(match, indexMatches);
+    return indexedHighlight ? { ...match, highlights: indexedHighlight } : match;
+  });
 }
 
 export async function fetchEspnWorldCupFeed(signal) {
@@ -309,6 +340,48 @@ function normalizeHighlights(match) {
         "Official YouTube highlights"
     ),
   };
+}
+
+function findIndexedHighlight(match, indexMatches) {
+  if (!indexMatches || typeof indexMatches !== "object") return null;
+
+  const candidates = [
+    match.id,
+    matchKey(match),
+    matchKey(match, { reverseTeams: true }),
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const highlight = normalizeIndexedHighlight(indexMatches[candidate]);
+    if (highlight) return highlight;
+  }
+
+  return null;
+}
+
+function normalizeIndexedHighlight(highlight) {
+  if (!highlight) return null;
+  const source = typeof highlight === "string" ? { url: highlight } : highlight;
+  if (!source.url) return null;
+
+  return {
+    url: String(source.url),
+    title: String(source.title || "Official match highlights"),
+    source: String(source.source || "Official FIFA YouTube highlights"),
+  };
+}
+
+function matchKey(match, options = {}) {
+  const home = String(options.reverseTeams ? match.away : match.home).toLowerCase();
+  const away = String(options.reverseTeams ? match.home : match.away).toLowerCase();
+  const date = String(match.kickoff || "").slice(0, 10);
+  if (!date || !home || !away) return "";
+  return `${date}-${home}-${away}`;
+}
+
+function publicAssetUrl(path) {
+  const baseUrl = import.meta.env?.BASE_URL || "/";
+  return `${baseUrl}${path}`.replace(/\/{2,}/g, "/");
 }
 
 function normalizeEspnStatus(statusPayload) {

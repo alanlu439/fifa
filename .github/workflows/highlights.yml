@@ -1,0 +1,47 @@
+name: Update YouTube Highlights
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-youtube-highlights
+  cancel-in-progress: false
+
+jobs:
+  update-highlights:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Search official FIFA highlights
+        run: npm run highlights:update
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_CHANNEL_HANDLE: "@fifa"
+
+      - name: Commit highlight index updates
+        run: |
+          if git diff --quiet -- public/highlights-index.json; then
+            echo "No highlight index changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/highlights-index.json
+          git commit -m "Update auto highlight index"
+          git push

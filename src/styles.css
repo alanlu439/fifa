@@ -87,8 +87,7 @@ button {
   margin: 0 auto 16px;
   max-width: 1480px;
   padding: 16px;
-  position: sticky;
-  top: 12px;
+  position: static;
   z-index: 10;
   backdrop-filter: blur(18px);
 }

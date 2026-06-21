@@ -37,6 +37,18 @@ The feed may be either an array of match objects or an object with a `matches` a
 
 FIFA Watchboard does not provide live video streams. Match cards show official YouTube highlights when a highlight URL is provided. If a match has no highlight URL yet, the card links to the official FIFA YouTube channel search for that matchup.
 
+## Automatic highlight search
+
+The site reads `public/highlights-index.json` on every feed refresh and automatically attaches any indexed official highlights to matching finished games. A scheduled GitHub Action runs `npm run highlights:update` hourly, searches the official FIFA YouTube channel, and commits new highlight URLs back into that index.
+
+To enable the automation, add a repository secret named `YOUTUBE_API_KEY` with a YouTube Data API key. Optional workflow environment variables:
+
+- `YOUTUBE_CHANNEL_HANDLE`: defaults to `@fifa`
+- `YOUTUBE_CHANNEL_ID`: skips handle lookup when supplied
+- `HIGHLIGHT_MATCH_FEED_URL`: searches against your custom match feed instead of the default live feed
+- `HIGHLIGHT_MAX_MATCHES`: maximum finished matches to search per run, default `8`
+- `HIGHLIGHT_RETRY_HOURS`: how soon to retry a match with no result, default `2`
+
 Include highlights metadata on a custom feed match:
 
 ```json
