@@ -99,7 +99,7 @@ function App() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [source, setSource] = useState(getFeedUrl() ? "External JSON feed" : "Loading ESPN feed");
+  const [source, setSource] = useState(getFeedUrl() ? "External JSON feed" : "Loading live feed");
   const [feedError, setFeedError] = useState("");
 
   const groups = useMemo(() => {
@@ -314,7 +314,7 @@ function Header({
             <span className={feedError ? "live-dot warning" : "live-dot"} aria-hidden="true" />
             <strong>{source}</strong>
             <span>World Cup 2026</span>
-            <span>{feedError ? "Demo fallback active" : "ESPN scoreboard window"}</span>
+            <span>{feedError ? "Demo fallback active" : "Live match window"}</span>
           </div>
         </div>
       </div>
@@ -351,7 +351,7 @@ function Header({
         <HeroFact
           label="Feed"
           value={source}
-          detail={`${feedError ? "Fallback active" : "Real scoreboard"} • ${autoRefresh ? "Auto refresh on" : "Auto refresh paused"}`}
+          detail={`${feedError ? "Fallback active" : "Real match data"} • ${autoRefresh ? "Auto refresh on" : "Auto refresh paused"}`}
           tone={feedError ? "warning" : "live"}
         />
         <HeroFact label={heroContext.focusLabel} value={heroContext.focusValue} detail={heroContext.focusDetail} tone={heroContext.focusTone} />
@@ -361,7 +361,7 @@ function Header({
 
       {feedError && (
         <div className="feed-alert" role="status">
-          Real feed unavailable: {feedError}
+          Live match data unavailable: {feedError}
         </div>
       )}
     </header>

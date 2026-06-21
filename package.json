@@ -1,7 +1,7 @@
 {
   "name": "fifa-watchboard",
   "version": "0.1.0",
-  "description": "A live World Cup 2026 score tracking board powered by ESPN feeds, with emoji flags, fixtures, standings, event timelines, and authorized video feed embeds.",
+  "description": "A live World Cup 2026 score tracking board with emoji flags, fixtures, standings, event timelines, and authorized video feed embeds.",
   "private": true,
   "type": "module",
   "scripts": {

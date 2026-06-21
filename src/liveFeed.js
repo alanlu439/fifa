@@ -93,7 +93,7 @@ export async function fetchEspnWorldCupFeed(signal) {
       ...tableData.teams,
       ...scoreboardData.teams,
     },
-    source: "ESPN live feed",
+    source: "Live match data",
   };
 }
 

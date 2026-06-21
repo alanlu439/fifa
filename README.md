@@ -1,8 +1,8 @@
 # FIFA Watchboard
 
-**Description:** A live World Cup 2026 score tracking board powered by ESPN feeds, with emoji flags, fixtures, standings, event timelines, and authorized video feed embeds.
+**Description:** A live World Cup 2026 score tracking board with emoji flags, fixtures, standings, event timelines, and authorized video feed embeds.
 
-FIFA Watchboard is a live-score tracking board for World Cup 2026 coverage. It uses ESPN's public FIFA World Cup scoreboard and standings feeds by default, with a local fallback and a custom external JSON feed hook. Match video panels support authorized embeddable feeds when a feed URL is supplied.
+FIFA Watchboard is a live-score tracking board for World Cup 2026 coverage. It uses a live match data feed by default, with a local fallback and a custom external JSON feed hook. Match video panels support authorized embeddable feeds when a feed URL is supplied.
 
 ## Run locally
 
@@ -25,7 +25,7 @@ npm run build:pages
 
 ## Live feed
 
-By default the board uses ESPN's public FIFA World Cup scoreboard and standings feeds. To override it with a CORS-accessible JSON feed, pass a `feed` query parameter:
+By default the board uses its live World Cup match data feed. To override it with a CORS-accessible JSON feed, pass a `feed` query parameter:
 
 ```text
 https://<user>.github.io/fifa/?feed=https://example.com/matches.json
