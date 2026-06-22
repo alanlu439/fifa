@@ -556,7 +556,7 @@ h1 {
   line-height: 1;
 }
 
-.team-score > span {
+.team-score .team-name {
   color: var(--text);
   font-size: clamp(18px, 1.8vw, 22px);
   font-weight: 780;
@@ -1477,7 +1477,7 @@ h1 {
     font-size: 34px;
   }
 
-  .team-score > span {
+  .team-score .team-name {
     font-size: 19px;
   }
 

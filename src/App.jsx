@@ -501,7 +501,7 @@ function TeamScore({ score, side, team }) {
   return (
     <div className={`team-score ${side} ${score == null ? "pending" : ""}`}>
       <TeamBadge team={team} />
-      <span>{team.name}</span>
+      <span className="team-name">{team.name}</span>
       <strong>{score ?? "-"}</strong>
     </div>
   );
