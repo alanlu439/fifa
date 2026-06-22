@@ -9,7 +9,7 @@ import {
   ExternalLink,
   Goal,
   History,
-  Maximize2,
+  LayoutDashboard,
   Minimize2,
   Radio,
   RefreshCw,
@@ -140,6 +140,11 @@ function App() {
   const fixtureMatches = useMemo(() => filteredMatches.filter((match) => !isPastMatch(match)), [filteredMatches]);
   const pastMatches = useMemo(() => filteredMatches.filter(isPastMatch).sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff)), [filteredMatches]);
   const resultCount = activeTab === "past" ? pastMatches.length : activeTab === "fixtures" ? fixtureMatches.length : filteredMatches.length;
+  const dashboardLiveMatches = useMemo(() => filteredMatches.filter(isLiveMatch), [filteredMatches]);
+  const dashboardUpcomingMatch = useMemo(
+    () => filteredMatches.filter((match) => match.status === "upcoming").sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff))[0] || null,
+    [filteredMatches]
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -215,26 +220,23 @@ function App() {
 
   async function toggleFullscreen() {
     if (document.fullscreenElement) {
-      await document.exitFullscreen();
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // Dashboard Mode remains available even if the browser blocks fullscreen exit.
+      }
       setFullscreenFallback(false);
       return;
-    }
-
-    const target = appShellRef.current || document.documentElement;
-    if (target.requestFullscreen) {
-      try {
-        await target.requestFullscreen();
-        setFullscreenFallback(false);
-        return;
-      } catch {
-        // Some embedded browsers block fullscreen; keep a visual fallback mode.
-      }
     }
 
     setFullscreenFallback((current) => !current);
   }
 
   const fullscreenActive = fullscreenElementActive || fullscreenFallback;
+  const dashboardPrimaryMatch = dashboardLiveMatches[0] || dashboardUpcomingMatch || selectedMatch;
+  const dashboardMatches = dashboardLiveMatches.length ? dashboardLiveMatches : dashboardPrimaryMatch ? [dashboardPrimaryMatch] : [];
+  const dashboardMode = dashboardLiveMatches.length ? "live" : "upcoming";
+  const dashboardStandings = groupTables[dashboardPrimaryMatch?.group] || [];
 
   return (
     <div className={fullscreenActive ? "app-shell dashboard-fullscreen" : "app-shell"} ref={appShellRef}>
@@ -250,6 +252,17 @@ function App() {
         source={source}
       />
 
+      {fullscreenActive ? (
+        <DashboardMode
+          boardSummary={boardSummary}
+          matches={dashboardMatches}
+          mode={dashboardMode}
+          onSelectMatch={selectMatch}
+          primaryMatch={dashboardPrimaryMatch}
+          standingsRows={dashboardStandings}
+          teamsByCode={teamsByCode}
+        />
+      ) : (
       <main className="board">
         <section className="control-bar" aria-label="Score board controls">
           <div className="tabs" role="tablist" aria-label="Board views">
@@ -321,6 +334,7 @@ function App() {
 
         {activeTab === "groups" && <GroupsView groupTables={groupTables} teamsByCode={teamsByCode} />}
       </main>
+      )}
     </div>
   );
 }
@@ -337,9 +351,11 @@ function Header({
   source,
 }) {
   const [now, setNow] = useState(() => new Date());
-  const FullscreenIcon = isFullscreen ? Minimize2 : Maximize2;
+  const DashboardIcon = isFullscreen ? Minimize2 : LayoutDashboard;
   const currentClock = formatClockParts(now);
   const updateAge = formatUpdateAge(now - lastUpdated);
+  const autoRefreshLabel = autoRefresh ? "Pause auto refresh" : "Resume auto refresh";
+  const dashboardLabel = isFullscreen ? "Exit dashboard mode" : "Enter dashboard mode";
 
   useEffect(() => {
     const clock = window.setInterval(() => setNow(new Date()), 1000);
@@ -369,9 +385,8 @@ function Header({
           <span className="clock-time">{currentClock.time}</span>
           <span className="clock-zone">{currentClock.zone}</span>
         </div>
-        <button className="icon-button" onClick={onToggleRefresh} type="button" aria-label="Toggle auto refresh">
+        <button className="icon-button" onClick={onToggleRefresh} type="button" aria-label={autoRefreshLabel} aria-pressed={autoRefresh} title={autoRefreshLabel}>
           {autoRefresh ? <CirclePause size={18} /> : <CirclePlay size={18} />}
-          <span>{autoRefresh ? "Auto on" : "Auto off"}</span>
         </button>
         <button
           className={isRefreshing ? "icon-button refresh spinning" : "icon-button refresh"}
@@ -379,12 +394,12 @@ function Header({
           onClick={onRefresh}
           type="button"
           aria-label="Refresh scores now"
+          title="Refresh scores now"
         >
           <RefreshCw size={18} />
         </button>
-        <button className="icon-button fullscreen-button" onClick={onToggleFullscreen} type="button" aria-label={isFullscreen ? "Exit full screen" : "Open full screen dashboard"}>
-          <FullscreenIcon size={18} />
-          <span>{isFullscreen ? "Exit" : "Full screen"}</span>
+        <button className="icon-button fullscreen-button" onClick={onToggleFullscreen} type="button" aria-label={dashboardLabel} title={dashboardLabel}>
+          <DashboardIcon size={18} />
         </button>
       </div>
 
@@ -394,6 +409,129 @@ function Header({
         </div>
       )}
     </header>
+  );
+}
+
+function DashboardMode({ boardSummary, matches, mode, onSelectMatch, primaryMatch, standingsRows, teamsByCode }) {
+  if (!primaryMatch) {
+    return (
+      <main className="dashboard-board empty-board">
+        <h2>No dashboard match available</h2>
+        <p>Try clearing filters or refreshing the feed.</p>
+      </main>
+    );
+  }
+
+  const isLive = mode === "live";
+  const home = getTeam(primaryMatch.home, teamsByCode);
+  const away = getTeam(primaryMatch.away, teamsByCode);
+  const eventCount = primaryMatch.events.length;
+  const kickoff = formatFeaturedKickoff(primaryMatch.kickoff);
+  const otherMatches = matches.filter((match) => match.id !== primaryMatch.id);
+
+  return (
+    <main className={`dashboard-board ${isLive ? "live-dashboard" : "upcoming-dashboard"}`} aria-label="Dashboard mode">
+      <section className="dashboard-stage" aria-label={isLive ? "Live match focus" : "Upcoming match focus"}>
+        <div className="dashboard-title-row">
+          <div>
+            <h2>{isLive ? "Live Dashboard" : "Next Match Dashboard"}</h2>
+            <p>{isLive ? `${boardSummary.live} match${boardSummary.live === 1 ? "" : "es"} live now` : "No live matches. Showing the next scheduled fixture."}</p>
+          </div>
+          <span className={`status-chip ${primaryMatch.status}`}>{statusLabel(primaryMatch.status)}</span>
+        </div>
+
+        <div className="dashboard-score">
+          <DashboardTeam team={home} score={primaryMatch.homeScore} />
+          <div className={`dashboard-clock-card ${primaryMatch.status}`}>
+            <small>{isLive ? primaryMatch.note || "In play" : "Kickoff"}</small>
+            {primaryMatch.status === "upcoming" ? (
+              <span className="clock-stack">
+                <strong>{kickoff.date}</strong>
+                <span>{kickoff.time}</span>
+              </span>
+            ) : (
+              <strong>{`${primaryMatch.minute}'`}</strong>
+            )}
+            <small>{primaryMatch.group}</small>
+          </div>
+          <DashboardTeam team={away} score={primaryMatch.awayScore} />
+        </div>
+
+        <div className="dashboard-meta-grid">
+          <DashboardInfo label="Venue" value={primaryMatch.venue} />
+          <DashboardInfo label="Stage" value={primaryMatch.stage} />
+          <DashboardInfo label="Events" value={eventCount ? `${eventCount} recorded` : primaryMatch.status === "upcoming" ? "Awaiting kickoff" : "No events yet"} />
+          <DashboardInfo label="Next kickoff" value={boardSummary.nextKickoff} />
+        </div>
+
+        <div className="dashboard-stat-row">
+          <StatPill label="Possession" value={`${primaryMatch.stats.possessionHome}%`} />
+          <StatPill label="Shots" value={`${primaryMatch.stats.shotsHome}-${primaryMatch.stats.shotsAway}`} />
+          <StatPill label="xG" value={`${primaryMatch.stats.xgHome.toFixed(1)}-${primaryMatch.stats.xgAway.toFixed(1)}`} />
+        </div>
+      </section>
+
+      <section className="dashboard-panel dashboard-window" aria-label={isLive ? "Live matches" : "Upcoming match"}>
+        <div className="section-heading compact">
+          <div>
+            <h2>{isLive ? "Live Only" : "Next Up"}</h2>
+            <p>{isLive ? "Finished and future fixtures hidden in Dashboard Mode" : "Dashboard fallback while live window is quiet"}</p>
+          </div>
+          <Activity size={18} strokeWidth={2.2} />
+        </div>
+        <div className="dashboard-match-stack">
+          <DashboardMatchTile active match={primaryMatch} onClick={() => onSelectMatch(primaryMatch.id)} teamsByCode={teamsByCode} />
+          {otherMatches.map((match) => (
+            <DashboardMatchTile key={match.id} match={match} onClick={() => onSelectMatch(match.id)} teamsByCode={teamsByCode} />
+          ))}
+        </div>
+      </section>
+
+      <section className="dashboard-panel dashboard-details" aria-label="Detailed match information">
+        <EventTimeline away={primaryMatch.away} events={primaryMatch.events.slice(0, 5)} home={primaryMatch.home} teamsByCode={teamsByCode} />
+        <StandingsPanel group={primaryMatch.group} rows={standingsRows.slice(0, 4)} teamsByCode={teamsByCode} />
+      </section>
+    </main>
+  );
+}
+
+function DashboardTeam({ score, team }) {
+  return (
+    <div className="dashboard-team">
+      <TeamBadge team={team} />
+      <span>{team.name}</span>
+      <strong>{score ?? "-"}</strong>
+    </div>
+  );
+}
+
+function DashboardInfo({ label, value }) {
+  return (
+    <div className="dashboard-info">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function DashboardMatchTile({ active = false, match, onClick, teamsByCode }) {
+  const home = getTeam(match.home, teamsByCode);
+  const away = getTeam(match.away, teamsByCode);
+  const timeLabel = match.status === "upcoming" ? formatShortKickoff(match.kickoff) : `${match.minute}'`;
+
+  return (
+    <button className={active ? "dashboard-match-tile active" : "dashboard-match-tile"} onClick={onClick} type="button">
+      <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
+      <div className="dashboard-tile-main">
+        <span>{home.code}</span>
+        <strong>{match.homeScore ?? "-"} : {match.awayScore ?? "-"}</strong>
+        <span>{away.code}</span>
+      </div>
+      <div className="dashboard-tile-meta">
+        <span>{match.group}</span>
+        <span>{timeLabel}</span>
+      </div>
+    </button>
   );
 }
 
@@ -895,8 +1033,12 @@ function scoreStatusWeight(status) {
   return 3;
 }
 
+function isLiveMatch(match) {
+  return match.status === "live" || match.status === "halftime";
+}
+
 function getBoardSummary(matches) {
-  const live = matches.filter((match) => match.status === "live" || match.status === "halftime").length;
+  const live = matches.filter(isLiveMatch).length;
   const upcomingMatches = matches
     .filter((match) => match.status === "upcoming")
     .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
