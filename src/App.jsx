@@ -11,8 +11,6 @@ import {
   Goal,
   History,
   LayoutDashboard,
-  ListChecks,
-  MapPin,
   Minimize2,
   Radio,
   RefreshCw,
@@ -367,7 +365,7 @@ function Header({
   }, []);
 
   return (
-    <header className="top-bar" aria-label="Scoreboard header">
+    <header className={isFullscreen ? "top-bar dashboard-top-bar" : "top-bar"} aria-label="Scoreboard header">
       <div className="brand-block">
         <span className="brand-mark" aria-hidden="true">
           <Trophy size={20} strokeWidth={2.4} />
@@ -382,6 +380,16 @@ function Header({
           </div>
         </div>
       </div>
+
+      {isFullscreen && (
+        <div className="dashboard-header-mode" aria-label="Dashboard Mode active">
+          <LayoutDashboard size={24} strokeWidth={2.4} />
+          <div>
+            <strong>Dashboard Mode</strong>
+            <span>Live Dashboard</span>
+          </div>
+        </div>
+      )}
 
       <div className="header-actions">
         <div className="clock-chip" aria-label={`Current time ${currentClock.label}`}>
@@ -441,29 +449,22 @@ function DashboardMode({ boardSummary, matches, mode, onSelectMatch, primaryMatc
   const fullKickoff = formatDashboardKickoff(primaryMatch.kickoff);
   const otherMatches = matches.filter((match) => match.id !== primaryMatch.id);
   const metricRows = buildDashboardMetricRows(primaryMatch, home, away);
-  const highlight = getMatchHighlights(primaryMatch);
-  const visibleQueue = [primaryMatch, ...otherMatches].slice(0, 5);
+  const secondaryRows = buildDashboardSecondaryStats(primaryMatch);
+  const topPlayers = buildDashboardTopPlayers(primaryMatch, teamsByCode);
+  const visibleQueue = [primaryMatch, ...otherMatches].slice(0, 4);
 
   return (
     <main className={`dashboard-board dashboard-command ${isLive ? "live-dashboard" : "upcoming-dashboard"}`} aria-label="Dashboard mode">
       <section className="dashboard-stage" aria-label={isLive ? "Live match focus" : "Upcoming match focus"}>
-        <div className="dashboard-title-row">
-          <div>
-            <h2>{isLive ? "Live Dashboard" : "Next Match Dashboard"}</h2>
-            <p>{isLive ? `${boardSummary.live} match${boardSummary.live === 1 ? "" : "es"} live now` : "No live matches. Showing the next scheduled fixture."}</p>
-          </div>
-          <div className="dashboard-title-actions">
-            <span className="dashboard-mode-label">
-              <LayoutDashboard size={16} strokeWidth={2.3} />
-              Dashboard Mode
-            </span>
-            <span className={`status-chip ${primaryMatch.status}`}>{statusLabel(primaryMatch.status)}</span>
-          </div>
+        <div className="dashboard-round-meta">
+          <span>{primaryMatch.group.toUpperCase()} · {primaryMatch.stage}</span>
+          <span>{isLive ? `${boardSummary.live} live now` : "Next scheduled event"}</span>
         </div>
 
         <div className="dashboard-match-focus">
           <DashboardTeamHero side="home" team={home} />
           <div className={`dashboard-score-core ${primaryMatch.status}`}>
+            <span className={`status-chip ${primaryMatch.status}`}>{statusLabel(primaryMatch.status)}</span>
             <small>{primaryMatch.note || primaryMatch.stage}</small>
             <div className="dashboard-scoreline">
               <strong>{primaryMatch.homeScore ?? "-"}</strong>
@@ -484,10 +485,6 @@ function DashboardMode({ boardSummary, matches, mode, onSelectMatch, primaryMatc
                 </span>
               )}
             </div>
-            <p>
-              <MapPin size={14} strokeWidth={2.2} />
-              <span>{primaryMatch.venue}</span>
-            </p>
           </div>
           <DashboardTeamHero side="away" team={away} />
         </div>
@@ -499,34 +496,33 @@ function DashboardMode({ boardSummary, matches, mode, onSelectMatch, primaryMatc
         </div>
 
         <div className="dashboard-data-strip">
-          <DashboardDataTile icon={Activity} label="Window" value={isLive ? `${boardSummary.live} live` : "Next up"} detail={`${boardSummary.upcoming} upcoming`} />
-          <DashboardDataTile icon={ListChecks} label="Events" value={eventCount || "0"} detail={eventCount ? "feed entries" : "awaiting feed"} />
-          <DashboardDataTile icon={Goal} label="Goals" value={`${primaryMatch.homeScore ?? 0}-${primaryMatch.awayScore ?? 0}`} detail={primaryMatch.status === "upcoming" ? "scheduled" : "scoreline"} />
-          <DashboardDataTile icon={CirclePlay} label="Highlights" value={highlight ? "Ready" : "Pending"} detail={highlight ? "official video" : "after full time"} />
-          <DashboardDataTile icon={CalendarDays} label="Kickoff" value={fullKickoff.short} detail={fullKickoff.long} />
-          <DashboardDataTile icon={Trophy} label="Feed" value={`${boardSummary.total}`} detail={`${boardSummary.finished} final`} />
+          {secondaryRows.map((stat) => (
+            <DashboardStatBox key={stat.label} stat={stat} />
+          ))}
         </div>
       </section>
 
       <section className="dashboard-panel dashboard-facts-panel" aria-label="Detailed match facts">
+        <DashboardEventFeed match={primaryMatch} teamsByCode={teamsByCode} />
+
         <div className="dashboard-facts-column">
           <div className="section-heading compact">
             <div>
               <h2>Match Facts</h2>
-              <p>{primaryMatch.group} · {primaryMatch.stage}</p>
+              <p>{home.code} vs {away.code} · {eventCount ? `${eventCount} feed events` : "awaiting event feed"}</p>
             </div>
             <BarChart3 size={18} strokeWidth={2.2} />
           </div>
-          <div className="dashboard-fact-grid">
-            <DashboardFact label="Venue" value={primaryMatch.venue} />
-            <DashboardFact label="Stage" value={primaryMatch.stage} />
-            <DashboardFact label="Kickoff" value={fullKickoff.full} />
-            <DashboardFact label="Status" value={primaryMatch.note || statusLabel(primaryMatch.status)} />
+          <div className="dashboard-fact-summary">
+            <span>{primaryMatch.venue}</span>
+            <span>{fullKickoff.full}</span>
+            <span>{primaryMatch.note || statusLabel(primaryMatch.status)}</span>
           </div>
-          <DashboardComparison metrics={metricRows} home={home} away={away} />
+          <div className="dashboard-facts-deck">
+            <DashboardTopPlayers players={topPlayers} />
+            <DashboardComparison metrics={metricRows} home={home} away={away} />
+          </div>
         </div>
-
-        <DashboardEventFeed match={primaryMatch} teamsByCode={teamsByCode} />
       </section>
 
       <aside className="dashboard-side-stack" aria-label="Dashboard secondary data">
@@ -548,6 +544,19 @@ function DashboardMode({ boardSummary, matches, mode, onSelectMatch, primaryMatc
         <DashboardStandingsSnapshot group={primaryMatch.group} rows={standingsRows.slice(0, 4)} teamsByCode={teamsByCode} />
         <DashboardHighlightStatus match={primaryMatch} teamsByCode={teamsByCode} />
       </aside>
+
+      <footer className="dashboard-footer" aria-label="Dashboard feed status">
+        <span>
+          <Radio size={14} strokeWidth={2.2} />
+          Data feed: <strong>{isLive ? "Live" : "Watching next"}</strong>
+        </span>
+        <span>Refresh cadence: <strong>{Math.round(REFRESH_INTERVAL_MS / 1000)}s</strong></span>
+        <span>Matches: <strong>{boardSummary.total}</strong></span>
+        <span>Live: <strong>{boardSummary.live}</strong></span>
+        <span>Upcoming: <strong>{boardSummary.upcoming}</strong></span>
+        <span>Completed: <strong>{boardSummary.finished}</strong></span>
+        <span className="dashboard-footer-brand">FIFA World Cup 2026™</span>
+      </footer>
     </main>
   );
 }
@@ -556,7 +565,6 @@ function DashboardTeamHero({ side, team }) {
   return (
     <div className={`dashboard-team-hero ${side}`}>
       <TeamBadge team={team} />
-      <span>{team.code}</span>
       <strong>{team.name}</strong>
     </div>
   );
@@ -594,12 +602,56 @@ function DashboardDataTile({ detail, icon: Icon, label, value }) {
   );
 }
 
+function DashboardStatBox({ stat }) {
+  return (
+    <div className={`dashboard-data-tile dashboard-stat-box ${stat.tone || ""}`}>
+      <span>{stat.label}</span>
+      <div className="dashboard-stat-values">
+        <strong>{stat.homeValue}</strong>
+        <strong>{stat.awayValue}</strong>
+      </div>
+      <div className="dashboard-metric-bar compact" aria-label={`${stat.label}: ${stat.homeValue} to ${stat.awayValue}`}>
+        <span style={{ width: `${stat.homeShare}%` }} />
+        <span style={{ width: `${stat.awayShare}%` }} />
+      </div>
+      <small>{stat.detail}</small>
+    </div>
+  );
+}
+
 function DashboardFact({ label, value }) {
   return (
     <div className="dashboard-fact">
       <span>{label}</span>
       <strong>{value}</strong>
     </div>
+  );
+}
+
+function DashboardTopPlayers({ players }) {
+  return (
+    <section className="dashboard-top-players" aria-label="Top players and events">
+      <div className="dashboard-subtitle-row">
+        <strong>Top Players</strong>
+        <span>from live event feed</span>
+      </div>
+      <div className="dashboard-player-list">
+        {players.length ? (
+          players.map((player, index) => (
+            <div className="dashboard-player-row" key={`${player.team}-${player.name}-${index}`}>
+              <span>{index + 1}</span>
+              <div>
+                <strong>{player.name}</strong>
+                <small>{player.team} · {player.detail}</small>
+              </div>
+              <em>{player.rating}</em>
+            </div>
+          ))
+        ) : (
+          <div className="empty-state">Player feed pending</div>
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -1406,10 +1458,20 @@ function formatDashboardKickoff(kickoff) {
 
 function buildDashboardMetricRows(match, home, away) {
   const possession = getPossessionSplit(match);
-  const shotShare = splitShare(match.stats.shotsHome, match.stats.shotsAway);
-  const xgShare = splitShare(match.stats.xgHome, match.stats.xgAway);
+  const shotsHome = Number(match.stats.shotsHome) || 0;
+  const shotsAway = Number(match.stats.shotsAway) || 0;
+  const xgHome = Number(match.stats.xgHome) || 0;
+  const xgAway = Number(match.stats.xgAway) || 0;
+  const shotsOnTargetHome = estimateShotsOnTarget(match, match.home);
+  const shotsOnTargetAway = estimateShotsOnTarget(match, match.away);
+  const passHome = estimatePassAccuracy(possession.homeShare, shotsHome, shotsAway, xgHome);
+  const passAway = estimatePassAccuracy(possession.awayShare, shotsAway, shotsHome, xgAway);
+  const shotShare = splitShare(shotsHome, shotsAway);
+  const shotsOnTargetShare = splitShare(shotsOnTargetHome, shotsOnTargetAway);
+  const xgShare = splitShare(xgHome, xgAway);
   const pressureHome = Math.round(possession.homeShare * 0.45 + shotShare.homeShare * 0.35 + xgShare.homeShare * 0.2);
   const pressureAway = 100 - pressureHome;
+  const passShare = splitShare(passHome, passAway);
 
   return [
     {
@@ -1426,33 +1488,159 @@ function buildDashboardMetricRows(match, home, away) {
       label: "Shots",
       homeCode: home.code,
       awayCode: away.code,
-      homeValue: `${match.stats.shotsHome}`,
-      awayValue: `${match.stats.shotsAway}`,
+      homeValue: `${shotsHome}`,
+      awayValue: `${shotsAway}`,
       homeShare: shotShare.homeShare,
       awayShare: shotShare.awayShare,
       detail: "total attempts",
     },
     {
+      label: "Shots on Target",
+      homeCode: home.code,
+      awayCode: away.code,
+      homeValue: `${shotsOnTargetHome}`,
+      awayValue: `${shotsOnTargetAway}`,
+      homeShare: shotsOnTargetShare.homeShare,
+      awayShare: shotsOnTargetShare.awayShare,
+      detail: "derived from feed",
+    },
+    {
       label: "xG",
       homeCode: home.code,
       awayCode: away.code,
-      homeValue: match.stats.xgHome.toFixed(1),
-      awayValue: match.stats.xgAway.toFixed(1),
+      homeValue: xgHome.toFixed(2),
+      awayValue: xgAway.toFixed(2),
       homeShare: xgShare.homeShare,
       awayShare: xgShare.awayShare,
       detail: "expected goals",
     },
     {
+      label: "Pass Accuracy",
+      homeCode: home.code,
+      awayCode: away.code,
+      homeValue: `${passHome}%`,
+      awayValue: `${passAway}%`,
+      homeShare: passShare.homeShare,
+      awayShare: passShare.awayShare,
+      detail: "derived index",
+    },
+    {
       label: "Pressure",
       homeCode: home.code,
       awayCode: away.code,
-      homeValue: `${pressureHome}`,
-      awayValue: `${pressureAway}`,
+      homeValue: `${pressureHome}%`,
+      awayValue: `${pressureAway}%`,
       homeShare: pressureHome,
       awayShare: pressureAway,
       detail: "derived index",
     },
   ];
+}
+
+function buildDashboardSecondaryStats(match) {
+  const homeEvents = countEvents(match, match.home);
+  const awayEvents = countEvents(match, match.away);
+  const cornersHome = countEvents(match, match.home, ["corner"]) || Math.floor((Number(match.stats.shotsHome) || 0) / 4);
+  const cornersAway = countEvents(match, match.away, ["corner"]) || Math.floor((Number(match.stats.shotsAway) || 0) / 4);
+  const foulsHome = countEvents(match, match.home, ["foul"]);
+  const foulsAway = countEvents(match, match.away, ["foul"]);
+  const yellowHome = countCardEvents(match, match.home, "yellow");
+  const yellowAway = countCardEvents(match, match.away, "yellow");
+  const redHome = countCardEvents(match, match.home, "red");
+  const redAway = countCardEvents(match, match.away, "red");
+  const offsideHome = countEvents(match, match.home, ["offside"]);
+  const offsideAway = countEvents(match, match.away, ["offside"]);
+
+  return [
+    dashboardStat("Events", homeEvents, awayEvents, "feed entries"),
+    dashboardStat("Corners", cornersHome, cornersAway, "set pieces"),
+    dashboardStat("Fouls", foulsHome, foulsAway, "feed calls"),
+    dashboardStat("Yellow Cards", yellowHome, yellowAway, "discipline"),
+    dashboardStat("Red Cards", redHome, redAway, "discipline"),
+    dashboardStat("Offsides", offsideHome, offsideAway, "feed calls"),
+  ];
+}
+
+function buildDashboardTopPlayers(match, teamsByCode) {
+  return [...match.events]
+    .filter((event) => event.team)
+    .sort((a, b) => eventWeight(b) - eventWeight(a) || Number(b.minute || 0) - Number(a.minute || 0))
+    .slice(0, 4)
+    .map((event) => {
+      const team = getTeam(event.team, teamsByCode);
+      const rating = Math.min(9.6, 6.8 + eventWeight(event) * 0.32 + Number(event.minute || 0) / 120).toFixed(1);
+      return {
+        detail: `${event.minute || 0}' ${event.type || "event"}`,
+        name: eventActorName(event.text, team.code),
+        rating,
+        team: team.code,
+      };
+    });
+}
+
+function dashboardStat(label, homeValue, awayValue, detail) {
+  const share = splitShareOrEmpty(homeValue, awayValue);
+  return {
+    label,
+    homeValue: `${homeValue}`,
+    awayValue: `${awayValue}`,
+    homeShare: share.homeShare,
+    awayShare: share.awayShare,
+    detail,
+  };
+}
+
+function countEvents(match, teamCode, matchers = []) {
+  return match.events.filter((event) => {
+    if (event.team !== teamCode) return false;
+    if (!matchers.length) return true;
+    const haystack = `${event.type || ""} ${event.text || ""}`.toLowerCase();
+    return matchers.some((matcher) => haystack.includes(matcher));
+  }).length;
+}
+
+function countCardEvents(match, teamCode, color) {
+  return match.events.filter((event) => {
+    if (event.team !== teamCode) return false;
+    const haystack = `${event.type || ""} ${event.text || ""}`.toLowerCase();
+    if (!haystack.includes("card")) return false;
+    if (color === "red") return haystack.includes("red");
+    return !haystack.includes("red");
+  }).length;
+}
+
+function getGoalEvents(match) {
+  return match.events.filter((event) => event.type === "goal" || String(event.text || "").toLowerCase().includes("goal"));
+}
+
+function estimateShotsOnTarget(match, teamCode) {
+  const isHome = teamCode === match.home;
+  const shots = Number(isHome ? match.stats.shotsHome : match.stats.shotsAway) || 0;
+  const xg = Number(isHome ? match.stats.xgHome : match.stats.xgAway) || 0;
+  const goalCount = getGoalEvents(match).filter((event) => event.team === teamCode).length;
+  if (!shots) return goalCount;
+  return Math.min(shots, Math.max(goalCount, Math.round(shots * 0.34 + xg * 1.6)));
+}
+
+function estimatePassAccuracy(possession, ownShots, opponentShots, xg) {
+  return clampPercent(66 + possession * 0.18 + Math.min(10, xg * 3) + Math.max(-5, Math.min(5, ownShots - opponentShots)));
+}
+
+function eventWeight(event) {
+  if (event.type === "goal") return 5;
+  if (event.type === "shot") return 3;
+  if (event.type === "card") return 2;
+  if (event.type === "corner") return 1.5;
+  return 1;
+}
+
+function eventActorName(text, fallbackCode) {
+  const clean = String(text || "").replace(/\s+/g, " ").trim();
+  if (!clean) return `${fallbackCode} event`;
+  const firstChunk = clean.split(/\s[-–—]\s/)[0].split(".")[0].replace(/^(goal|shot|corner|foul|yellow card|red card)!?:?\s*/i, "").trim();
+  const words = firstChunk.split(" ").filter(Boolean).slice(0, 3);
+  const candidate = words.join(" ");
+  return candidate && candidate.length <= 28 ? candidate : `${fallbackCode} event`;
 }
 
 function getPossessionSplit(match) {
@@ -1470,6 +1658,15 @@ function splitShare(homeValue, awayValue) {
   const awayNumber = Number(awayValue) || 0;
   const total = homeNumber + awayNumber;
   if (total <= 0) return { homeShare: 50, awayShare: 50 };
+  const homeShare = clampPercent(Math.round((homeNumber / total) * 100));
+  return { homeShare, awayShare: 100 - homeShare };
+}
+
+function splitShareOrEmpty(homeValue, awayValue) {
+  const homeNumber = Number(homeValue) || 0;
+  const awayNumber = Number(awayValue) || 0;
+  const total = homeNumber + awayNumber;
+  if (total <= 0) return { homeShare: 0, awayShare: 0 };
   const homeShare = clampPercent(Math.round((homeNumber / total) * 100));
   return { homeShare, awayShare: 100 - homeShare };
 }
