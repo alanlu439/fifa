@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
+  BarChart3,
   CalendarDays,
   ChevronDown,
   CirclePause,
@@ -10,6 +11,8 @@ import {
   Goal,
   History,
   LayoutDashboard,
+  ListChecks,
+  MapPin,
   Minimize2,
   Radio,
   RefreshCw,
@@ -17,6 +20,7 @@ import {
   SlidersHorizontal,
   Table2,
   Trophy,
+  Video,
 } from "lucide-react";
 import { standings as sampleStandings, statusLabel, teams } from "./data.js";
 import { collectTeamsFromMatches, fetchLiveData, freshSampleMatches, getFeedUrl } from "./liveFeed.js";
@@ -434,90 +438,297 @@ function DashboardMode({ boardSummary, matches, mode, onSelectMatch, primaryMatc
   const away = getTeam(primaryMatch.away, teamsByCode);
   const eventCount = primaryMatch.events.length;
   const kickoff = formatFeaturedKickoff(primaryMatch.kickoff);
+  const fullKickoff = formatDashboardKickoff(primaryMatch.kickoff);
   const otherMatches = matches.filter((match) => match.id !== primaryMatch.id);
+  const metricRows = buildDashboardMetricRows(primaryMatch, home, away);
+  const highlight = getMatchHighlights(primaryMatch);
+  const visibleQueue = [primaryMatch, ...otherMatches].slice(0, 5);
 
   return (
-    <main className={`dashboard-board ${isLive ? "live-dashboard" : "upcoming-dashboard"}`} aria-label="Dashboard mode">
+    <main className={`dashboard-board dashboard-command ${isLive ? "live-dashboard" : "upcoming-dashboard"}`} aria-label="Dashboard mode">
       <section className="dashboard-stage" aria-label={isLive ? "Live match focus" : "Upcoming match focus"}>
         <div className="dashboard-title-row">
           <div>
             <h2>{isLive ? "Live Dashboard" : "Next Match Dashboard"}</h2>
             <p>{isLive ? `${boardSummary.live} match${boardSummary.live === 1 ? "" : "es"} live now` : "No live matches. Showing the next scheduled fixture."}</p>
           </div>
-          <span className={`status-chip ${primaryMatch.status}`}>{statusLabel(primaryMatch.status)}</span>
-        </div>
-
-        <div className="dashboard-score">
-          <DashboardTeam team={home} score={primaryMatch.homeScore} />
-          <div className={`dashboard-clock-card ${primaryMatch.status}`}>
-            <small>{isLive ? primaryMatch.note || "In play" : "Kickoff"}</small>
-            {primaryMatch.status === "upcoming" ? (
-              <span className="clock-stack">
-                <strong>{kickoff.date}</strong>
-                <span>{kickoff.time}</span>
-              </span>
-            ) : (
-              <strong>{`${primaryMatch.minute}'`}</strong>
-            )}
-            <small>{primaryMatch.group}</small>
+          <div className="dashboard-title-actions">
+            <span className="dashboard-mode-label">
+              <LayoutDashboard size={16} strokeWidth={2.3} />
+              Dashboard Mode
+            </span>
+            <span className={`status-chip ${primaryMatch.status}`}>{statusLabel(primaryMatch.status)}</span>
           </div>
-          <DashboardTeam team={away} score={primaryMatch.awayScore} />
         </div>
 
-        <div className="dashboard-meta-grid">
-          <DashboardInfo label="Venue" value={primaryMatch.venue} />
-          <DashboardInfo label="Stage" value={primaryMatch.stage} />
-          <DashboardInfo label="Events" value={eventCount ? `${eventCount} recorded` : primaryMatch.status === "upcoming" ? "Awaiting kickoff" : "No events yet"} />
-          <DashboardInfo label="Next kickoff" value={boardSummary.nextKickoff} />
-        </div>
-
-        <div className="dashboard-stat-row">
-          <StatPill label="Possession" value={`${primaryMatch.stats.possessionHome}%`} />
-          <StatPill label="Shots" value={`${primaryMatch.stats.shotsHome}-${primaryMatch.stats.shotsAway}`} />
-          <StatPill label="xG" value={`${primaryMatch.stats.xgHome.toFixed(1)}-${primaryMatch.stats.xgAway.toFixed(1)}`} />
-        </div>
-      </section>
-
-      <section className="dashboard-panel dashboard-window" aria-label={isLive ? "Live matches" : "Upcoming match"}>
-        <div className="section-heading compact">
-          <div>
-            <h2>{isLive ? "Live Only" : "Next Up"}</h2>
-            <p>{isLive ? "Finished and future fixtures hidden in Dashboard Mode" : "Dashboard fallback while live window is quiet"}</p>
+        <div className="dashboard-match-focus">
+          <DashboardTeamHero side="home" team={home} />
+          <div className={`dashboard-score-core ${primaryMatch.status}`}>
+            <small>{primaryMatch.note || primaryMatch.stage}</small>
+            <div className="dashboard-scoreline">
+              <strong>{primaryMatch.homeScore ?? "-"}</strong>
+              <span>:</span>
+              <strong>{primaryMatch.awayScore ?? "-"}</strong>
+            </div>
+            <div className="dashboard-clock-strip">
+              <Clock3 size={16} strokeWidth={2.2} />
+              {primaryMatch.status === "upcoming" ? (
+                <span>
+                  <strong>{kickoff.date}</strong>
+                  {kickoff.time}
+                </span>
+              ) : (
+                <span>
+                  <strong>{`${primaryMatch.minute}'`}</strong>
+                  {primaryMatch.status === "halftime" ? "Half-time" : "Match clock"}
+                </span>
+              )}
+            </div>
+            <p>
+              <MapPin size={14} strokeWidth={2.2} />
+              <span>{primaryMatch.venue}</span>
+            </p>
           </div>
-          <Activity size={18} strokeWidth={2.2} />
+          <DashboardTeamHero side="away" team={away} />
         </div>
-        <div className="dashboard-match-stack">
-          <DashboardMatchTile active match={primaryMatch} onClick={() => onSelectMatch(primaryMatch.id)} teamsByCode={teamsByCode} />
-          {otherMatches.map((match) => (
-            <DashboardMatchTile key={match.id} match={match} onClick={() => onSelectMatch(match.id)} teamsByCode={teamsByCode} />
+
+        <div className="dashboard-metric-grid" aria-label="Match metrics">
+          {metricRows.map((metric) => (
+            <DashboardMetricLane key={metric.label} metric={metric} />
           ))}
         </div>
+
+        <div className="dashboard-data-strip">
+          <DashboardDataTile icon={Activity} label="Window" value={isLive ? `${boardSummary.live} live` : "Next up"} detail={`${boardSummary.upcoming} upcoming`} />
+          <DashboardDataTile icon={ListChecks} label="Events" value={eventCount || "0"} detail={eventCount ? "feed entries" : "awaiting feed"} />
+          <DashboardDataTile icon={Goal} label="Goals" value={`${primaryMatch.homeScore ?? 0}-${primaryMatch.awayScore ?? 0}`} detail={primaryMatch.status === "upcoming" ? "scheduled" : "scoreline"} />
+          <DashboardDataTile icon={CirclePlay} label="Highlights" value={highlight ? "Ready" : "Pending"} detail={highlight ? "official video" : "after full time"} />
+          <DashboardDataTile icon={CalendarDays} label="Kickoff" value={fullKickoff.short} detail={fullKickoff.long} />
+          <DashboardDataTile icon={Trophy} label="Feed" value={`${boardSummary.total}`} detail={`${boardSummary.finished} final`} />
+        </div>
       </section>
 
-      <section className="dashboard-panel dashboard-details" aria-label="Detailed match information">
-        <EventTimeline away={primaryMatch.away} events={primaryMatch.events.slice(0, 5)} home={primaryMatch.home} teamsByCode={teamsByCode} />
-        <StandingsPanel group={primaryMatch.group} rows={standingsRows.slice(0, 4)} teamsByCode={teamsByCode} />
+      <section className="dashboard-panel dashboard-facts-panel" aria-label="Detailed match facts">
+        <div className="dashboard-facts-column">
+          <div className="section-heading compact">
+            <div>
+              <h2>Match Facts</h2>
+              <p>{primaryMatch.group} · {primaryMatch.stage}</p>
+            </div>
+            <BarChart3 size={18} strokeWidth={2.2} />
+          </div>
+          <div className="dashboard-fact-grid">
+            <DashboardFact label="Venue" value={primaryMatch.venue} />
+            <DashboardFact label="Stage" value={primaryMatch.stage} />
+            <DashboardFact label="Kickoff" value={fullKickoff.full} />
+            <DashboardFact label="Status" value={primaryMatch.note || statusLabel(primaryMatch.status)} />
+          </div>
+          <DashboardComparison metrics={metricRows} home={home} away={away} />
+        </div>
+
+        <DashboardEventFeed match={primaryMatch} teamsByCode={teamsByCode} />
       </section>
+
+      <aside className="dashboard-side-stack" aria-label="Dashboard secondary data">
+        <section className="dashboard-panel dashboard-window" aria-label={isLive ? "Live matches" : "Upcoming match"}>
+          <div className="section-heading compact">
+            <div>
+              <h2>{isLive ? "Live & Next" : "Next Up"}</h2>
+              <p>{isLive ? "Dashboard Mode hides final results and future fixtures" : "Showing the next scheduled fixture while live window is quiet"}</p>
+            </div>
+            <Activity size={18} strokeWidth={2.2} />
+          </div>
+          <div className="dashboard-match-stack">
+            {visibleQueue.map((match, index) => (
+              <DashboardMatchTile key={match.id} active={index === 0} match={match} onClick={() => onSelectMatch(match.id)} teamsByCode={teamsByCode} />
+            ))}
+          </div>
+        </section>
+
+        <DashboardStandingsSnapshot group={primaryMatch.group} rows={standingsRows.slice(0, 4)} teamsByCode={teamsByCode} />
+        <DashboardHighlightStatus match={primaryMatch} teamsByCode={teamsByCode} />
+      </aside>
     </main>
   );
 }
 
-function DashboardTeam({ score, team }) {
+function DashboardTeamHero({ side, team }) {
   return (
-    <div className="dashboard-team">
+    <div className={`dashboard-team-hero ${side}`}>
       <TeamBadge team={team} />
-      <span>{team.name}</span>
-      <strong>{score ?? "-"}</strong>
+      <span>{team.code}</span>
+      <strong>{team.name}</strong>
     </div>
   );
 }
 
-function DashboardInfo({ label, value }) {
+function DashboardMetricLane({ metric }) {
   return (
-    <div className="dashboard-info">
+    <div className="dashboard-metric-lane">
+      <div className="dashboard-metric-head">
+        <strong>{metric.homeValue}</strong>
+        <span>{metric.label}</span>
+        <strong>{metric.awayValue}</strong>
+      </div>
+      <div className="dashboard-metric-bar" aria-label={`${metric.label}: ${metric.homeValue} to ${metric.awayValue}`}>
+        <span style={{ width: `${metric.homeShare}%` }} />
+        <span style={{ width: `${metric.awayShare}%` }} />
+      </div>
+      <div className="dashboard-metric-foot">
+        <span>{metric.homeCode}</span>
+        <small>{metric.detail}</small>
+        <span>{metric.awayCode}</span>
+      </div>
+    </div>
+  );
+}
+
+function DashboardDataTile({ detail, icon: Icon, label, value }) {
+  return (
+    <div className="dashboard-data-tile">
+      <Icon size={15} strokeWidth={2.2} />
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <small>{detail}</small>
+    </div>
+  );
+}
+
+function DashboardFact({ label, value }) {
+  return (
+    <div className="dashboard-fact">
       <span>{label}</span>
       <strong>{value}</strong>
     </div>
+  );
+}
+
+function DashboardComparison({ away, home, metrics }) {
+  return (
+    <div className="dashboard-comparison" aria-label={`${home.name} and ${away.name} comparison`}>
+      <div className="dashboard-comparison-title">
+        <span>{home.code}</span>
+        <strong>Team Comparison</strong>
+        <span>{away.code}</span>
+      </div>
+      {metrics.slice(1).map((metric) => (
+        <div className="dashboard-compare-row" key={`compare-${metric.label}`}>
+          <span>{metric.homeValue}</span>
+          <div>
+            <small>{metric.label}</small>
+            <div className="dashboard-metric-bar compact">
+              <span style={{ width: `${metric.homeShare}%` }} />
+              <span style={{ width: `${metric.awayShare}%` }} />
+            </div>
+          </div>
+          <span>{metric.awayValue}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DashboardEventFeed({ match, teamsByCode }) {
+  const visibleEvents = [...match.events].slice(-6).reverse();
+
+  return (
+    <section className="dashboard-event-feed" aria-label="Live events">
+      <div className="section-heading compact">
+        <div>
+          <h2>Live Events</h2>
+          <p>
+            {teamName(match.home, teamsByCode)} vs {teamName(match.away, teamsByCode)}
+          </p>
+        </div>
+        <Goal size={18} strokeWidth={2.2} />
+      </div>
+      <div className="dashboard-event-list">
+        {visibleEvents.length ? (
+          visibleEvents.map((event, index) => (
+            <div className="dashboard-event-row" key={`${event.minute}-${event.team}-${event.text}-${index}`}>
+              <span className={`event-type ${event.type}`} />
+              <strong>{event.minute}'</strong>
+              <span>{getTeam(event.team, teamsByCode).code}</span>
+              <p>{event.text}</p>
+            </div>
+          ))
+        ) : (
+          <div className="empty-state">No match events yet</div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function DashboardStandingsSnapshot({ group, rows, teamsByCode }) {
+  return (
+    <section className="dashboard-panel dashboard-table-panel" aria-label={`${group} group table`}>
+      <div className="section-heading compact">
+        <div>
+          <h2>Group Table</h2>
+          <p>{group}</p>
+        </div>
+        <Table2 size={18} strokeWidth={2.2} />
+      </div>
+      <table className="dashboard-standings-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Team</th>
+            <th>MP</th>
+            <th>GD</th>
+            <th>Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, index) => {
+            const item = row.teamData || getTeam(row.team, teamsByCode);
+            return (
+              <tr key={row.team}>
+                <td>{index + 1}</td>
+                <td>
+                  <TeamBadge team={item} compact />
+                  <span>{item.name}</span>
+                </td>
+                <td>{row.played}</td>
+                <td>{row.goalsFor - row.goalsAgainst}</td>
+                <td>{row.points}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
+function DashboardHighlightStatus({ match, teamsByCode }) {
+  const home = getTeam(match.home, teamsByCode);
+  const away = getTeam(match.away, teamsByCode);
+  const highlights = getMatchHighlights(match);
+  const resolved = highlights ? resolveYouTubeHighlight(highlights.url) : null;
+  const searchUrl = officialHighlightsSearchUrl(match, teamsByCode);
+
+  return (
+    <section className="dashboard-panel dashboard-highlight-status" aria-label={`${home.name} vs ${away.name} highlight status`}>
+      <div className="section-heading compact">
+        <div>
+          <h2>Official Highlights</h2>
+          <p>{resolved ? highlights.source : match.status === "finished" ? "Waiting for official FIFA upload" : "Available after full time"}</p>
+        </div>
+        <Video size={18} strokeWidth={2.2} />
+      </div>
+      <div className="dashboard-highlight-body">
+        <div>
+          <strong>{home.name} vs {away.name}</strong>
+          <span>{resolved ? "Video ready" : "Pending upload"}</span>
+        </div>
+        <a href={resolved?.watchUrl || searchUrl} target="_blank" rel="noreferrer">
+          {resolved ? "Watch" : "Search FIFA"}
+          <ExternalLink size={13} strokeWidth={2.2} />
+        </a>
+      </div>
+    </section>
   );
 }
 
@@ -528,15 +739,24 @@ function DashboardMatchTile({ active = false, match, onClick, teamsByCode }) {
 
   return (
     <button className={active ? "dashboard-match-tile active" : "dashboard-match-tile"} onClick={onClick} type="button">
-      <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
+      <div className="dashboard-tile-status">
+        <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
+        <span>{timeLabel}</span>
+      </div>
       <div className="dashboard-tile-main">
-        <span>{home.code}</span>
+        <span>
+          <TeamBadge team={home} compact />
+          {home.name}
+        </span>
         <strong>{match.homeScore ?? "-"} : {match.awayScore ?? "-"}</strong>
-        <span>{away.code}</span>
+        <span>
+          {away.name}
+          <TeamBadge team={away} compact />
+        </span>
       </div>
       <div className="dashboard-tile-meta">
         <span>{match.group}</span>
-        <span>{timeLabel}</span>
+        <span>{match.venue}</span>
       </div>
     </button>
   );
@@ -1159,6 +1379,103 @@ function formatFeaturedKickoff(kickoff) {
       minute: "2-digit",
     }).format(date),
   };
+}
+
+function formatDashboardKickoff(kickoff) {
+  const date = new Date(kickoff);
+  return {
+    short: new Intl.DateTimeFormat(undefined, {
+      day: "numeric",
+      month: "short",
+    }).format(date),
+    long: new Intl.DateTimeFormat(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZoneName: "short",
+    }).format(date),
+    full: new Intl.DateTimeFormat(undefined, {
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      month: "short",
+      timeZoneName: "short",
+      weekday: "short",
+    }).format(date),
+  };
+}
+
+function buildDashboardMetricRows(match, home, away) {
+  const possession = getPossessionSplit(match);
+  const shotShare = splitShare(match.stats.shotsHome, match.stats.shotsAway);
+  const xgShare = splitShare(match.stats.xgHome, match.stats.xgAway);
+  const pressureHome = Math.round(possession.homeShare * 0.45 + shotShare.homeShare * 0.35 + xgShare.homeShare * 0.2);
+  const pressureAway = 100 - pressureHome;
+
+  return [
+    {
+      label: "Possession",
+      homeCode: home.code,
+      awayCode: away.code,
+      homeValue: `${possession.homeShare}%`,
+      awayValue: `${possession.awayShare}%`,
+      homeShare: possession.homeShare,
+      awayShare: possession.awayShare,
+      detail: "territory split",
+    },
+    {
+      label: "Shots",
+      homeCode: home.code,
+      awayCode: away.code,
+      homeValue: `${match.stats.shotsHome}`,
+      awayValue: `${match.stats.shotsAway}`,
+      homeShare: shotShare.homeShare,
+      awayShare: shotShare.awayShare,
+      detail: "total attempts",
+    },
+    {
+      label: "xG",
+      homeCode: home.code,
+      awayCode: away.code,
+      homeValue: match.stats.xgHome.toFixed(1),
+      awayValue: match.stats.xgAway.toFixed(1),
+      homeShare: xgShare.homeShare,
+      awayShare: xgShare.awayShare,
+      detail: "expected goals",
+    },
+    {
+      label: "Pressure",
+      homeCode: home.code,
+      awayCode: away.code,
+      homeValue: `${pressureHome}`,
+      awayValue: `${pressureAway}`,
+      homeShare: pressureHome,
+      awayShare: pressureAway,
+      detail: "derived index",
+    },
+  ];
+}
+
+function getPossessionSplit(match) {
+  const homeShare = Number(match.stats.possessionHome);
+  if (!Number.isFinite(homeShare) || homeShare <= 0) {
+    return { homeShare: 50, awayShare: 50 };
+  }
+
+  const safeHome = clampPercent(homeShare);
+  return { homeShare: safeHome, awayShare: 100 - safeHome };
+}
+
+function splitShare(homeValue, awayValue) {
+  const homeNumber = Number(homeValue) || 0;
+  const awayNumber = Number(awayValue) || 0;
+  const total = homeNumber + awayNumber;
+  if (total <= 0) return { homeShare: 50, awayShare: 50 };
+  const homeShare = clampPercent(Math.round((homeNumber / total) * 100));
+  return { homeShare, awayShare: 100 - homeShare };
+}
+
+function clampPercent(value) {
+  return Math.min(100, Math.max(0, Math.round(value)));
 }
 
 function flagEmojiForTeam(code) {
