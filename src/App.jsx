@@ -262,7 +262,9 @@ function App() {
                   onClick={() => setActiveTab(tab.id)}
                   role="tab"
                   type="button"
+                  aria-label={tab.label}
                   aria-selected={activeTab === tab.id}
+                  title={tab.label}
                 >
                   <Icon size={16} strokeWidth={2.2} />
                   <span>{tab.label}</span>
