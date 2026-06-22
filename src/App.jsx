@@ -398,8 +398,15 @@ function Header({
         >
           <RefreshCw size={18} />
         </button>
-        <button className="icon-button fullscreen-button" onClick={onToggleFullscreen} type="button" aria-label={dashboardLabel} title={dashboardLabel}>
-          <DashboardIcon size={18} />
+        <button
+          className={isFullscreen ? "icon-button fullscreen-button dashboard-toggle active" : "icon-button fullscreen-button dashboard-toggle"}
+          onClick={onToggleFullscreen}
+          type="button"
+          aria-label={dashboardLabel}
+          aria-pressed={isFullscreen}
+          title={dashboardLabel}
+        >
+          <DashboardIcon size={20} />
         </button>
       </div>
 

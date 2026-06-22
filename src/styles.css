@@ -92,6 +92,10 @@ button {
 }
 
 .dashboard-fullscreen .top-bar {
+  border-color: rgba(87, 216, 255, 0.34);
+  box-shadow:
+    0 18px 58px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(87, 216, 255, 0.08);
   margin-bottom: 0;
   max-width: none;
   position: static;
@@ -265,6 +269,7 @@ h1 {
   justify-content: center;
   order: 1;
   padding: 0;
+  position: relative;
   width: 42px;
 }
 
@@ -281,6 +286,49 @@ h1 {
 
 .fullscreen-button {
   min-width: 42px;
+}
+
+.dashboard-toggle {
+  background:
+    linear-gradient(135deg, rgba(35, 219, 143, 0.3), rgba(87, 216, 255, 0.22)),
+    rgba(255, 255, 255, 0.08);
+  border-color: rgba(87, 216, 255, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(87, 216, 255, 0.12),
+    0 14px 32px rgba(35, 219, 143, 0.12);
+  color: var(--cyan);
+  min-height: 44px;
+  width: 52px;
+}
+
+.dashboard-toggle svg {
+  stroke-width: 2.45;
+}
+
+.dashboard-toggle::after {
+  background: var(--green);
+  border: 2px solid #071411;
+  border-radius: 999px;
+  content: "";
+  height: 9px;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 9px;
+}
+
+.dashboard-toggle.active {
+  background: linear-gradient(135deg, var(--green), var(--cyan));
+  border-color: transparent;
+  box-shadow:
+    0 0 0 1px rgba(245, 251, 248, 0.24),
+    0 18px 42px rgba(87, 216, 255, 0.24);
+  color: #04110e;
+}
+
+.dashboard-toggle.active::after {
+  background: #04110e;
+  border-color: rgba(245, 251, 248, 0.72);
 }
 
 .icon-button.refresh.spinning svg {
@@ -429,6 +477,20 @@ h1 {
   box-shadow: var(--shadow);
   min-height: 0;
   min-width: 0;
+}
+
+.dashboard-fullscreen .dashboard-stage,
+.dashboard-fullscreen .dashboard-panel {
+  border-color: rgba(87, 216, 255, 0.23);
+  box-shadow:
+    0 20px 56px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(245, 251, 248, 0.04);
+}
+
+.dashboard-fullscreen .dashboard-stage {
+  background:
+    linear-gradient(135deg, rgba(35, 219, 143, 0.08), rgba(87, 216, 255, 0.035)),
+    rgba(8, 21, 18, 0.9);
 }
 
 .dashboard-stage {
@@ -1849,6 +1911,16 @@ h1 {
     justify-content: center;
     padding: 0;
     width: 40px;
+  }
+
+  .header-actions .dashboard-toggle {
+    flex-basis: 48px;
+    width: 48px;
+  }
+
+  .dashboard-toggle::after {
+    right: 7px;
+    top: 7px;
   }
 
   .dashboard-stage,
