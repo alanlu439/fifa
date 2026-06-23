@@ -25,10 +25,9 @@ const TEAM_ALIASES = {
 };
 
 async function main() {
-  const apiKey = process.env.YOUTUBE_API_KEY;
+  const apiKey = process.env.YOUTUBE_API_KEY || "";
   if (!apiKey) {
-    console.log("YOUTUBE_API_KEY is not set; skipping automatic highlight search.");
-    return;
+    console.log("YOUTUBE_API_KEY is not set; adding official FIFA search links for unlinked finals.");
   }
 
   const now = new Date();
@@ -40,8 +39,11 @@ async function main() {
   const searchableMatches = matches
     .filter((match) => match.status === "finished")
     .sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff))
-    .filter((match) => !findExistingHighlight(index.matches, match))
-    .filter((match) => shouldSearch(index.checked, match, now, retryHours));
+    .filter((match) => {
+      const existing = findExistingHighlight(index.matches, match);
+      return !existing || Boolean(apiKey && existing.fallbackSearch);
+    })
+    .filter((match) => (apiKey ? shouldSearch(index.checked, match, now, retryHours) : true));
   const finishedMatches = limitMatches(searchableMatches, maxMatches);
 
   if (!finishedMatches.length) {
@@ -51,7 +53,7 @@ async function main() {
 
   let changed = false;
   for (const match of finishedMatches) {
-    const result = await searchHighlight(match, channel, apiKey, now);
+    const result = apiKey ? await searchHighlight(match, channel, apiKey, now) : null;
     const key = matchKey(match);
     const idKey = String(match.id);
 
@@ -63,6 +65,18 @@ async function main() {
       changed = true;
       console.log(`Added highlight for ${matchLabel(match)}: ${result.title}`);
     } else {
+      const fallback = fallbackHighlightSearch(match, channel, now);
+      index.matches[idKey] = fallback;
+      index.matches[key] = { ...fallback, aliasFor: idKey };
+      delete index.checked[idKey];
+      delete index.checked[key];
+
+      if (!apiKey) {
+        changed = true;
+        console.log(`Added FIFA search link for ${matchLabel(match)}.`);
+        continue;
+      }
+
       const previous = index.checked[idKey] || index.checked[key] || {};
       const checked = {
         attempts: Number(previous.attempts || 0) + 1,
@@ -73,7 +87,7 @@ async function main() {
       index.checked[idKey] = checked;
       index.checked[key] = { ...checked, aliasFor: idKey };
       changed = true;
-      console.log(`No highlight found for ${matchLabel(match)}.`);
+      console.log(`No direct highlight found for ${matchLabel(match)}; added FIFA search link.`);
     }
   }
 
@@ -83,7 +97,7 @@ async function main() {
   }
 
   index.schemaVersion = 1;
-  index.source = "Official FIFA YouTube highlights";
+  index.source = "Official FIFA YouTube highlights and search links";
   index.channelHandle = channel.handle;
   index.channelId = channel.id;
   index.channelTitle = channel.title;
@@ -117,6 +131,10 @@ async function loadMatches() {
 async function resolveChannel(apiKey) {
   const configuredId = process.env.YOUTUBE_CHANNEL_ID;
   const handle = process.env.YOUTUBE_CHANNEL_HANDLE || DEFAULT_CHANNEL_HANDLE;
+  if (!apiKey) {
+    return { id: configuredId || "", handle, title: process.env.YOUTUBE_CHANNEL_TITLE || "FIFA" };
+  }
+
   if (configuredId) {
     return { id: configuredId, handle, title: process.env.YOUTUBE_CHANNEL_TITLE || "FIFA" };
   }
@@ -132,6 +150,25 @@ async function resolveChannel(apiKey) {
     handle,
     id: channel.id,
     title: channel.snippet?.title || "FIFA",
+  };
+}
+
+function fallbackHighlightSearch(match, channel, now) {
+  const query = buildSearchQuery(match);
+  return {
+    matchId: String(match.id),
+    matchKey: matchKey(match),
+    home: String(match.home),
+    away: String(match.away),
+    kickoff: String(match.kickoff),
+    url: youtubeChannelSearchUrl(channel.handle, query),
+    title: `${matchLabel(match)} official highlights`,
+    source: "Official FIFA YouTube search",
+    channelTitle: channel.title || "FIFA",
+    thumbnail: "",
+    fallbackSearch: true,
+    query,
+    discoveredAt: now.toISOString(),
   };
 }
 
@@ -176,6 +213,13 @@ async function searchHighlight(match, channel, apiKey, now) {
       "",
     discoveredAt: now.toISOString(),
   };
+}
+
+function youtubeChannelSearchUrl(handle, query) {
+  const normalizedHandle = String(handle || DEFAULT_CHANNEL_HANDLE).startsWith("@")
+    ? String(handle || DEFAULT_CHANNEL_HANDLE)
+    : `@${handle}`;
+  return `https://www.youtube.com/${normalizedHandle}/search?query=${encodeURIComponent(query)}`;
 }
 
 function buildSearchQuery(match) {

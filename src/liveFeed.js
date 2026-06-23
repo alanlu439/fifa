@@ -339,6 +339,7 @@ function normalizeHighlights(match) {
         match.video_source ||
         "Official YouTube highlights"
     ),
+    fallbackSearch: Boolean(highlights.fallbackSearch || match.highlightsFallbackSearch || match.highlights_fallback_search),
   };
 }
 
@@ -368,6 +369,10 @@ function normalizeIndexedHighlight(highlight) {
     url: String(source.url),
     title: String(source.title || "Official match highlights"),
     source: String(source.source || "Official FIFA YouTube highlights"),
+    fallbackSearch: Boolean(source.fallbackSearch),
+    channelTitle: source.channelTitle ? String(source.channelTitle) : "",
+    publishedAt: source.publishedAt ? String(source.publishedAt) : "",
+    thumbnail: source.thumbnail ? String(source.thumbnail) : "",
   };
 }
 

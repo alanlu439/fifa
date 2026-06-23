@@ -801,26 +801,24 @@ function DashboardStandingsSnapshot({ group, rows, teamsByCode }) {
 function DashboardHighlightStatus({ match, teamsByCode }) {
   const home = getTeam(match.home, teamsByCode);
   const away = getTeam(match.away, teamsByCode);
-  const highlights = getMatchHighlights(match);
-  const resolved = highlights ? resolveYouTubeHighlight(highlights.url) : null;
-  const searchUrl = officialHighlightsSearchUrl(match, teamsByCode);
+  const highlightState = getHighlightState(match, teamsByCode);
 
   return (
     <section className="dashboard-panel dashboard-highlight-status" aria-label={`${home.name} vs ${away.name} highlight status`}>
       <div className="section-heading compact">
         <div>
           <h2>Official Highlights</h2>
-          <p>{resolved ? highlights.source : match.status === "finished" ? "Waiting for official FIFA upload" : "Available after full time"}</p>
+          <p>{highlightState.caption}</p>
         </div>
         <Video size={18} strokeWidth={2.2} />
       </div>
       <div className="dashboard-highlight-body">
         <div>
           <strong>{home.name} vs {away.name}</strong>
-          <span>{resolved ? "Video ready" : "Pending upload"}</span>
+          <span>{highlightState.statusText}</span>
         </div>
-        <a href={resolved?.watchUrl || searchUrl} target="_blank" rel="noreferrer">
-          {resolved ? "Watch" : "Search FIFA"}
+        <a href={highlightState.href} target="_blank" rel="noreferrer">
+          {highlightState.shortAction}
           <ExternalLink size={13} strokeWidth={2.2} />
         </a>
       </div>
@@ -1078,11 +1076,7 @@ function EventTimeline({ away, events, home, teamsByCode }) {
 function MatchHighlights({ compact = false, match, teamsByCode }) {
   const home = getTeam(match.home, teamsByCode);
   const away = getTeam(match.away, teamsByCode);
-  const highlights = getMatchHighlights(match);
-  const resolved = highlights ? resolveYouTubeHighlight(highlights.url) : null;
-  const searchUrl = officialHighlightsSearchUrl(match, teamsByCode);
-  const title = highlights?.title || `${home.name} vs ${away.name} official highlights`;
-  const placeholder = match.status === "finished" ? "Official highlights pending" : "Highlights publish after full time";
+  const highlightState = getHighlightState(match, teamsByCode);
 
   return (
     <section className={compact ? "match-highlights compact" : "match-highlights"} aria-label={`${home.name} vs ${away.name} official highlights`}>
@@ -1092,28 +1086,28 @@ function MatchHighlights({ compact = false, match, teamsByCode }) {
             <CirclePlay size={15} strokeWidth={2.2} />
             Official highlights
           </h3>
-          <p>{resolved ? highlights.source : placeholder}</p>
+          <p>{highlightState.caption}</p>
         </div>
-        <a href={resolved?.watchUrl || searchUrl} target="_blank" rel="noreferrer">
-          {resolved ? "Watch on YouTube" : "Search FIFA"}
+        <a href={highlightState.href} target="_blank" rel="noreferrer">
+          {highlightState.action}
           <ExternalLink size={13} strokeWidth={2.2} />
         </a>
       </div>
 
-      {resolved ? (
+      {highlightState.resolved ? (
         <div className="highlight-frame">
           <iframe
             allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
             referrerPolicy="strict-origin-when-cross-origin"
             sandbox="allow-same-origin allow-scripts allow-presentation allow-popups"
-            src={resolved.embedUrl}
-            title={title}
+            src={highlightState.resolved.embedUrl}
+            title={highlightState.title}
           />
         </div>
       ) : (
         <div className="highlight-placeholder">
           <CirclePlay size={20} strokeWidth={1.9} />
-          <span>{placeholder}</span>
+          <span>{highlightState.placeholder}</span>
         </div>
       )}
     </section>
@@ -1202,8 +1196,10 @@ function PastEventsView({ matches, onSelectMatch, teamsByCode }) {
 function PastVideosLibrary({ matches, onSelectMatch, teamsByCode }) {
   if (!matches.length) return null;
 
-  const publishedCount = matches.filter((match) => getMatchHighlights(match)).length;
-  const pendingCount = matches.length - publishedCount;
+  const highlightStates = matches.map((match) => getHighlightState(match, teamsByCode));
+  const publishedCount = highlightStates.filter((state) => state.resolved).length;
+  const linkedCount = highlightStates.filter((state) => state.autoSearch).length;
+  const pendingCount = matches.length - publishedCount - linkedCount;
 
   return (
     <section className="past-video-library" aria-label="All past match videos">
@@ -1211,7 +1207,7 @@ function PastVideosLibrary({ matches, onSelectMatch, teamsByCode }) {
         <div>
           <h2>Past Videos</h2>
           <p>
-            {publishedCount} published, {pendingCount} waiting for official FIFA upload
+            {publishedCount} videos, {linkedCount} auto-added FIFA links{pendingCount ? `, ${pendingCount} waiting for official FIFA upload` : ""}
           </p>
         </div>
         <CirclePlay size={18} strokeWidth={2.2} />
@@ -1377,6 +1373,58 @@ function getBoardSummary(matches) {
 
 function getMatchHighlights(match) {
   return match.highlights || null;
+}
+
+function getHighlightState(match, teamsByCode) {
+  const home = getTeam(match.home, teamsByCode);
+  const away = getTeam(match.away, teamsByCode);
+  const highlights = getMatchHighlights(match);
+  const resolved = highlights ? resolveYouTubeHighlight(highlights.url) : null;
+  const searchUrl = officialHighlightsSearchUrl(match, teamsByCode);
+  const autoSearch = Boolean(highlights?.fallbackSearch && !resolved);
+  const href = resolved?.watchUrl || highlights?.url || searchUrl;
+  const pendingText = match.status === "finished" ? "Official highlights pending" : "Highlights publish after full time";
+  const title = highlights?.title || `${home.name} vs ${away.name} official highlights`;
+
+  if (resolved) {
+    return {
+      action: "Watch on YouTube",
+      autoSearch: false,
+      caption: highlights.source,
+      href,
+      placeholder: "Official highlight video ready",
+      resolved,
+      shortAction: "Watch",
+      statusText: "Video ready",
+      title,
+    };
+  }
+
+  if (autoSearch) {
+    return {
+      action: "Open FIFA search",
+      autoSearch: true,
+      caption: "Official FIFA search link auto-added",
+      href,
+      placeholder: "Official FIFA link ready",
+      resolved: null,
+      shortAction: "Open search",
+      statusText: "FIFA link ready",
+      title,
+    };
+  }
+
+  return {
+    action: "Search FIFA",
+    autoSearch: false,
+    caption: pendingText,
+    href,
+    placeholder: pendingText,
+    resolved: null,
+    shortAction: "Search FIFA",
+    statusText: match.status === "finished" ? "Pending upload" : "Available after full time",
+    title,
+  };
 }
 
 function officialHighlightsSearchUrl(match, teamsByCode) {
