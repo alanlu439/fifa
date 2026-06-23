@@ -106,7 +106,7 @@ button {
   grid-template-areas:
     "brand master actions"
     "info info info";
-  grid-template-columns: minmax(250px, 1fr) minmax(320px, 430px) auto;
+  grid-template-columns: minmax(250px, 1fr) minmax(380px, 520px) auto;
   grid-template-rows: auto auto;
 }
 
@@ -118,16 +118,110 @@ button {
   grid-area: actions;
 }
 
-.dashboard-master-clock {
+.clock-chip.dashboard-master-clock {
+  align-items: center;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.035)),
+    linear-gradient(135deg, rgba(87, 216, 255, 0.18), rgba(35, 219, 143, 0.06)),
+    rgba(3, 18, 18, 0.82);
+  border-color: rgba(137, 236, 255, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.13),
+    inset 0 -1px 0 rgba(35, 219, 143, 0.08),
+    0 18px 42px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(87, 216, 255, 0.08);
   grid-area: master;
   grid-template-areas:
-    "icon title"
-    "icon time"
-    "icon zone";
+    "label time meta";
+  grid-template-columns: auto minmax(0, 1fr) auto;
   justify-self: center;
-  min-height: 68px;
+  min-height: 74px;
   order: 0;
-  width: min(100%, 430px);
+  overflow: hidden;
+  padding: 11px 16px;
+  position: relative;
+  width: min(100%, 520px);
+}
+
+.clock-chip.dashboard-master-clock::before {
+  background:
+    linear-gradient(90deg, rgba(87, 216, 255, 0.24), transparent 30%, transparent 70%, rgba(35, 219, 143, 0.18)),
+    radial-gradient(circle at 50% -40%, rgba(245, 251, 248, 0.2), transparent 48%);
+  content: "";
+  inset: 0;
+  opacity: 0.76;
+  pointer-events: none;
+  position: absolute;
+}
+
+.clock-chip.dashboard-master-clock > * {
+  position: relative;
+  z-index: 1;
+}
+
+.master-clock-label {
+  align-items: center;
+  border-right: 1px solid rgba(186, 216, 207, 0.18);
+  color: var(--muted);
+  display: flex;
+  gap: 8px;
+  grid-area: label;
+  min-width: 0;
+  padding-right: 14px;
+}
+
+.master-clock-label svg {
+  color: var(--cyan);
+  flex: 0 0 auto;
+}
+
+.master-clock-label span {
+  font-size: 11px;
+  font-weight: 860;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.clock-chip.dashboard-master-clock .clock-time {
+  font-size: clamp(30px, 3.2vw, 44px);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  justify-self: center;
+  text-shadow: 0 10px 26px rgba(87, 216, 255, 0.16);
+}
+
+.master-clock-meta {
+  border-left: 1px solid rgba(186, 216, 207, 0.18);
+  display: grid;
+  gap: 5px;
+  grid-area: meta;
+  justify-items: end;
+  min-width: 0;
+  padding-left: 14px;
+}
+
+.master-clock-date {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 820;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.master-clock-zone {
+  background: rgba(87, 216, 255, 0.11);
+  border: 1px solid rgba(87, 216, 255, 0.24);
+  border-radius: 999px;
+  color: var(--cyan);
+  font-size: 10px;
+  font-weight: 860;
+  line-height: 1;
+  padding: 5px 8px;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .dashboard-header-mode {
@@ -2753,9 +2847,9 @@ h1 {
     min-width: 0;
   }
 
-  .dashboard-master-clock {
+  .clock-chip.dashboard-master-clock {
     justify-self: center;
-    width: min(100%, 430px);
+    width: min(100%, 520px);
   }
 
   .dashboard-header-match {
@@ -3091,6 +3185,42 @@ h1 {
 
   .clock-zone {
     font-size: 10px;
+  }
+
+  .clock-chip.dashboard-master-clock {
+    grid-template-areas:
+      "label meta"
+      "time time";
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 84px;
+    padding: 11px 12px;
+    row-gap: 9px;
+    width: 100%;
+  }
+
+  .clock-chip.dashboard-master-clock .clock-time {
+    font-size: clamp(28px, 10.5vw, 38px);
+    justify-self: center;
+  }
+
+  .master-clock-label {
+    border-right: 0;
+    padding-right: 0;
+  }
+
+  .master-clock-label span {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+
+  .master-clock-meta {
+    border-left: 0;
+    gap: 4px;
+    padding-left: 0;
+  }
+
+  .master-clock-date {
+    font-size: 11px;
   }
 
   .header-actions .icon-button {

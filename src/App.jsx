@@ -402,10 +402,15 @@ function Header({
 
       {isFullscreen && (
         <div className="clock-chip dashboard-master-clock" aria-label={`Master clock ${currentClock.label}`}>
-          <Clock3 size={22} strokeWidth={2.2} />
-          <span className="clock-title">Master clock</span>
+          <div className="master-clock-label">
+            <Clock3 size={21} strokeWidth={2.2} />
+            <span>Master clock</span>
+          </div>
           <span className="clock-time">{currentClock.time}</span>
-          <span className="clock-zone">{currentClock.zone}</span>
+          <div className="master-clock-meta">
+            <span className="master-clock-date">{currentClock.date}</span>
+            <span className="master-clock-zone">{currentClock.zone}</span>
+          </div>
         </div>
       )}
 
@@ -1508,6 +1513,11 @@ function formatClockParts(date) {
     second: "2-digit",
     timeZoneName: "short",
   }).formatToParts(date);
+  const dateLabel = new Intl.DateTimeFormat(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "2-digit",
+  }).format(date);
   const zone = parts.find((part) => part.type === "timeZoneName")?.value || "";
   const time = parts
     .filter((part) => part.type !== "timeZoneName")
@@ -1517,6 +1527,7 @@ function formatClockParts(date) {
     .trim();
 
   return {
+    date: dateLabel,
     label: zone ? `${time} ${zone}` : time,
     time,
     zone,
