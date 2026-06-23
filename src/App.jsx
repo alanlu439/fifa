@@ -12,6 +12,7 @@ import {
   History,
   LayoutDashboard,
   Minimize2,
+  Newspaper,
   Radio,
   RefreshCw,
   Search,
@@ -21,7 +22,7 @@ import {
   Video,
 } from "lucide-react";
 import { standings as sampleStandings, statusLabel, teams } from "./data.js";
-import { collectTeamsFromMatches, fetchLiveData, freshSampleMatches, getFeedUrl } from "./liveFeed.js";
+import { collectTeamsFromMatches, fetchLiveData, fetchWorldCupNews, freshNewsItems, freshSampleMatches, getFeedUrl } from "./liveFeed.js";
 
 const tabs = [
   { id: "live", label: "Live", icon: Radio },
@@ -106,6 +107,10 @@ function App() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [newsItems, setNewsItems] = useState(() => freshNewsItems());
+  const [newsSource, setNewsSource] = useState("Official links");
+  const [newsUpdatedAt, setNewsUpdatedAt] = useState(new Date());
+  const [newsError, setNewsError] = useState("");
   const [source, setSource] = useState(getFeedUrl() ? "External JSON feed" : "Loading live feed");
   const [feedError, setFeedError] = useState("");
   const [fullscreenElementActive, setFullscreenElementActive] = useState(false);
@@ -151,19 +156,17 @@ function App() {
   useEffect(() => {
     const controller = new AbortController();
 
-    async function loadFeed() {
-      await loadLiveFeed(controller.signal);
-    }
-
-    loadFeed();
+    loadLiveFeed(controller.signal);
+    loadNewsFeed(controller.signal);
     return () => controller.abort();
   }, []);
 
   useEffect(() => {
     if (!autoRefresh) return undefined;
 
-    const interval = window.setInterval(async () => {
-      await loadLiveFeed();
+    const interval = window.setInterval(() => {
+      loadLiveFeed();
+      loadNewsFeed();
     }, REFRESH_INTERVAL_MS);
 
     return () => window.clearInterval(interval);
@@ -185,6 +188,7 @@ function App() {
     setIsRefreshing(true);
     try {
       const data = await fetchLiveData(signal);
+      if (signal?.aborted) return;
       if (!data.matches.length) throw new Error("Real feed returned no matches for the current window");
       const nextTeams = { ...teams, ...data.teams, ...collectTeamsFromMatches(data.matches) };
       setMatches(data.matches);
@@ -197,7 +201,7 @@ function App() {
       setFeedError("");
       setLastUpdated(new Date());
     } catch (error) {
-      if (error.name === "AbortError") return;
+      if (error.name === "AbortError" || signal?.aborted) return;
       const fallbackMatches = freshSampleMatches();
       setMatches(fallbackMatches);
       setGroupTables(sampleStandings);
@@ -211,8 +215,26 @@ function App() {
     }
   }
 
+  async function loadNewsFeed(signal) {
+    try {
+      const data = await fetchWorldCupNews(signal);
+      if (signal?.aborted) return;
+      setNewsItems(data.items);
+      setNewsSource(data.source);
+      setNewsError("");
+      setNewsUpdatedAt(new Date());
+    } catch (error) {
+      if (error.name === "AbortError" || signal?.aborted) return;
+      setNewsItems(freshNewsItems());
+      setNewsSource("Official links");
+      setNewsError(error.message || "News feed unavailable");
+      setNewsUpdatedAt(new Date());
+    }
+  }
+
   function refreshNow() {
     loadLiveFeed();
+    loadNewsFeed();
   }
 
   function selectMatch(matchId) {
@@ -263,6 +285,10 @@ function App() {
           boardSummary={boardSummary}
           matches={dashboardMatches}
           mode={dashboardMode}
+          newsError={newsError}
+          newsItems={newsItems}
+          newsSource={newsSource}
+          newsUpdatedAt={newsUpdatedAt}
           onSelectMatch={selectMatch}
           primaryMatch={dashboardPrimaryMatch}
           standingsRows={dashboardStandings}
@@ -322,6 +348,10 @@ function App() {
           <LiveBoard
             boardSummary={boardSummary}
             matches={filteredMatches}
+            newsError={newsError}
+            newsItems={newsItems}
+            newsSource={newsSource}
+            newsUpdatedAt={newsUpdatedAt}
             selectedMatch={selectedMatch}
             selectedMatchId={selectedMatch?.id}
             standingsRows={visibleStandings}
@@ -480,7 +510,7 @@ function Header({
   );
 }
 
-function DashboardMode({ boardSummary, matches, mode, onSelectMatch, primaryMatch, standingsRows, teamsByCode }) {
+function DashboardMode({ boardSummary, matches, mode, newsError, newsItems, newsSource, newsUpdatedAt, onSelectMatch, primaryMatch, standingsRows, teamsByCode }) {
   if (!primaryMatch) {
     return (
       <main className="dashboard-board empty-board">
@@ -590,6 +620,7 @@ function DashboardMode({ boardSummary, matches, mode, onSelectMatch, primaryMatc
           </div>
         </section>
 
+        <NewsPanel dashboard error={newsError} items={newsItems} source={newsSource} updatedAt={newsUpdatedAt} />
         <DashboardStandingsSnapshot group={primaryMatch.group} rows={standingsRows.slice(0, 4)} teamsByCode={teamsByCode} />
         <DashboardHighlightStatus match={primaryMatch} teamsByCode={teamsByCode} />
       </aside>
@@ -861,7 +892,53 @@ function DashboardMatchTile({ active = false, match, onClick, teamsByCode }) {
   );
 }
 
-function LiveBoard({ boardSummary, matches, onSelectMatch, selectedMatch, selectedMatchId, standingsRows, teamsByCode }) {
+function NewsPanel({ dashboard = false, error, items, source, updatedAt }) {
+  const visibleItems = items.slice(0, dashboard ? 5 : 4);
+  const updatedLabel = updatedAt ? formatNewsUpdatedAt(updatedAt) : "syncing";
+
+  return (
+    <section className={dashboard ? "dashboard-panel news-panel dashboard-news-panel" : "rail-panel news-panel"} aria-label="World Cup news">
+      <div className="section-heading compact">
+        <div>
+          <h2>Newswire</h2>
+          <p>{error ? "Official backup links" : `${source} · updated ${updatedLabel}`}</p>
+        </div>
+        <Newspaper size={18} strokeWidth={2.2} />
+      </div>
+      <div className="news-list">
+        {visibleItems.map((item, index) => (
+          <NewsCard item={item} key={item.id || `${item.title}-${index}`} lead={index === 0} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function NewsCard({ item, lead }) {
+  return (
+    <article className={lead ? "news-card lead" : "news-card"}>
+      <a className={item.image ? "news-thumb" : "news-thumb placeholder"} href={item.url} target="_blank" rel="noreferrer" aria-label={item.title}>
+        {item.image ? <img alt="" loading="lazy" src={item.image} /> : <Newspaper size={18} strokeWidth={2.1} />}
+      </a>
+      <div className="news-card-body">
+        <div className="news-meta">
+          <span>{item.tag}</span>
+          <span>{formatNewsTime(item.published)}</span>
+        </div>
+        <h3>
+          <a href={item.url} target="_blank" rel="noreferrer">{item.title}</a>
+        </h3>
+        {item.summary && <p>{item.summary}</p>}
+        <a className="news-link" href={item.url} target="_blank" rel="noreferrer">
+          {item.source}
+          <ExternalLink size={12} strokeWidth={2.2} />
+        </a>
+      </div>
+    </article>
+  );
+}
+
+function LiveBoard({ boardSummary, matches, newsError, newsItems, newsSource, newsUpdatedAt, onSelectMatch, selectedMatch, selectedMatchId, standingsRows, teamsByCode }) {
   if (!selectedMatch) {
     return (
       <section className="wide-panel empty-board">
@@ -901,6 +978,7 @@ function LiveBoard({ boardSummary, matches, onSelectMatch, selectedMatch, select
       </section>
 
       <aside className="side-rail" aria-label="Match insights">
+        <NewsPanel error={newsError} items={newsItems} source={newsSource} updatedAt={newsUpdatedAt} />
         <StandingsPanel group={selectedMatch.group} rows={standingsRows} teamsByCode={teamsByCode} />
         <EventTimeline
           away={selectedMatch.away}
@@ -1504,6 +1582,29 @@ function formatUpdateAge(milliseconds) {
   if (minutes < 60) return `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
   return `${hours}h ago`;
+}
+
+function formatNewsUpdatedAt(date) {
+  return new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(date);
+}
+
+function formatNewsTime(value) {
+  if (!value) return "Live";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Live";
+  const minutes = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
+  if (minutes < 1) return "Now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return new Intl.DateTimeFormat(undefined, {
+    day: "numeric",
+    month: "short",
+  }).format(date);
 }
 
 function formatClockParts(date) {

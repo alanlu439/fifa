@@ -4,6 +4,7 @@ const requiredKeys = ["id", "home", "away", "status", "group", "venue", "kickoff
 const ESPN_SCOREBOARD_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
 const ESPN_STANDINGS_URL = "https://site.web.api.espn.com/apis/v2/sports/soccer/fifa.world/standings";
 const ESPN_SUMMARY_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary";
+const ESPN_NEWS_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/news";
 const WORLD_CUP_2026_START = "2026-06-11T00:00:00";
 const HIGHLIGHTS_INDEX_PATH = "highlights-index.json";
 const summaryEventsCache = new Map();
@@ -138,12 +139,79 @@ export function freshSampleMatches() {
   }));
 }
 
+export function freshNewsItems() {
+  return [
+    {
+      id: "fifa-official-news",
+      title: "Official FIFA World Cup 2026 news",
+      summary: "Follow FIFA's tournament hub for confirmed match reports, team updates, venues and competition announcements.",
+      url: "https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/canadamexicousa2026",
+      source: "FIFA",
+      published: "",
+      image: "",
+      tag: "Official",
+    },
+    {
+      id: "fifa-match-centre",
+      title: "World Cup match centre",
+      summary: "Open the official competition center for fixtures, standings, match pages and knockout-stage updates.",
+      url: "https://www.fifa.com/fifaplus/en/match-centre/competition/17",
+      source: "FIFA",
+      published: "",
+      image: "",
+      tag: "Match center",
+    },
+    {
+      id: "fifa-youtube-highlights",
+      title: "Official FIFA video channel",
+      summary: "Highlights and tournament video are published on FIFA's official YouTube channel after matches finish.",
+      url: "https://www.youtube.com/@fifa",
+      source: "FIFA",
+      published: "",
+      image: "",
+      tag: "Video",
+    },
+  ];
+}
+
+export async function fetchWorldCupNews(signal) {
+  const payload = await fetchJson(`${ESPN_NEWS_URL}?limit=8`, signal);
+  const items = (payload.articles || []).map(normalizeNewsArticle).filter(Boolean).slice(0, 8);
+  if (!items.length) throw new Error("News feed returned no headlines");
+
+  return {
+    items,
+    source: payload.header || "FIFA World Cup News",
+  };
+}
+
 export function collectTeamsFromMatches(matches) {
   return matches.reduce((acc, match) => {
     if (match.homeTeam) acc[match.home] = match.homeTeam;
     if (match.awayTeam) acc[match.away] = match.awayTeam;
     return acc;
   }, {});
+}
+
+function normalizeNewsArticle(article) {
+  const url = article.links?.web?.href || article.link || "";
+  const title = article.headline || article.title || "";
+  if (!url || !title) return null;
+
+  const categories = (article.categories || []).map((category) => category.description).filter(Boolean);
+  const tag = categories.find((category) => !["news", "soccer", "fifa world cup"].includes(String(category).toLowerCase())) || "World Cup";
+  const image = (article.images || []).find((item) => item.url && (item.type === "header" || item.width >= 320)) || article.images?.find((item) => item.url);
+
+  return {
+    id: String(article.id || article.nowId || title),
+    title: String(title),
+    summary: String(article.description || article.summary || ""),
+    url: String(url),
+    source: String(article.byline || "ESPN"),
+    published: String(article.published || article.lastModified || ""),
+    image: image?.url ? String(image.url) : "",
+    tag: String(tag),
+  };
 }
 
 function normalizeEspnScoreboard(payload, teamGroups) {
