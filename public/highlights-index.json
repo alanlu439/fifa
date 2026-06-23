@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-23T05:46:53.195Z",
+  "generatedAt": "2026-06-23T20:27:06.659Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -592,6 +592,21 @@
       "thumbnail": "",
       "title": "France vs Iraq official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=France%20Iraq%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760461": {
+      "away": "UZB",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-23T20:27:06.659Z",
+      "fallbackSearch": true,
+      "home": "POR",
+      "kickoff": "2026-06-23T17:00Z",
+      "matchId": "760461",
+      "matchKey": "2026-06-23-por-uzb",
+      "query": "Portugal Uzbekistan highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Portugal vs Uzbekistan official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Uzbekistan%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -1224,6 +1239,22 @@
       "thumbnail": "",
       "title": "Norway vs Senegal official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Norway%20Senegal%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-23-por-uzb": {
+      "aliasFor": "760461",
+      "away": "UZB",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-23T20:27:06.659Z",
+      "fallbackSearch": true,
+      "home": "POR",
+      "kickoff": "2026-06-23T17:00Z",
+      "matchId": "760461",
+      "matchKey": "2026-06-23-por-uzb",
+      "query": "Portugal Uzbekistan highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Portugal vs Uzbekistan official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Uzbekistan%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
