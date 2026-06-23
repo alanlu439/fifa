@@ -853,10 +853,7 @@ function DashboardHighlightStatus({ match, teamsByCode }) {
           <strong>{home.name} vs {away.name}</strong>
           <span>{highlightState.statusText}</span>
         </div>
-        <a href={highlightState.href} target="_blank" rel="noreferrer">
-          {highlightState.shortAction}
-          <ExternalLink size={13} strokeWidth={2.2} />
-        </a>
+        <HighlightActionLink compact highlightState={highlightState} />
       </div>
     </section>
   );
@@ -1156,6 +1153,24 @@ function EventTimeline({ away, events, home, teamsByCode }) {
   );
 }
 
+function HighlightActionLink({ compact = false, highlightState }) {
+  const label = compact ? highlightState.shortAction : highlightState.action;
+
+  return (
+    <a
+      aria-label={`${highlightState.action} for ${highlightState.title}`}
+      className={highlightState.resolved ? "highlight-action youtube" : "highlight-action"}
+      href={highlightState.href}
+      target="_blank"
+      rel="noreferrer"
+    >
+      {highlightState.resolved && <CirclePlay size={14} strokeWidth={2.4} />}
+      <span>{label}</span>
+      <ExternalLink size={13} strokeWidth={2.2} />
+    </a>
+  );
+}
+
 function MatchHighlights({ compact = false, match, teamsByCode }) {
   const home = getTeam(match.home, teamsByCode);
   const away = getTeam(match.away, teamsByCode);
@@ -1171,10 +1186,7 @@ function MatchHighlights({ compact = false, match, teamsByCode }) {
           </h3>
           <p>{highlightState.caption}</p>
         </div>
-        <a href={highlightState.href} target="_blank" rel="noreferrer">
-          {highlightState.action}
-          <ExternalLink size={13} strokeWidth={2.2} />
-        </a>
+        <HighlightActionLink compact={compact} highlightState={highlightState} />
       </div>
 
       {highlightState.resolved ? (
@@ -1477,7 +1489,7 @@ function getHighlightState(match, teamsByCode) {
       href,
       placeholder: "Official highlight video ready",
       resolved,
-      shortAction: "Watch",
+      shortAction: "YouTube",
       statusText: "Video ready",
       title,
     };
