@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-23T20:27:06.659Z",
+  "generatedAt": "2026-06-23T22:41:26.202Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -592,6 +592,21 @@
       "thumbnail": "",
       "title": "France vs Iraq official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=France%20Iraq%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760458": {
+      "away": "GHA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-23T22:41:26.202Z",
+      "fallbackSearch": true,
+      "home": "ENG",
+      "kickoff": "2026-06-23T20:00Z",
+      "matchId": "760458",
+      "matchKey": "2026-06-23-eng-gha",
+      "query": "England Ghana highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "England vs Ghana official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=England%20Ghana%20highlights%20FIFA%20World%20Cup%202026"
     },
     "760461": {
       "away": "UZB",
@@ -1207,6 +1222,22 @@
       "thumbnail": "",
       "title": "New Zealand vs Egypt official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=New%20Zealand%20Egypt%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-23-eng-gha": {
+      "aliasFor": "760458",
+      "away": "GHA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-23T22:41:26.202Z",
+      "fallbackSearch": true,
+      "home": "ENG",
+      "kickoff": "2026-06-23T20:00Z",
+      "matchId": "760458",
+      "matchKey": "2026-06-23-eng-gha",
+      "query": "England Ghana highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "England vs Ghana official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=England%20Ghana%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-23-jor-alg": {
       "aliasFor": "760455",
