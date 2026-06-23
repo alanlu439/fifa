@@ -244,6 +244,9 @@ function App() {
     <div className={fullscreenActive ? "app-shell dashboard-fullscreen" : "app-shell"} ref={appShellRef}>
       <Header
         autoRefresh={autoRefresh}
+        boardSummary={boardSummary}
+        dashboardMatch={dashboardPrimaryMatch}
+        dashboardMode={dashboardMode}
         feedError={feedError}
         isFullscreen={fullscreenActive}
         isRefreshing={isRefreshing}
@@ -252,6 +255,7 @@ function App() {
         onToggleFullscreen={toggleFullscreen}
         onToggleRefresh={() => setAutoRefresh((current) => !current)}
         source={source}
+        teamsByCode={teamsByCode}
       />
 
       {fullscreenActive ? (
@@ -343,6 +347,9 @@ function App() {
 
 function Header({
   autoRefresh,
+  boardSummary,
+  dashboardMatch,
+  dashboardMode,
   feedError,
   isFullscreen,
   isRefreshing,
@@ -351,6 +358,7 @@ function Header({
   onToggleFullscreen,
   onToggleRefresh,
   source,
+  teamsByCode,
 }) {
   const [now, setNow] = useState(() => new Date());
   const DashboardIcon = isFullscreen ? Minimize2 : LayoutDashboard;
@@ -358,6 +366,17 @@ function Header({
   const updateAge = formatUpdateAge(now - lastUpdated);
   const autoRefreshLabel = autoRefresh ? "Pause auto refresh" : "Resume auto refresh";
   const dashboardLabel = isFullscreen ? "Exit dashboard mode" : "Enter dashboard mode";
+  const dashboardHome = dashboardMatch ? getTeam(dashboardMatch.home, teamsByCode) : null;
+  const dashboardAway = dashboardMatch ? getTeam(dashboardMatch.away, teamsByCode) : null;
+  const dashboardMatchLabel = dashboardMatch && dashboardHome && dashboardAway ? `${dashboardHome.code} vs ${dashboardAway.code}` : "Waiting for match data";
+  const dashboardStateLabel = dashboardMatch ? dashboardStatusSummary(dashboardMatch) : "No active window";
+  const dashboardCounts = boardSummary
+    ? [
+        { label: "Live", value: boardSummary.live },
+        { label: "Next", value: boardSummary.upcoming },
+        { label: "Final", value: boardSummary.finished },
+      ]
+    : [];
 
   useEffect(() => {
     const clock = window.setInterval(() => setNow(new Date()), 1000);
@@ -382,21 +401,46 @@ function Header({
       </div>
 
       {isFullscreen && (
+        <div className="clock-chip dashboard-master-clock" aria-label={`Master clock ${currentClock.label}`}>
+          <Clock3 size={22} strokeWidth={2.2} />
+          <span className="clock-title">Master clock</span>
+          <span className="clock-time">{currentClock.time}</span>
+          <span className="clock-zone">{currentClock.zone}</span>
+        </div>
+      )}
+
+      {isFullscreen && (
         <div className="dashboard-header-mode" aria-label="Dashboard Mode active">
-          <LayoutDashboard size={24} strokeWidth={2.4} />
-          <div>
-            <strong>Dashboard Mode</strong>
-            <span>Live Dashboard</span>
+          <div className="dashboard-mode-main">
+            <LayoutDashboard size={22} strokeWidth={2.4} />
+            <div>
+              <strong>Dashboard Mode</strong>
+              <span>{dashboardMode === "live" ? "Live command board" : "Next match command board"}</span>
+            </div>
+          </div>
+          <div className="dashboard-header-match">
+            <strong>{dashboardMatchLabel}</strong>
+            <span>{dashboardStateLabel}</span>
+          </div>
+          <div className="dashboard-header-counts" aria-label="Dashboard match counts">
+            {dashboardCounts.map((item) => (
+              <span key={item.label}>
+                <strong>{item.value}</strong>
+                {item.label}
+              </span>
+            ))}
           </div>
         </div>
       )}
 
       <div className="header-actions">
-        <div className="clock-chip" aria-label={`Current time ${currentClock.label}`}>
-          <Clock3 size={22} strokeWidth={2.2} />
-          <span className="clock-time">{currentClock.time}</span>
-          <span className="clock-zone">{currentClock.zone}</span>
-        </div>
+        {!isFullscreen && (
+          <div className="clock-chip" aria-label={`Current time ${currentClock.label}`}>
+            <Clock3 size={22} strokeWidth={2.2} />
+            <span className="clock-time">{currentClock.time}</span>
+            <span className="clock-zone">{currentClock.zone}</span>
+          </div>
+        )}
         <button className="icon-button" onClick={onToggleRefresh} type="button" aria-label={autoRefreshLabel} aria-pressed={autoRefresh} title={autoRefreshLabel}>
           {autoRefresh ? <CirclePause size={18} /> : <CirclePlay size={18} />}
         </button>
@@ -1385,6 +1429,18 @@ function formatShortKickoff(kickoff) {
     minute: "2-digit",
     month: "short",
   }).format(new Date(kickoff));
+}
+
+function dashboardStatusSummary(match) {
+  if (isLiveMatch(match)) {
+    return `${match.minute || 0}' · ${match.note || statusLabel(match.status)}`;
+  }
+
+  if (match.status === "finished") {
+    return `Final · ${match.homeScore ?? "-"}-${match.awayScore ?? "-"}`;
+  }
+
+  return `Next kickoff · ${formatShortKickoff(match.kickoff)}`;
 }
 
 function formatUpdateAge(milliseconds) {
