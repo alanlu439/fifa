@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-23T22:41:26.202Z",
+  "generatedAt": "2026-06-24T04:42:28.917Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -607,6 +607,36 @@
       "thumbnail": "",
       "title": "England vs Ghana official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=England%20Ghana%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760459": {
+      "away": "COD",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-24T04:42:28.917Z",
+      "fallbackSearch": true,
+      "home": "COL",
+      "kickoff": "2026-06-24T02:00Z",
+      "matchId": "760459",
+      "matchKey": "2026-06-24-col-cod",
+      "query": "Colombia Congo DR highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Colombia vs Congo DR official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Colombia%20Congo%20DR%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760460": {
+      "away": "CRO",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-24T04:42:28.917Z",
+      "fallbackSearch": true,
+      "home": "PAN",
+      "kickoff": "2026-06-23T23:00Z",
+      "matchId": "760460",
+      "matchKey": "2026-06-23-pan-cro",
+      "query": "Panama Croatia highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Panama vs Croatia official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Panama%20Croatia%20highlights%20FIFA%20World%20Cup%202026"
     },
     "760461": {
       "away": "UZB",
@@ -1271,6 +1301,22 @@
       "title": "Norway vs Senegal official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Norway%20Senegal%20highlights%20FIFA%20World%20Cup%202026"
     },
+    "2026-06-23-pan-cro": {
+      "aliasFor": "760460",
+      "away": "CRO",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-24T04:42:28.917Z",
+      "fallbackSearch": true,
+      "home": "PAN",
+      "kickoff": "2026-06-23T23:00Z",
+      "matchId": "760460",
+      "matchKey": "2026-06-23-pan-cro",
+      "query": "Panama Croatia highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Panama vs Croatia official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Panama%20Croatia%20highlights%20FIFA%20World%20Cup%202026"
+    },
     "2026-06-23-por-uzb": {
       "aliasFor": "760461",
       "away": "UZB",
@@ -1286,6 +1332,22 @@
       "thumbnail": "",
       "title": "Portugal vs Uzbekistan official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Uzbekistan%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-24-col-cod": {
+      "aliasFor": "760459",
+      "away": "COD",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-24T04:42:28.917Z",
+      "fallbackSearch": true,
+      "home": "COL",
+      "kickoff": "2026-06-24T02:00Z",
+      "matchId": "760459",
+      "matchKey": "2026-06-24-col-cod",
+      "query": "Colombia Congo DR highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Colombia vs Congo DR official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Colombia%20Congo%20DR%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
