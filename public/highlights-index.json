@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-24T04:42:28.917Z",
+  "generatedAt": "2026-06-24T21:00:40.256Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -652,6 +652,36 @@
       "thumbnail": "",
       "title": "Portugal vs Uzbekistan official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Uzbekistan%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760462": {
+      "away": "QAT",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-24T21:00:40.256Z",
+      "fallbackSearch": true,
+      "home": "BIH",
+      "kickoff": "2026-06-24T19:00Z",
+      "matchId": "760462",
+      "matchKey": "2026-06-24-bih-qat",
+      "query": "Bosnia-Herzegovina Qatar highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Bosnia-Herzegovina vs Qatar official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Bosnia-Herzegovina%20Qatar%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760463": {
+      "away": "CAN",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-24T21:00:40.256Z",
+      "fallbackSearch": true,
+      "home": "SUI",
+      "kickoff": "2026-06-24T19:00Z",
+      "matchId": "760463",
+      "matchKey": "2026-06-24-sui-can",
+      "query": "Switzerland Canada highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Switzerland vs Canada official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Canada%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -1333,6 +1363,22 @@
       "title": "Portugal vs Uzbekistan official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Uzbekistan%20highlights%20FIFA%20World%20Cup%202026"
     },
+    "2026-06-24-bih-qat": {
+      "aliasFor": "760462",
+      "away": "QAT",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-24T21:00:40.256Z",
+      "fallbackSearch": true,
+      "home": "BIH",
+      "kickoff": "2026-06-24T19:00Z",
+      "matchId": "760462",
+      "matchKey": "2026-06-24-bih-qat",
+      "query": "Bosnia-Herzegovina Qatar highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Bosnia-Herzegovina vs Qatar official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Bosnia-Herzegovina%20Qatar%20highlights%20FIFA%20World%20Cup%202026"
+    },
     "2026-06-24-col-cod": {
       "aliasFor": "760459",
       "away": "COD",
@@ -1348,6 +1394,22 @@
       "thumbnail": "",
       "title": "Colombia vs Congo DR official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Colombia%20Congo%20DR%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-24-sui-can": {
+      "aliasFor": "760463",
+      "away": "CAN",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-24T21:00:40.256Z",
+      "fallbackSearch": true,
+      "home": "SUI",
+      "kickoff": "2026-06-24T19:00Z",
+      "matchId": "760463",
+      "matchKey": "2026-06-24-sui-can",
+      "query": "Switzerland Canada highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Switzerland vs Canada official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Canada%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
