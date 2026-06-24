@@ -154,7 +154,7 @@ button {
   grid-template-areas:
     "brand master actions"
     "info info info";
-  grid-template-columns: minmax(250px, 1fr) minmax(380px, 520px) auto;
+  grid-template-columns: minmax(250px, 1fr) minmax(440px, 620px) auto;
   grid-template-rows: auto auto;
 }
 
@@ -186,9 +186,9 @@ button {
   min-height: 74px;
   order: 0;
   overflow: hidden;
-  padding: 11px 16px;
+  padding: 11px 18px;
   position: relative;
-  width: min(100%, 520px);
+  width: min(100%, 620px);
 }
 
 .clock-chip.dashboard-master-clock::before {
@@ -3234,8 +3234,9 @@ h1 {
   }
 
   .clock-chip.dashboard-master-clock {
-    justify-self: center;
-    width: min(100%, 520px);
+    justify-self: stretch;
+    max-width: none;
+    width: 100%;
   }
 
   .dashboard-header-match {
