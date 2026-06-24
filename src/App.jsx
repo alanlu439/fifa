@@ -1208,23 +1208,6 @@ function MatchHighlights({ compact = false, match, teamsByCode }) {
         </div>
         <HighlightActionLink compact={compact} highlightState={highlightState} />
       </div>
-
-      {highlightState.resolved ? (
-        <div className="highlight-frame">
-          <iframe
-            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-            referrerPolicy="strict-origin-when-cross-origin"
-            sandbox="allow-same-origin allow-scripts allow-presentation allow-popups"
-            src={highlightState.resolved.embedUrl}
-            title={highlightState.title}
-          />
-        </div>
-      ) : (
-        <div className="highlight-placeholder">
-          <CirclePlay size={20} strokeWidth={1.9} />
-          <span>{highlightState.placeholder}</span>
-        </div>
-      )}
     </section>
   );
 }
@@ -1507,7 +1490,6 @@ function getHighlightState(match, teamsByCode) {
       autoSearch: false,
       caption: highlights.source,
       href,
-      placeholder: "Official highlight video ready",
       resolved,
       shortAction: "YouTube",
       statusText: "Video ready",
@@ -1521,7 +1503,6 @@ function getHighlightState(match, teamsByCode) {
       autoSearch: true,
       caption: "Official FIFA search link auto-added",
       href,
-      placeholder: "Official FIFA link ready",
       resolved: null,
       shortAction: "Open search",
       statusText: "FIFA link ready",
@@ -1534,7 +1515,6 @@ function getHighlightState(match, teamsByCode) {
     autoSearch: false,
     caption: pendingText,
     href,
-    placeholder: pendingText,
     resolved: null,
     shortAction: "Search FIFA",
     statusText: match.status === "finished" ? "Pending upload" : "Available after full time",
@@ -1580,7 +1560,6 @@ function resolveYouTubeHighlight(url) {
   if (!videoId) return null;
 
   return {
-    embedUrl: `https://www.youtube.com/embed/${encodeURIComponent(videoId)}`,
     watchUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`,
   };
 }
