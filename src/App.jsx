@@ -430,6 +430,26 @@ function Header({
         </div>
       </div>
 
+      {!isFullscreen && boardSummary && (
+        <div className="header-match-strip" aria-label="Tournament status">
+          <div className="header-status-main">
+            <Radio size={17} strokeWidth={2.35} />
+            <div>
+              <span>Match Center</span>
+              <strong>{boardSummary.live ? `${boardSummary.live} live now` : `Next ${boardSummary.nextKickoff}`}</strong>
+            </div>
+          </div>
+          <div className="header-count-strip" aria-label="Match counts">
+            {dashboardCounts.map((item) => (
+              <span key={item.label}>
+                <strong>{item.value}</strong>
+                {item.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {isFullscreen && (
         <div className="clock-chip dashboard-master-clock" aria-label={`Master clock ${currentClock.label}`}>
           <div className="master-clock-label">
