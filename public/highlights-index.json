@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-24T21:00:40.256Z",
+  "generatedAt": "2026-06-25T01:29:47.365Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -682,6 +682,36 @@
       "thumbnail": "",
       "title": "Switzerland vs Canada official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Canada%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760464": {
+      "away": "HAI",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T01:29:47.365Z",
+      "fallbackSearch": true,
+      "home": "MAR",
+      "kickoff": "2026-06-24T22:00Z",
+      "matchId": "760464",
+      "matchKey": "2026-06-24-mar-hai",
+      "query": "Morocco Haiti highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Morocco vs Haiti official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Morocco%20Haiti%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760465": {
+      "away": "BRA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T01:29:47.365Z",
+      "fallbackSearch": true,
+      "home": "SCO",
+      "kickoff": "2026-06-24T22:00Z",
+      "matchId": "760465",
+      "matchKey": "2026-06-24-sco-bra",
+      "query": "Scotland Brazil highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Scotland vs Brazil official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Scotland%20Brazil%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -1394,6 +1424,38 @@
       "thumbnail": "",
       "title": "Colombia vs Congo DR official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Colombia%20Congo%20DR%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-24-mar-hai": {
+      "aliasFor": "760464",
+      "away": "HAI",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T01:29:47.365Z",
+      "fallbackSearch": true,
+      "home": "MAR",
+      "kickoff": "2026-06-24T22:00Z",
+      "matchId": "760464",
+      "matchKey": "2026-06-24-mar-hai",
+      "query": "Morocco Haiti highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Morocco vs Haiti official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Morocco%20Haiti%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-24-sco-bra": {
+      "aliasFor": "760465",
+      "away": "BRA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T01:29:47.365Z",
+      "fallbackSearch": true,
+      "home": "SCO",
+      "kickoff": "2026-06-24T22:00Z",
+      "matchId": "760465",
+      "matchKey": "2026-06-24-sco-bra",
+      "query": "Scotland Brazil highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Scotland vs Brazil official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Scotland%20Brazil%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-24-sui-can": {
       "aliasFor": "760463",
