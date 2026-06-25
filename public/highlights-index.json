@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-25T06:29:36.361Z",
+  "generatedAt": "2026-06-25T22:51:58.679Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -742,6 +742,36 @@
       "thumbnail": "",
       "title": "Czechia vs Mexico official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Czechia%20Mexico%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760468": {
+      "away": "GER",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T22:51:58.679Z",
+      "fallbackSearch": true,
+      "home": "ECU",
+      "kickoff": "2026-06-25T20:00Z",
+      "matchId": "760468",
+      "matchKey": "2026-06-25-ecu-ger",
+      "query": "Ecuador Germany highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Ecuador vs Germany official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Ecuador%20Germany%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760473": {
+      "away": "CIV",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T22:51:58.679Z",
+      "fallbackSearch": true,
+      "home": "CUW",
+      "kickoff": "2026-06-25T20:00Z",
+      "matchId": "760473",
+      "matchKey": "2026-06-25-cuw-civ",
+      "query": "Curaçao Ivory Coast highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Curaçao vs Ivory Coast official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Cura%C3%A7ao%20Ivory%20Coast%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -1503,6 +1533,22 @@
       "title": "Switzerland vs Canada official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Canada%20highlights%20FIFA%20World%20Cup%202026"
     },
+    "2026-06-25-cuw-civ": {
+      "aliasFor": "760473",
+      "away": "CIV",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T22:51:58.679Z",
+      "fallbackSearch": true,
+      "home": "CUW",
+      "kickoff": "2026-06-25T20:00Z",
+      "matchId": "760473",
+      "matchKey": "2026-06-25-cuw-civ",
+      "query": "Curaçao Ivory Coast highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Curaçao vs Ivory Coast official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Cura%C3%A7ao%20Ivory%20Coast%20highlights%20FIFA%20World%20Cup%202026"
+    },
     "2026-06-25-cze-mex": {
       "aliasFor": "760467",
       "away": "MEX",
@@ -1518,6 +1564,22 @@
       "thumbnail": "",
       "title": "Czechia vs Mexico official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Czechia%20Mexico%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-25-ecu-ger": {
+      "aliasFor": "760468",
+      "away": "GER",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T22:51:58.679Z",
+      "fallbackSearch": true,
+      "home": "ECU",
+      "kickoff": "2026-06-25T20:00Z",
+      "matchId": "760468",
+      "matchKey": "2026-06-25-ecu-ger",
+      "query": "Ecuador Germany highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Ecuador vs Germany official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Ecuador%20Germany%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-25-rsa-kor": {
       "aliasFor": "760466",
