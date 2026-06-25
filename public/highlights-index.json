@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-25T01:29:47.365Z",
+  "generatedAt": "2026-06-25T06:29:36.361Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -712,6 +712,36 @@
       "thumbnail": "",
       "title": "Scotland vs Brazil official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Scotland%20Brazil%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760466": {
+      "away": "KOR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T06:29:36.361Z",
+      "fallbackSearch": true,
+      "home": "RSA",
+      "kickoff": "2026-06-25T01:00Z",
+      "matchId": "760466",
+      "matchKey": "2026-06-25-rsa-kor",
+      "query": "South Africa South Korea highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "South Africa vs South Korea official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=South%20Africa%20South%20Korea%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760467": {
+      "away": "MEX",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T06:29:36.361Z",
+      "fallbackSearch": true,
+      "home": "CZE",
+      "kickoff": "2026-06-25T01:00Z",
+      "matchId": "760467",
+      "matchKey": "2026-06-25-cze-mex",
+      "query": "Czechia Mexico highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Czechia vs Mexico official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Czechia%20Mexico%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -1472,6 +1502,38 @@
       "thumbnail": "",
       "title": "Switzerland vs Canada official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Canada%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-25-cze-mex": {
+      "aliasFor": "760467",
+      "away": "MEX",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T06:29:36.361Z",
+      "fallbackSearch": true,
+      "home": "CZE",
+      "kickoff": "2026-06-25T01:00Z",
+      "matchId": "760467",
+      "matchKey": "2026-06-25-cze-mex",
+      "query": "Czechia Mexico highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Czechia vs Mexico official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Czechia%20Mexico%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-25-rsa-kor": {
+      "aliasFor": "760466",
+      "away": "KOR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-25T06:29:36.361Z",
+      "fallbackSearch": true,
+      "home": "RSA",
+      "kickoff": "2026-06-25T01:00Z",
+      "matchId": "760466",
+      "matchKey": "2026-06-25-rsa-kor",
+      "query": "South Africa South Korea highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "South Africa vs South Korea official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=South%20Africa%20South%20Korea%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
