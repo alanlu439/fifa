@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-26T06:31:54.988Z",
+  "generatedAt": "2026-06-26T22:38:57.888Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -832,6 +832,36 @@
       "thumbnail": "",
       "title": "Curaçao vs Ivory Coast official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Cura%C3%A7ao%20Ivory%20Coast%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760474": {
+      "away": "IRQ",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T22:38:57.888Z",
+      "fallbackSearch": true,
+      "home": "SEN",
+      "kickoff": "2026-06-26T19:00Z",
+      "matchId": "760474",
+      "matchKey": "2026-06-26-sen-irq",
+      "query": "Senegal Iraq highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Senegal vs Iraq official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Senegal%20Iraq%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760475": {
+      "away": "FRA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T22:38:57.888Z",
+      "fallbackSearch": true,
+      "home": "NOR",
+      "kickoff": "2026-06-26T19:00Z",
+      "matchId": "760475",
+      "matchKey": "2026-06-26-nor-fra",
+      "query": "Norway France highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Norway vs France official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Norway%20France%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -1689,6 +1719,22 @@
       "title": "Tunisia vs Netherlands official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Tunisia%20Netherlands%20highlights%20FIFA%20World%20Cup%202026"
     },
+    "2026-06-26-nor-fra": {
+      "aliasFor": "760475",
+      "away": "FRA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T22:38:57.888Z",
+      "fallbackSearch": true,
+      "home": "NOR",
+      "kickoff": "2026-06-26T19:00Z",
+      "matchId": "760475",
+      "matchKey": "2026-06-26-nor-fra",
+      "query": "Norway France highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Norway vs France official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Norway%20France%20highlights%20FIFA%20World%20Cup%202026"
+    },
     "2026-06-26-par-aus": {
       "aliasFor": "760469",
       "away": "AUS",
@@ -1704,6 +1750,22 @@
       "thumbnail": "",
       "title": "Paraguay vs Australia official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Paraguay%20Australia%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-26-sen-irq": {
+      "aliasFor": "760474",
+      "away": "IRQ",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T22:38:57.888Z",
+      "fallbackSearch": true,
+      "home": "SEN",
+      "kickoff": "2026-06-26T19:00Z",
+      "matchId": "760474",
+      "matchKey": "2026-06-26-sen-irq",
+      "query": "Senegal Iraq highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Senegal vs Iraq official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Senegal%20Iraq%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-26-tur-usa": {
       "aliasFor": "760470",
