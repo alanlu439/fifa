@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-26T01:33:17.267Z",
+  "generatedAt": "2026-06-26T06:31:54.988Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -757,6 +757,36 @@
       "thumbnail": "",
       "title": "Ecuador vs Germany official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Ecuador%20Germany%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760469": {
+      "away": "AUS",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T06:31:54.988Z",
+      "fallbackSearch": true,
+      "home": "PAR",
+      "kickoff": "2026-06-26T02:00Z",
+      "matchId": "760469",
+      "matchKey": "2026-06-26-par-aus",
+      "query": "Paraguay Australia highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Paraguay vs Australia official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Paraguay%20Australia%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760470": {
+      "away": "USA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T06:31:54.988Z",
+      "fallbackSearch": true,
+      "home": "TUR",
+      "kickoff": "2026-06-26T02:00Z",
+      "matchId": "760470",
+      "matchKey": "2026-06-26-tur-usa",
+      "query": "Türkiye United States highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Türkiye vs United States official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=T%C3%BCrkiye%20United%20States%20highlights%20FIFA%20World%20Cup%202026"
     },
     "760471": {
       "away": "SWE",
@@ -1658,6 +1688,38 @@
       "thumbnail": "",
       "title": "Tunisia vs Netherlands official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Tunisia%20Netherlands%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-26-par-aus": {
+      "aliasFor": "760469",
+      "away": "AUS",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T06:31:54.988Z",
+      "fallbackSearch": true,
+      "home": "PAR",
+      "kickoff": "2026-06-26T02:00Z",
+      "matchId": "760469",
+      "matchKey": "2026-06-26-par-aus",
+      "query": "Paraguay Australia highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Paraguay vs Australia official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Paraguay%20Australia%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-26-tur-usa": {
+      "aliasFor": "760470",
+      "away": "USA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T06:31:54.988Z",
+      "fallbackSearch": true,
+      "home": "TUR",
+      "kickoff": "2026-06-26T02:00Z",
+      "matchId": "760470",
+      "matchKey": "2026-06-26-tur-usa",
+      "query": "Türkiye United States highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Türkiye vs United States official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=T%C3%BCrkiye%20United%20States%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
