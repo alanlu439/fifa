@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-25T22:51:58.679Z",
+  "generatedAt": "2026-06-26T01:33:17.267Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -757,6 +757,36 @@
       "thumbnail": "",
       "title": "Ecuador vs Germany official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Ecuador%20Germany%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760471": {
+      "away": "SWE",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T01:33:17.267Z",
+      "fallbackSearch": true,
+      "home": "JPN",
+      "kickoff": "2026-06-25T23:00Z",
+      "matchId": "760471",
+      "matchKey": "2026-06-25-jpn-swe",
+      "query": "Japan Sweden highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Japan vs Sweden official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Japan%20Sweden%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760472": {
+      "away": "NED",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T01:33:17.267Z",
+      "fallbackSearch": true,
+      "home": "TUN",
+      "kickoff": "2026-06-25T23:00Z",
+      "matchId": "760472",
+      "matchKey": "2026-06-25-tun-ned",
+      "query": "Tunisia Netherlands highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Tunisia vs Netherlands official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Tunisia%20Netherlands%20highlights%20FIFA%20World%20Cup%202026"
     },
     "760473": {
       "away": "CIV",
@@ -1581,6 +1611,22 @@
       "title": "Ecuador vs Germany official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Ecuador%20Germany%20highlights%20FIFA%20World%20Cup%202026"
     },
+    "2026-06-25-jpn-swe": {
+      "aliasFor": "760471",
+      "away": "SWE",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T01:33:17.267Z",
+      "fallbackSearch": true,
+      "home": "JPN",
+      "kickoff": "2026-06-25T23:00Z",
+      "matchId": "760471",
+      "matchKey": "2026-06-25-jpn-swe",
+      "query": "Japan Sweden highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Japan vs Sweden official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Japan%20Sweden%20highlights%20FIFA%20World%20Cup%202026"
+    },
     "2026-06-25-rsa-kor": {
       "aliasFor": "760466",
       "away": "KOR",
@@ -1596,6 +1642,22 @@
       "thumbnail": "",
       "title": "South Africa vs South Korea official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=South%20Africa%20South%20Korea%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-25-tun-ned": {
+      "aliasFor": "760472",
+      "away": "NED",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-26T01:33:17.267Z",
+      "fallbackSearch": true,
+      "home": "TUN",
+      "kickoff": "2026-06-25T23:00Z",
+      "matchId": "760472",
+      "matchKey": "2026-06-25-tun-ned",
+      "query": "Tunisia Netherlands highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Tunisia vs Netherlands official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Tunisia%20Netherlands%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
