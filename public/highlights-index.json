@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-28T01:30:59.957Z",
+  "generatedAt": "2026-06-28T06:39:10.134Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -953,6 +953,51 @@
       "title": "Colombia vs Portugal official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Colombia%20Portugal%20highlights%20FIFA%20World%20Cup%202026"
     },
+    "760482": {
+      "away": "UZB",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-28T06:39:10.134Z",
+      "fallbackSearch": true,
+      "home": "COD",
+      "kickoff": "2026-06-27T23:30Z",
+      "matchId": "760482",
+      "matchKey": "2026-06-27-cod-uzb",
+      "query": "Congo DR Uzbekistan highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Congo DR vs Uzbekistan official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Congo%20DR%20Uzbekistan%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760483": {
+      "away": "ARG",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-28T06:39:10.134Z",
+      "fallbackSearch": true,
+      "home": "JOR",
+      "kickoff": "2026-06-28T02:00Z",
+      "matchId": "760483",
+      "matchKey": "2026-06-28-jor-arg",
+      "query": "Jordan Argentina highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Jordan vs Argentina official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Jordan%20Argentina%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760484": {
+      "away": "AUT",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-28T06:39:10.134Z",
+      "fallbackSearch": true,
+      "home": "ALG",
+      "kickoff": "2026-06-28T02:00Z",
+      "matchId": "760484",
+      "matchKey": "2026-06-28-alg-aut",
+      "query": "Algeria Austria highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Algeria vs Austria official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Algeria%20Austria%20highlights%20FIFA%20World%20Cup%202026"
+    },
     "760485": {
       "away": "ENG",
       "channelTitle": "FIFA",
@@ -1888,6 +1933,22 @@
       "title": "Türkiye vs United States official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=T%C3%BCrkiye%20United%20States%20highlights%20FIFA%20World%20Cup%202026"
     },
+    "2026-06-27-cod-uzb": {
+      "aliasFor": "760482",
+      "away": "UZB",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-28T06:39:10.134Z",
+      "fallbackSearch": true,
+      "home": "COD",
+      "kickoff": "2026-06-27T23:30Z",
+      "matchId": "760482",
+      "matchKey": "2026-06-27-cod-uzb",
+      "query": "Congo DR Uzbekistan highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Congo DR vs Uzbekistan official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Congo%20DR%20Uzbekistan%20highlights%20FIFA%20World%20Cup%202026"
+    },
     "2026-06-27-col-por": {
       "aliasFor": "760481",
       "away": "POR",
@@ -1999,6 +2060,38 @@
       "thumbnail": "",
       "title": "Uruguay vs Spain official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Uruguay%20Spain%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-28-alg-aut": {
+      "aliasFor": "760484",
+      "away": "AUT",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-28T06:39:10.134Z",
+      "fallbackSearch": true,
+      "home": "ALG",
+      "kickoff": "2026-06-28T02:00Z",
+      "matchId": "760484",
+      "matchKey": "2026-06-28-alg-aut",
+      "query": "Algeria Austria highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Algeria vs Austria official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Algeria%20Austria%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-28-jor-arg": {
+      "aliasFor": "760483",
+      "away": "ARG",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-28T06:39:10.134Z",
+      "fallbackSearch": true,
+      "home": "JOR",
+      "kickoff": "2026-06-28T02:00Z",
+      "matchId": "760483",
+      "matchKey": "2026-06-28-jor-arg",
+      "query": "Jordan Argentina highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Jordan vs Argentina official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Jordan%20Argentina%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
