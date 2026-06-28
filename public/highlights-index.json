@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-28T06:39:10.134Z",
+  "generatedAt": "2026-06-28T21:32:39.965Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1012,6 +1012,21 @@
       "thumbnail": "",
       "title": "Panama vs England official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Panama%20England%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760486": {
+      "away": "CAN",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-28T21:32:39.965Z",
+      "fallbackSearch": true,
+      "home": "RSA",
+      "kickoff": "2026-06-28T19:00Z",
+      "matchId": "760486",
+      "matchKey": "2026-06-28-rsa-can",
+      "query": "South Africa Canada highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "South Africa vs Canada official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=South%20Africa%20Canada%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2092,6 +2107,22 @@
       "thumbnail": "",
       "title": "Jordan vs Argentina official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Jordan%20Argentina%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-28-rsa-can": {
+      "aliasFor": "760486",
+      "away": "CAN",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-28T21:32:39.965Z",
+      "fallbackSearch": true,
+      "home": "RSA",
+      "kickoff": "2026-06-28T19:00Z",
+      "matchId": "760486",
+      "matchKey": "2026-06-28-rsa-can",
+      "query": "South Africa Canada highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "South Africa vs Canada official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=South%20Africa%20Canada%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
