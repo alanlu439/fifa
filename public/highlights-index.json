@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-28T21:32:39.965Z",
+  "generatedAt": "2026-06-29T20:17:44.372Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1027,6 +1027,21 @@
       "thumbnail": "",
       "title": "South Africa vs Canada official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=South%20Africa%20Canada%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760487": {
+      "away": "JPN",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-29T20:17:44.372Z",
+      "fallbackSearch": true,
+      "home": "BRA",
+      "kickoff": "2026-06-29T17:00Z",
+      "matchId": "760487",
+      "matchKey": "2026-06-29-bra-jpn",
+      "query": "Brazil Japan highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Brazil vs Japan official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Brazil%20Japan%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2123,6 +2138,22 @@
       "thumbnail": "",
       "title": "South Africa vs Canada official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=South%20Africa%20Canada%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-29-bra-jpn": {
+      "aliasFor": "760487",
+      "away": "JPN",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-29T20:17:44.372Z",
+      "fallbackSearch": true,
+      "home": "BRA",
+      "kickoff": "2026-06-29T17:00Z",
+      "matchId": "760487",
+      "matchKey": "2026-06-29-bra-jpn",
+      "query": "Brazil Japan highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Brazil vs Japan official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Brazil%20Japan%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
