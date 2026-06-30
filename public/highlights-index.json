@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-30T04:38:31.984Z",
+  "generatedAt": "2026-06-30T19:12:19.218Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1072,6 +1072,21 @@
       "thumbnail": "",
       "title": "Germany vs Paraguay official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Germany%20Paraguay%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760490": {
+      "away": "NOR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-30T19:12:19.218Z",
+      "fallbackSearch": true,
+      "home": "CIV",
+      "kickoff": "2026-06-30T17:00Z",
+      "matchId": "760490",
+      "matchKey": "2026-06-30-civ-nor",
+      "query": "Ivory Coast Norway highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Ivory Coast vs Norway official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Ivory%20Coast%20Norway%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2200,6 +2215,22 @@
       "thumbnail": "",
       "title": "Germany vs Paraguay official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Germany%20Paraguay%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-30-civ-nor": {
+      "aliasFor": "760490",
+      "away": "NOR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-30T19:12:19.218Z",
+      "fallbackSearch": true,
+      "home": "CIV",
+      "kickoff": "2026-06-30T17:00Z",
+      "matchId": "760490",
+      "matchKey": "2026-06-30-civ-nor",
+      "query": "Ivory Coast Norway highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Ivory Coast vs Norway official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Ivory%20Coast%20Norway%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-30-ned-mar": {
       "aliasFor": "760488",
