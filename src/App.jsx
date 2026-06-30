@@ -8,6 +8,7 @@ import {
   CirclePlay,
   Clock3,
   ExternalLink,
+  GitBranch,
   Goal,
   History,
   LayoutDashboard,
@@ -28,6 +29,7 @@ const tabs = [
   { id: "live", label: "Live", icon: Radio },
   { id: "fixtures", label: "Fixtures", icon: CalendarDays },
   { id: "past", label: "Past", icon: History },
+  { id: "bracket", label: "Bracket", icon: GitBranch },
   { id: "groups", label: "Groups", icon: Table2 },
 ];
 
@@ -94,6 +96,50 @@ const flagCodesByTeam = {
 };
 
 const FIFA_YOUTUBE_CHANNEL = "https://www.youtube.com/@fifa";
+const KNOCKOUT_ROUNDS = [
+  {
+    id: "round-of-32",
+    label: "Round of 32",
+    shortLabel: "R32",
+    slotCount: 16,
+    aliases: ["round of 32", "last 32", "1/16", "1/16-finals", "1/16 finals"],
+  },
+  {
+    id: "round-of-16",
+    label: "Round of 16",
+    shortLabel: "R16",
+    slotCount: 8,
+    aliases: ["round of 16", "last 16", "1/8", "1/8-finals", "1/8 finals"],
+  },
+  {
+    id: "quarterfinals",
+    label: "Quarterfinals",
+    shortLabel: "QF",
+    slotCount: 4,
+    aliases: ["quarterfinal", "quarter final", "quarter-finals", "quarter finals"],
+  },
+  {
+    id: "semifinals",
+    label: "Semifinals",
+    shortLabel: "SF",
+    slotCount: 2,
+    aliases: ["semifinal", "semi final", "semi-finals", "semi finals"],
+  },
+  {
+    id: "third-place",
+    label: "Third Place",
+    shortLabel: "3P",
+    slotCount: 1,
+    aliases: ["third place", "third-place", "3rd place", "bronze"],
+  },
+  {
+    id: "final",
+    label: "Final",
+    shortLabel: "Final",
+    slotCount: 1,
+    aliases: ["final", "world cup final", "championship match"],
+  },
+];
 
 function App() {
   const appShellRef = useRef(null);
@@ -126,14 +172,7 @@ function App() {
 
     return matches
       .filter((match) => group === "All" || match.group === group)
-      .filter((match) => {
-        if (!cleanQuery) return true;
-        const home = teamName(match.home, teamsByCode).toLowerCase();
-        const away = teamName(match.away, teamsByCode).toLowerCase();
-        return [home, away, match.home.toLowerCase(), match.away.toLowerCase(), match.venue.toLowerCase(), match.group.toLowerCase()].some((value) =>
-          value.includes(cleanQuery)
-        );
-      })
+      .filter((match) => matchContainsQuery(match, cleanQuery, teamsByCode))
       .sort((a, b) => scoreStatusWeight(a.status) - scoreStatusWeight(b.status));
   }, [group, matches, query, teamsByCode]);
 
@@ -146,7 +185,16 @@ function App() {
   const boardSummary = useMemo(() => getBoardSummary(matches), [matches]);
   const fixtureMatches = useMemo(() => filteredMatches.filter((match) => !isPastMatch(match)), [filteredMatches]);
   const pastMatches = useMemo(() => filteredMatches.filter(isPastMatch).sort((a, b) => new Date(b.kickoff) - new Date(a.kickoff)), [filteredMatches]);
-  const resultCount = activeTab === "past" ? pastMatches.length : activeTab === "fixtures" ? fixtureMatches.length : filteredMatches.length;
+  const bracketMatches = useMemo(() => {
+    const cleanQuery = query.trim().toLowerCase();
+    return matches
+      .filter(isKnockoutMatch)
+      .filter((match) => matchContainsQuery(match, cleanQuery, teamsByCode))
+      .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
+  }, [matches, query, teamsByCode]);
+  const bracketRounds = useMemo(() => buildBracketRounds(bracketMatches), [bracketMatches]);
+  const resultCount =
+    activeTab === "past" ? pastMatches.length : activeTab === "fixtures" ? fixtureMatches.length : activeTab === "bracket" ? bracketMatches.length : filteredMatches.length;
   const dashboardLiveMatches = useMemo(() => filteredMatches.filter(isLiveMatch), [filteredMatches]);
   const dashboardUpcomingMatch = useMemo(
     () => filteredMatches.filter((match) => match.status === "upcoming").sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff))[0] || null,
@@ -367,6 +415,8 @@ function App() {
         {activeTab === "past" && (
           <PastEventsView matches={pastMatches} teamsByCode={teamsByCode} onSelectMatch={selectMatch} />
         )}
+
+        {activeTab === "bracket" && <BracketView rounds={bracketRounds} teamsByCode={teamsByCode} onSelectMatch={selectMatch} />}
 
         {activeTab === "groups" && <GroupsView groupTables={groupTables} teamsByCode={teamsByCode} />}
       </main>
@@ -1411,6 +1461,124 @@ function GroupsView({ groupTables, teamsByCode }) {
   );
 }
 
+function BracketView({ onSelectMatch, rounds, teamsByCode }) {
+  const actualMatches = rounds.flatMap((round) => round.slots.map((slot) => slot.match).filter(Boolean));
+  const liveCount = actualMatches.filter(isLiveMatch).length;
+  const finishedCount = actualMatches.filter(isPastMatch).length;
+  const upcomingCount = actualMatches.filter((match) => match.status === "upcoming").length;
+  const openSlots = rounds.reduce((count, round) => count + round.slots.filter((slot) => !slot.match).length, 0);
+  const nextKnockout = actualMatches
+    .filter((match) => match.status === "upcoming")
+    .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff))[0];
+
+  return (
+    <section className="wide-panel bracket-view" aria-label="World Cup knockout bracket">
+      <div className="section-heading bracket-heading">
+        <div>
+          <h2>Knockout Bracket</h2>
+          <p>
+            Round of 32 to Final · {nextKnockout ? `next knockout match ${formatShortKickoff(nextKnockout.kickoff)}` : "slots update when the match feed publishes qualifiers"}
+          </p>
+        </div>
+        <GitBranch size={18} strokeWidth={2.2} />
+      </div>
+
+      <div className="bracket-summary" aria-label="Knockout status summary">
+        <BracketSummaryItem label="Live" value={liveCount} tone="live" />
+        <BracketSummaryItem label="Upcoming" value={upcomingCount} tone="upcoming" />
+        <BracketSummaryItem label="Final" value={finishedCount} tone="finished" />
+        <BracketSummaryItem label="Open slots" value={openSlots} tone="open" />
+      </div>
+
+      <div className="bracket-shell">
+        <div className="bracket-rounds">
+          {rounds.map((round) => (
+            <section className="bracket-round" key={round.id} aria-label={round.label}>
+              <div className="bracket-round-header">
+                <div>
+                  <span>{round.shortLabel}</span>
+                  <h3>{round.label}</h3>
+                </div>
+                <strong>{round.matchCount}/{round.slots.length}</strong>
+              </div>
+              <div className="bracket-stack">
+                {round.slots.map((slot) => (
+                  <BracketMatchCard key={slot.id} slot={slot} teamsByCode={teamsByCode} onSelectMatch={onSelectMatch} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
+
+      {!actualMatches.length && (
+        <div className="bracket-empty-note">
+          No knockout fixtures are in the live feed yet. The bracket scaffold is ready and will fill automatically as FIFA publishes the Round of 32 and later rounds.
+        </div>
+      )}
+    </section>
+  );
+}
+
+function BracketSummaryItem({ label, tone, value }) {
+  return (
+    <div className={`bracket-summary-item ${tone}`}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function BracketMatchCard({ onSelectMatch, slot, teamsByCode }) {
+  if (!slot.match) {
+    return (
+      <article className="bracket-card bracket-placeholder">
+        <div className="bracket-placeholder-top">
+          <span>{slot.label}</span>
+          <strong>TBD</strong>
+        </div>
+        <p>{slot.path}</p>
+      </article>
+    );
+  }
+
+  const { match } = slot;
+  const home = getTeam(match.home, teamsByCode);
+  const away = getTeam(match.away, teamsByCode);
+  const homeScore = match.homeScore ?? "-";
+  const awayScore = match.awayScore ?? "-";
+  const timeLabel = match.status === "upcoming" ? formatShortKickoff(match.kickoff) : match.status === "finished" ? "Final" : `${match.minute}'`;
+  const homeWon = match.status === "finished" && Number(match.homeScore) > Number(match.awayScore);
+  const awayWon = match.status === "finished" && Number(match.awayScore) > Number(match.homeScore);
+
+  return (
+    <button className={`bracket-card ${match.status}`} onClick={() => onSelectMatch(match.id)} type="button" aria-label={`Open ${home.name} vs ${away.name}`}>
+      <div className="bracket-card-top">
+        <span className={`status-chip ${match.status}`}>{statusLabel(match.status)}</span>
+        <span>{slot.label}</span>
+      </div>
+      <div className={homeWon ? "bracket-team-row winner" : "bracket-team-row"}>
+        <span className="bracket-team-info">
+          <TeamBadge team={home} compact />
+          <span>{home.name}</span>
+        </span>
+        <strong>{homeScore}</strong>
+      </div>
+      <div className={awayWon ? "bracket-team-row winner" : "bracket-team-row"}>
+        <span className="bracket-team-info">
+          <TeamBadge team={away} compact />
+          <span>{away.name}</span>
+        </span>
+        <strong>{awayScore}</strong>
+      </div>
+      <div className="bracket-card-meta">
+        <span>{timeLabel}</span>
+        <span>{match.venue}</span>
+      </div>
+    </button>
+  );
+}
+
 function StatPill({ label, value }) {
   return (
     <div className="stat-pill">
@@ -1441,6 +1609,81 @@ function getTeam(code, teamsByCode) {
 
 function teamName(code, teamsByCode) {
   return getTeam(code, teamsByCode).name;
+}
+
+function matchContainsQuery(match, cleanQuery, teamsByCode) {
+  if (!cleanQuery) return true;
+  const home = teamName(match.home, teamsByCode).toLowerCase();
+  const away = teamName(match.away, teamsByCode).toLowerCase();
+  return [home, away, match.home, match.away, match.venue, match.group, match.stage, match.note]
+    .filter(Boolean)
+    .map((value) => String(value).toLowerCase())
+    .some((value) => value.includes(cleanQuery));
+}
+
+function buildBracketRounds(matches) {
+  const matchesByRound = KNOCKOUT_ROUNDS.reduce((acc, round) => ({ ...acc, [round.id]: [] }), {});
+
+  matches.forEach((match) => {
+    const round = getKnockoutRound(match);
+    if (round) matchesByRound[round.id].push(match);
+  });
+
+  return KNOCKOUT_ROUNDS.map((round) => {
+    const roundMatches = [...matchesByRound[round.id]].sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
+    const filledSlots = roundMatches.map((match, index) => ({
+      id: `${round.id}-${match.id}`,
+      label: `${round.shortLabel} ${index + 1}`,
+      match,
+    }));
+    const slotCount = Math.max(round.slotCount, filledSlots.length);
+    const slots = Array.from({ length: slotCount }, (_, index) => filledSlots[index] || buildBracketPlaceholder(round, index));
+
+    return {
+      ...round,
+      matchCount: roundMatches.length,
+      slots,
+    };
+  });
+}
+
+function buildBracketPlaceholder(round, index) {
+  return {
+    id: `${round.id}-slot-${index + 1}`,
+    label: `${round.shortLabel} ${index + 1}`,
+    path: bracketPlaceholderPath(round.id, index),
+  };
+}
+
+function bracketPlaceholderPath(roundId, index) {
+  if (roundId === "round-of-32") return "Group-stage qualifier to be confirmed";
+  if (roundId === "round-of-16") return `Winner R32-${index * 2 + 1} vs Winner R32-${index * 2 + 2}`;
+  if (roundId === "quarterfinals") return `Winner R16-${index * 2 + 1} vs Winner R16-${index * 2 + 2}`;
+  if (roundId === "semifinals") return `Winner QF-${index * 2 + 1} vs Winner QF-${index * 2 + 2}`;
+  if (roundId === "third-place") return "Loser SF-1 vs Loser SF-2";
+  return "Winner SF-1 vs Winner SF-2";
+}
+
+function isKnockoutMatch(match) {
+  return Boolean(getKnockoutRound(match));
+}
+
+function getKnockoutRound(match) {
+  const text = knockoutStageText(match);
+  if (!text || /\bgroup stage\b/.test(text)) return null;
+
+  const thirdPlace = KNOCKOUT_ROUNDS.find((round) => round.id === "third-place");
+  if (thirdPlace.aliases.some((alias) => text.includes(alias))) return thirdPlace;
+
+  return KNOCKOUT_ROUNDS.find((round) => round.id !== "third-place" && round.aliases.some((alias) => text.includes(alias))) || null;
+}
+
+function knockoutStageText(match) {
+  return [match.stage, match.group, match.note]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+    .replace(/[-_]+/g, " ");
 }
 
 function scoreStatusWeight(status) {
