@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-06-29T20:17:44.372Z",
+  "generatedAt": "2026-06-30T04:38:31.984Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1042,6 +1042,36 @@
       "thumbnail": "",
       "title": "Brazil vs Japan official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Brazil%20Japan%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760488": {
+      "away": "MAR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-30T04:38:31.984Z",
+      "fallbackSearch": true,
+      "home": "NED",
+      "kickoff": "2026-06-30T01:00Z",
+      "matchId": "760488",
+      "matchKey": "2026-06-30-ned-mar",
+      "query": "Netherlands Morocco highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Netherlands vs Morocco official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Netherlands%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760489": {
+      "away": "PAR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-30T04:38:31.984Z",
+      "fallbackSearch": true,
+      "home": "GER",
+      "kickoff": "2026-06-29T20:30Z",
+      "matchId": "760489",
+      "matchKey": "2026-06-29-ger-par",
+      "query": "Germany Paraguay highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Germany vs Paraguay official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Germany%20Paraguay%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2154,6 +2184,38 @@
       "thumbnail": "",
       "title": "Brazil vs Japan official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Brazil%20Japan%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-29-ger-par": {
+      "aliasFor": "760489",
+      "away": "PAR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-30T04:38:31.984Z",
+      "fallbackSearch": true,
+      "home": "GER",
+      "kickoff": "2026-06-29T20:30Z",
+      "matchId": "760489",
+      "matchKey": "2026-06-29-ger-par",
+      "query": "Germany Paraguay highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Germany vs Paraguay official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Germany%20Paraguay%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-06-30-ned-mar": {
+      "aliasFor": "760488",
+      "away": "MAR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-06-30T04:38:31.984Z",
+      "fallbackSearch": true,
+      "home": "NED",
+      "kickoff": "2026-06-30T01:00Z",
+      "matchId": "760488",
+      "matchKey": "2026-06-30-ned-mar",
+      "query": "Netherlands Morocco highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Netherlands vs Morocco official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Netherlands%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
