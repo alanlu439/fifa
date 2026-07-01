@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-01T01:35:17.785Z",
+  "generatedAt": "2026-07-01T06:48:08.528Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1087,6 +1087,21 @@
       "thumbnail": "",
       "title": "Ivory Coast vs Norway official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Ivory%20Coast%20Norway%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760491": {
+      "away": "ECU",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-01T06:48:08.528Z",
+      "fallbackSearch": true,
+      "home": "MEX",
+      "kickoff": "2026-07-01T02:00Z",
+      "matchId": "760491",
+      "matchKey": "2026-07-01-mex-ecu",
+      "query": "Mexico Ecuador highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Mexico vs Ecuador official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Mexico%20Ecuador%20highlights%20FIFA%20World%20Cup%202026"
     },
     "760492": {
       "away": "SWE",
@@ -2278,6 +2293,22 @@
       "thumbnail": "",
       "title": "Netherlands vs Morocco official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Netherlands%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-01-mex-ecu": {
+      "aliasFor": "760491",
+      "away": "ECU",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-01T06:48:08.528Z",
+      "fallbackSearch": true,
+      "home": "MEX",
+      "kickoff": "2026-07-01T02:00Z",
+      "matchId": "760491",
+      "matchKey": "2026-07-01-mex-ecu",
+      "query": "Mexico Ecuador highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Mexico vs Ecuador official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Mexico%20Ecuador%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
