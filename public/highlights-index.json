@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-01T06:48:08.528Z",
+  "generatedAt": "2026-07-01T19:14:33.132Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1117,6 +1117,21 @@
       "thumbnail": "",
       "title": "France vs Sweden official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=France%20Sweden%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760495": {
+      "away": "COD",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-01T19:14:33.132Z",
+      "fallbackSearch": true,
+      "home": "ENG",
+      "kickoff": "2026-07-01T16:00Z",
+      "matchId": "760495",
+      "matchKey": "2026-07-01-eng-cod",
+      "query": "England Congo DR highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "England vs Congo DR official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=England%20Congo%20DR%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2293,6 +2308,22 @@
       "thumbnail": "",
       "title": "Netherlands vs Morocco official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Netherlands%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-01-eng-cod": {
+      "aliasFor": "760495",
+      "away": "COD",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-01T19:14:33.132Z",
+      "fallbackSearch": true,
+      "home": "ENG",
+      "kickoff": "2026-07-01T16:00Z",
+      "matchId": "760495",
+      "matchKey": "2026-07-01-eng-cod",
+      "query": "England Congo DR highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "England vs Congo DR official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=England%20Congo%20DR%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-07-01-mex-ecu": {
       "aliasFor": "760491",
