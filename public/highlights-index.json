@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-02T01:27:39.473Z",
+  "generatedAt": "2026-07-02T06:12:45.744Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1132,6 +1132,21 @@
       "thumbnail": "",
       "title": "Belgium vs Senegal official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Belgium%20Senegal%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760494": {
+      "away": "BIH",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-02T06:12:45.744Z",
+      "fallbackSearch": true,
+      "home": "USA",
+      "kickoff": "2026-07-02T00:00Z",
+      "matchId": "760494",
+      "matchKey": "2026-07-02-usa-bih",
+      "query": "United States Bosnia-Herzegovina highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "United States vs Bosnia-Herzegovina official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=United%20States%20Bosnia-Herzegovina%20highlights%20FIFA%20World%20Cup%202026"
     },
     "760495": {
       "away": "COD",
@@ -2371,6 +2386,22 @@
       "thumbnail": "",
       "title": "Mexico vs Ecuador official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Mexico%20Ecuador%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-02-usa-bih": {
+      "aliasFor": "760494",
+      "away": "BIH",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-02T06:12:45.744Z",
+      "fallbackSearch": true,
+      "home": "USA",
+      "kickoff": "2026-07-02T00:00Z",
+      "matchId": "760494",
+      "matchKey": "2026-07-02-usa-bih",
+      "query": "United States Bosnia-Herzegovina highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "United States vs Bosnia-Herzegovina official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=United%20States%20Bosnia-Herzegovina%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
