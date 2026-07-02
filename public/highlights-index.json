@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-01T19:14:33.132Z",
+  "generatedAt": "2026-07-02T01:27:39.473Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1117,6 +1117,21 @@
       "thumbnail": "",
       "title": "France vs Sweden official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=France%20Sweden%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760493": {
+      "away": "SEN",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-02T01:27:39.473Z",
+      "fallbackSearch": true,
+      "home": "BEL",
+      "kickoff": "2026-07-01T20:00Z",
+      "matchId": "760493",
+      "matchKey": "2026-07-01-bel-sen",
+      "query": "Belgium Senegal highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Belgium vs Senegal official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Belgium%20Senegal%20highlights%20FIFA%20World%20Cup%202026"
     },
     "760495": {
       "away": "COD",
@@ -2308,6 +2323,22 @@
       "thumbnail": "",
       "title": "Netherlands vs Morocco official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Netherlands%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-01-bel-sen": {
+      "aliasFor": "760493",
+      "away": "SEN",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-02T01:27:39.473Z",
+      "fallbackSearch": true,
+      "home": "BEL",
+      "kickoff": "2026-07-01T20:00Z",
+      "matchId": "760493",
+      "matchKey": "2026-07-01-bel-sen",
+      "query": "Belgium Senegal highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Belgium vs Senegal official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Belgium%20Senegal%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-07-01-eng-cod": {
       "aliasFor": "760495",
