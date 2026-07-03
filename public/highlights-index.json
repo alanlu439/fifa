@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-02T21:37:35.254Z",
+  "generatedAt": "2026-07-03T04:13:29.937Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1162,6 +1162,21 @@
       "thumbnail": "",
       "title": "England vs Congo DR official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=England%20Congo%20DR%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760496": {
+      "away": "CRO",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-03T04:13:29.937Z",
+      "fallbackSearch": true,
+      "home": "POR",
+      "kickoff": "2026-07-02T23:00Z",
+      "matchId": "760496",
+      "matchKey": "2026-07-02-por-cro",
+      "query": "Portugal Croatia highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Portugal vs Croatia official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Croatia%20highlights%20FIFA%20World%20Cup%202026"
     },
     "760497": {
       "away": "AUT",
@@ -2417,6 +2432,22 @@
       "thumbnail": "",
       "title": "Spain vs Austria official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Spain%20Austria%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-02-por-cro": {
+      "aliasFor": "760496",
+      "away": "CRO",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-03T04:13:29.937Z",
+      "fallbackSearch": true,
+      "home": "POR",
+      "kickoff": "2026-07-02T23:00Z",
+      "matchId": "760496",
+      "matchKey": "2026-07-02-por-cro",
+      "query": "Portugal Croatia highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Portugal vs Croatia official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Croatia%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-07-02-usa-bih": {
       "aliasFor": "760494",
