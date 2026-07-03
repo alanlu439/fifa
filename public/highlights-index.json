@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-03T07:42:53.896Z",
+  "generatedAt": "2026-07-03T21:35:22.019Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1207,6 +1207,21 @@
       "thumbnail": "",
       "title": "Switzerland vs Algeria official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Algeria%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760499": {
+      "away": "EGY",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-03T21:35:22.019Z",
+      "fallbackSearch": true,
+      "home": "AUS",
+      "kickoff": "2026-07-03T18:00Z",
+      "matchId": "760499",
+      "matchKey": "2026-07-03-aus-egy",
+      "query": "Australia Egypt highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Australia vs Egypt official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Australia%20Egypt%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2479,6 +2494,22 @@
       "thumbnail": "",
       "title": "United States vs Bosnia-Herzegovina official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=United%20States%20Bosnia-Herzegovina%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-03-aus-egy": {
+      "aliasFor": "760499",
+      "away": "EGY",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-03T21:35:22.019Z",
+      "fallbackSearch": true,
+      "home": "AUS",
+      "kickoff": "2026-07-03T18:00Z",
+      "matchId": "760499",
+      "matchKey": "2026-07-03-aus-egy",
+      "query": "Australia Egypt highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Australia vs Egypt official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Australia%20Egypt%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-07-03-sui-alg": {
       "aliasFor": "760498",
