@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-03T04:13:29.937Z",
+  "generatedAt": "2026-07-03T07:42:53.896Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1192,6 +1192,21 @@
       "thumbnail": "",
       "title": "Spain vs Austria official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Spain%20Austria%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760498": {
+      "away": "ALG",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-03T07:42:53.896Z",
+      "fallbackSearch": true,
+      "home": "SUI",
+      "kickoff": "2026-07-03T03:00Z",
+      "matchId": "760498",
+      "matchKey": "2026-07-03-sui-alg",
+      "query": "Switzerland Algeria highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Switzerland vs Algeria official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Algeria%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2464,6 +2479,22 @@
       "thumbnail": "",
       "title": "United States vs Bosnia-Herzegovina official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=United%20States%20Bosnia-Herzegovina%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-03-sui-alg": {
+      "aliasFor": "760498",
+      "away": "ALG",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-03T07:42:53.896Z",
+      "fallbackSearch": true,
+      "home": "SUI",
+      "kickoff": "2026-07-03T03:00Z",
+      "matchId": "760498",
+      "matchKey": "2026-07-03-sui-alg",
+      "query": "Switzerland Algeria highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Switzerland vs Algeria official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Algeria%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
