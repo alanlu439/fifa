@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-04T04:06:51.801Z",
+  "generatedAt": "2026-07-04T19:40:49.460Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1252,6 +1252,21 @@
       "thumbnail": "",
       "title": "Colombia vs Ghana official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Colombia%20Ghana%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760502": {
+      "away": "MAR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-04T19:40:49.460Z",
+      "fallbackSearch": true,
+      "home": "CAN",
+      "kickoff": "2026-07-04T17:00Z",
+      "matchId": "760502",
+      "matchKey": "2026-07-04-can-mar",
+      "query": "Canada Morocco highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Canada vs Morocco official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Canada%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2572,6 +2587,22 @@
       "thumbnail": "",
       "title": "Switzerland vs Algeria official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Algeria%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-04-can-mar": {
+      "aliasFor": "760502",
+      "away": "MAR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-04T19:40:49.460Z",
+      "fallbackSearch": true,
+      "home": "CAN",
+      "kickoff": "2026-07-04T17:00Z",
+      "matchId": "760502",
+      "matchKey": "2026-07-04-can-mar",
+      "query": "Canada Morocco highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Canada vs Morocco official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Canada%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-07-04-col-gha": {
       "aliasFor": "760501",
