@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-04T19:40:49.460Z",
+  "generatedAt": "2026-07-04T23:26:18.634Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1267,6 +1267,21 @@
       "thumbnail": "",
       "title": "Canada vs Morocco official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Canada%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760503": {
+      "away": "FRA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-04T23:26:18.634Z",
+      "fallbackSearch": true,
+      "home": "PAR",
+      "kickoff": "2026-07-04T21:00Z",
+      "matchId": "760503",
+      "matchKey": "2026-07-04-par-fra",
+      "query": "Paraguay France highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Paraguay vs France official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Paraguay%20France%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2619,6 +2634,22 @@
       "thumbnail": "",
       "title": "Colombia vs Ghana official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Colombia%20Ghana%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-04-par-fra": {
+      "aliasFor": "760503",
+      "away": "FRA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-04T23:26:18.634Z",
+      "fallbackSearch": true,
+      "home": "PAR",
+      "kickoff": "2026-07-04T21:00Z",
+      "matchId": "760503",
+      "matchKey": "2026-07-04-par-fra",
+      "query": "Paraguay France highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Paraguay vs France official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Paraguay%20France%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
