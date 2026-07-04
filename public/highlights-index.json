@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-03T21:35:22.019Z",
+  "generatedAt": "2026-07-04T04:06:51.801Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1222,6 +1222,36 @@
       "thumbnail": "",
       "title": "Australia vs Egypt official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Australia%20Egypt%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760500": {
+      "away": "CPV",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-04T04:06:51.801Z",
+      "fallbackSearch": true,
+      "home": "ARG",
+      "kickoff": "2026-07-03T22:00Z",
+      "matchId": "760500",
+      "matchKey": "2026-07-03-arg-cpv",
+      "query": "Argentina Cape Verde highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Argentina vs Cape Verde official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Argentina%20Cape%20Verde%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760501": {
+      "away": "GHA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-04T04:06:51.801Z",
+      "fallbackSearch": true,
+      "home": "COL",
+      "kickoff": "2026-07-04T01:30Z",
+      "matchId": "760501",
+      "matchKey": "2026-07-04-col-gha",
+      "query": "Colombia Ghana highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Colombia vs Ghana official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Colombia%20Ghana%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2495,6 +2525,22 @@
       "title": "United States vs Bosnia-Herzegovina official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=United%20States%20Bosnia-Herzegovina%20highlights%20FIFA%20World%20Cup%202026"
     },
+    "2026-07-03-arg-cpv": {
+      "aliasFor": "760500",
+      "away": "CPV",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-04T04:06:51.801Z",
+      "fallbackSearch": true,
+      "home": "ARG",
+      "kickoff": "2026-07-03T22:00Z",
+      "matchId": "760500",
+      "matchKey": "2026-07-03-arg-cpv",
+      "query": "Argentina Cape Verde highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Argentina vs Cape Verde official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Argentina%20Cape%20Verde%20highlights%20FIFA%20World%20Cup%202026"
+    },
     "2026-07-03-aus-egy": {
       "aliasFor": "760499",
       "away": "EGY",
@@ -2526,6 +2572,22 @@
       "thumbnail": "",
       "title": "Switzerland vs Algeria official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Switzerland%20Algeria%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-04-col-gha": {
+      "aliasFor": "760501",
+      "away": "GHA",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-04T04:06:51.801Z",
+      "fallbackSearch": true,
+      "home": "COL",
+      "kickoff": "2026-07-04T01:30Z",
+      "matchId": "760501",
+      "matchKey": "2026-07-04-col-gha",
+      "query": "Colombia Ghana highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Colombia vs Ghana official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Colombia%20Ghana%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
