@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-04T23:26:18.634Z",
+  "generatedAt": "2026-07-05T22:17:42.887Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1282,6 +1282,21 @@
       "thumbnail": "",
       "title": "Paraguay vs France official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Paraguay%20France%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760504": {
+      "away": "NOR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-05T22:17:42.887Z",
+      "fallbackSearch": true,
+      "home": "BRA",
+      "kickoff": "2026-07-05T20:00Z",
+      "matchId": "760504",
+      "matchKey": "2026-07-05-bra-nor",
+      "query": "Brazil Norway highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Brazil vs Norway official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Brazil%20Norway%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2650,6 +2665,22 @@
       "thumbnail": "",
       "title": "Paraguay vs France official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Paraguay%20France%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-05-bra-nor": {
+      "aliasFor": "760504",
+      "away": "NOR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-05T22:17:42.887Z",
+      "fallbackSearch": true,
+      "home": "BRA",
+      "kickoff": "2026-07-05T20:00Z",
+      "matchId": "760504",
+      "matchKey": "2026-07-05-bra-nor",
+      "query": "Brazil Norway highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Brazil vs Norway official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Brazil%20Norway%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
