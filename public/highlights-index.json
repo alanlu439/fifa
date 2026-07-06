@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-06T04:46:34.212Z",
+  "generatedAt": "2026-07-06T21:05:12.616Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1312,6 +1312,21 @@
       "thumbnail": "",
       "title": "Mexico vs England official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Mexico%20England%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760506": {
+      "away": "ESP",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-06T21:05:12.616Z",
+      "fallbackSearch": true,
+      "home": "POR",
+      "kickoff": "2026-07-06T19:00Z",
+      "matchId": "760506",
+      "matchKey": "2026-07-06-por-esp",
+      "query": "Portugal Spain highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Portugal vs Spain official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Spain%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2712,6 +2727,22 @@
       "thumbnail": "",
       "title": "Mexico vs England official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Mexico%20England%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-06-por-esp": {
+      "aliasFor": "760506",
+      "away": "ESP",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-06T21:05:12.616Z",
+      "fallbackSearch": true,
+      "home": "POR",
+      "kickoff": "2026-07-06T19:00Z",
+      "matchId": "760506",
+      "matchKey": "2026-07-06-por-esp",
+      "query": "Portugal Spain highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Portugal vs Spain official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Spain%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
