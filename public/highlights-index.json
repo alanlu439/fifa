@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-05T22:17:42.887Z",
+  "generatedAt": "2026-07-06T04:46:34.212Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1297,6 +1297,21 @@
       "thumbnail": "",
       "title": "Brazil vs Norway official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Brazil%20Norway%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760505": {
+      "away": "ENG",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-06T04:46:34.212Z",
+      "fallbackSearch": true,
+      "home": "MEX",
+      "kickoff": "2026-07-06T01:00Z",
+      "matchId": "760505",
+      "matchKey": "2026-07-06-mex-eng",
+      "query": "Mexico England highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Mexico vs England official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Mexico%20England%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2681,6 +2696,22 @@
       "thumbnail": "",
       "title": "Brazil vs Norway official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Brazil%20Norway%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-06-mex-eng": {
+      "aliasFor": "760505",
+      "away": "ENG",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-06T04:46:34.212Z",
+      "fallbackSearch": true,
+      "home": "MEX",
+      "kickoff": "2026-07-06T01:00Z",
+      "matchId": "760505",
+      "matchKey": "2026-07-06-mex-eng",
+      "query": "Mexico England highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Mexico vs England official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Mexico%20England%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
