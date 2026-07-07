@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-07T05:10:37.673Z",
+  "generatedAt": "2026-07-07T20:18:26.856Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1342,6 +1342,21 @@
       "thumbnail": "",
       "title": "United States vs Belgium official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=United%20States%20Belgium%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760509": {
+      "away": "EGY",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-07T20:18:26.856Z",
+      "fallbackSearch": true,
+      "home": "ARG",
+      "kickoff": "2026-07-07T16:00Z",
+      "matchId": "760509",
+      "matchKey": "2026-07-07-arg-egy",
+      "query": "Argentina Egypt highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Argentina vs Egypt official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Argentina%20Egypt%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2758,6 +2773,22 @@
       "thumbnail": "",
       "title": "Portugal vs Spain official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Spain%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-07-arg-egy": {
+      "aliasFor": "760509",
+      "away": "EGY",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-07T20:18:26.856Z",
+      "fallbackSearch": true,
+      "home": "ARG",
+      "kickoff": "2026-07-07T16:00Z",
+      "matchId": "760509",
+      "matchKey": "2026-07-07-arg-egy",
+      "query": "Argentina Egypt highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Argentina vs Egypt official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Argentina%20Egypt%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-07-07-usa-bel": {
       "aliasFor": "760507",
