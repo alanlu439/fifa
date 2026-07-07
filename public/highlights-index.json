@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-06T21:05:12.616Z",
+  "generatedAt": "2026-07-07T05:10:37.673Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1327,6 +1327,21 @@
       "thumbnail": "",
       "title": "Portugal vs Spain official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Spain%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760507": {
+      "away": "BEL",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-07T05:10:37.673Z",
+      "fallbackSearch": true,
+      "home": "USA",
+      "kickoff": "2026-07-07T00:00Z",
+      "matchId": "760507",
+      "matchKey": "2026-07-07-usa-bel",
+      "query": "United States Belgium highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "United States vs Belgium official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=United%20States%20Belgium%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2743,6 +2758,22 @@
       "thumbnail": "",
       "title": "Portugal vs Spain official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Portugal%20Spain%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-07-usa-bel": {
+      "aliasFor": "760507",
+      "away": "BEL",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-07T05:10:37.673Z",
+      "fallbackSearch": true,
+      "home": "USA",
+      "kickoff": "2026-07-07T00:00Z",
+      "matchId": "760507",
+      "matchKey": "2026-07-07-usa-bel",
+      "query": "United States Belgium highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "United States vs Belgium official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=United%20States%20Belgium%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
