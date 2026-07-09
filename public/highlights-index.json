@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-07T23:25:42.435Z",
+  "generatedAt": "2026-07-09T23:40:40.551Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1372,6 +1372,21 @@
       "thumbnail": "",
       "title": "Argentina vs Egypt official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Argentina%20Egypt%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760510": {
+      "away": "MAR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-09T23:40:40.551Z",
+      "fallbackSearch": true,
+      "home": "FRA",
+      "kickoff": "2026-07-09T20:00Z",
+      "matchId": "760510",
+      "matchKey": "2026-07-09-fra-mar",
+      "query": "France Morocco highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "France vs Morocco official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=France%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2836,6 +2851,22 @@
       "thumbnail": "",
       "title": "United States vs Belgium official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=United%20States%20Belgium%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-09-fra-mar": {
+      "aliasFor": "760510",
+      "away": "MAR",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-09T23:40:40.551Z",
+      "fallbackSearch": true,
+      "home": "FRA",
+      "kickoff": "2026-07-09T20:00Z",
+      "matchId": "760510",
+      "matchKey": "2026-07-09-fra-mar",
+      "query": "France Morocco highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "France vs Morocco official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=France%20Morocco%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
