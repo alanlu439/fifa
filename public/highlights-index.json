@@ -3,7 +3,7 @@
   "channelId": "",
   "channelTitle": "FIFA",
   "checked": {},
-  "generatedAt": "2026-07-10T22:28:23.817Z",
+  "generatedAt": "2026-07-12T00:14:08.594Z",
   "matches": {
     "760414": {
       "away": "CZE",
@@ -1402,6 +1402,21 @@
       "thumbnail": "",
       "title": "Spain vs Belgium official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Spain%20Belgium%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "760512": {
+      "away": "ENG",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-12T00:14:08.594Z",
+      "fallbackSearch": true,
+      "home": "NOR",
+      "kickoff": "2026-07-11T21:00Z",
+      "matchId": "760512",
+      "matchKey": "2026-07-11-nor-eng",
+      "query": "Norway England highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Norway vs England official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Norway%20England%20highlights%20FIFA%20World%20Cup%202026"
     },
     "2026-06-11-mex-rsa": {
       "aliasFor": "760415",
@@ -2898,6 +2913,22 @@
       "thumbnail": "",
       "title": "Spain vs Belgium official highlights",
       "url": "https://www.youtube.com/@fifa/search?query=Spain%20Belgium%20highlights%20FIFA%20World%20Cup%202026"
+    },
+    "2026-07-11-nor-eng": {
+      "aliasFor": "760512",
+      "away": "ENG",
+      "channelTitle": "FIFA",
+      "discoveredAt": "2026-07-12T00:14:08.594Z",
+      "fallbackSearch": true,
+      "home": "NOR",
+      "kickoff": "2026-07-11T21:00Z",
+      "matchId": "760512",
+      "matchKey": "2026-07-11-nor-eng",
+      "query": "Norway England highlights FIFA World Cup 2026",
+      "source": "Official FIFA YouTube search",
+      "thumbnail": "",
+      "title": "Norway vs England official highlights",
+      "url": "https://www.youtube.com/@fifa/search?query=Norway%20England%20highlights%20FIFA%20World%20Cup%202026"
     }
   },
   "schemaVersion": 1,
